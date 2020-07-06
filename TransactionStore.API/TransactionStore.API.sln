@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29911.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionStore.API", "TransactionStore.API\TransactionStore.API.csproj", "{6C76C802-DC06-49A5-B01F-6C7384847AAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionStore.Data", "TransactionStore.Data\TransactionStore.Data.csproj", "{19BDCC58-1F26-4418-A84E-BBBECAA6D279}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6C76C802-DC06-49A5-B01F-6C7384847AAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C76C802-DC06-49A5-B01F-6C7384847AAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C76C802-DC06-49A5-B01F-6C7384847AAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C76C802-DC06-49A5-B01F-6C7384847AAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19BDCC58-1F26-4418-A84E-BBBECAA6D279}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19BDCC58-1F26-4418-A84E-BBBECAA6D279}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19BDCC58-1F26-4418-A84E-BBBECAA6D279}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19BDCC58-1F26-4418-A84E-BBBECAA6D279}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7C7D8093-5364-4C00-A9DB-7A25CDD93B7E}
+	EndGlobalSection
+EndGlobal
