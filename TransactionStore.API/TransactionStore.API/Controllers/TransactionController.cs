@@ -14,7 +14,7 @@ namespace TransactionStore.API.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
-    public class TransactionController : ControllerBase
+    public class TransactionController : Controller
     {
         private readonly ILogger<TransactionController> _logger;
 

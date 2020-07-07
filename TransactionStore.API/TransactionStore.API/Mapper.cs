@@ -23,26 +23,27 @@ namespace TransactionStore.API
             };
         }
 
-        public TransactionOutputModel ConvertTransactionDTOToTransactionOutputModel(TransactionDTO transaction)
-        {
-            return new TransactionOutputModel()
-            {
-                LeadId = transaction.LeadId,
-                TypeId = transaction.TypeId,
-                CurrencyId = transaction.CurrencyId,
-                Amount = transaction.Amount,
-                Timestamp = transaction.Timestamp
-            };
-        }
+        //public TransactionOutputModel ConvertTransactionDTOToTransactionOutputModel(TransactionDTO transaction)
+        //{
+        //    return new TransactionOutputModel()
+        //    {
+        //        LeadId = transaction.LeadId,
+        //        TypeId = transaction.TypeId,
+        //        CurrencyId = transaction.CurrencyId,
+        //        Amount = transaction.Amount,
+        //        Timestamp = transaction.Timestamp
+        //    };
+        //}
 
-        public List<TransactionOutputModel> ConvertTransactionDTOsToTransactionOutputModels(List<TransactionDTO> transaction)
+        public List<TransactionOutputModel> ConvertTransactionDTOsToTransactionOutputModels(List<TransactionDTO> transactions)
         {
             List<TransactionOutputModel> models = new List<TransactionOutputModel>();
-            foreach( var dto in transaction)
+            foreach( var dto in transactions)
             {
                 models.Add(
                     new TransactionOutputModel()
                     {
+                        Id = dto.Id,
                         TypeId = dto.TypeId,
                         CurrencyId = dto.CurrencyId,
                         Amount = dto.Amount,
