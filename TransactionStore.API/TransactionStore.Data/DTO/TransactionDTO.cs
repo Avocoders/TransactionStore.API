@@ -6,7 +6,7 @@ namespace TransactionStore.Data.DTO
 {
     public class TransactionDTO
     {
-        public TransactionDTO(Int64 id, Int64 leadId, byte typeId, byte currencyId, decimal amount, DateTime timestamp)
+        public TransactionDTO(long id, long leadId, byte typeId, byte currencyId, decimal amount, DateTime timestamp)
         {
             Id = id;
             LeadId = leadId;
@@ -17,8 +17,8 @@ namespace TransactionStore.Data.DTO
         }
 
 
-        public Int64 Id { get; set; }
-        public Int64 LeadId { get; set; }
+        public long Id { get; set; }
+        public long LeadId { get; set; }
         public byte TypeId { get; set; }
         public byte CurrencyId { get; set; }
         public decimal Amount { get; set; }
