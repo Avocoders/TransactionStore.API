@@ -6,6 +6,7 @@ namespace TransactionStore.Data.DTO
 {
     public class TransactionDTO
     {
+        public TransactionDTO() { }
         public TransactionDTO(long id, long leadId, byte typeId, byte currencyId, decimal amount, DateTime timestamp)
         {
             Id = id;

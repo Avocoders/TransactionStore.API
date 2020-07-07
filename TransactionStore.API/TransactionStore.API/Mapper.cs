@@ -1,6 +1,7 @@
 ﻿using TransactionStore.API.Models.Input;
 using TransactionStore.API.Models.Output;
 using TransactionStore.Data.DTO;
+using TransactionStore.Data.StoredProcedure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,24 @@ namespace TransactionStore.API
                 Amount = transaction.Amount,
                 Timestamp = transaction.Timestamp
             };
+        }
+
+        public List<TransactionOutputModel> ConvertTransactionDTOsToTransactionOutputModels(List<TransactionDTO> transaction)
+        {
+            List<TransactionOutputModel> models = new List<TransactionOutputModel>();
+            foreach( var dto in transaction)
+            {
+                models.Add(
+                    new TransactionOutputModel()
+                    {
+                        TypeId = dto.TypeId,
+                        CurrencyId = dto.CurrencyId,
+                        Amount = dto.Amount,
+                        Timestamp = dto.Timestamp
+                    }
+                    );
+            }
+            return models;
         }
     }
 }
