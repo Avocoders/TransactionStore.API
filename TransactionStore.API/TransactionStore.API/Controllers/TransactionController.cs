@@ -32,13 +32,20 @@ namespace TransactionStore.API.Controllers
             return transactionCRUD.Add(transactionDTO);
         }
 
-        [HttpGet("{leadId}")]
+        [HttpGet("lead/{leadId}")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
         {
             Mapper mapper = new Mapper();
             TransactionCRUD transaction = new TransactionCRUD();
             return Ok(mapper.ConvertTransactionDTOsToTransactionOutputModels(transaction.GetByLeadId(leadId)));
         }
-
+        
+        [HttpGet("{Id}")]
+        public ActionResult<List<TransactionOutputModel>> GetTransactionsById(long id)
+        {
+            Mapper mapper = new Mapper();
+            TransactionCRUD transaction = new TransactionCRUD();
+            return Ok(mapper.ConvertTransactionDTOsToTransactionOutputModels(transaction.GetById(id)));
+        }
     }
 }

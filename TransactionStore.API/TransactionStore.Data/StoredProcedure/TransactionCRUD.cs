@@ -25,5 +25,13 @@ namespace TransactionStore.Data.StoredProcedure
             string sqlExpression = "Transaction_GetByLeadId @leadId";
             return connection.Query<TransactionDTO>(sqlExpression, new { leadId }).ToList();
         }
+        
+        public List<TransactionDTO> GetById(long id)
+        {
+            var connection = Connection.GetConnection();
+            connection.Open();
+            string sqlExpression = "Transaction_GetById @id";
+            return connection.Query<TransactionDTO>(sqlExpression, new { id }).ToList();
+        }
     }
 }
