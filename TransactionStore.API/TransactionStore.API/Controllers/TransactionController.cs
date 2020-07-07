@@ -13,8 +13,8 @@ using TransactionStore.Data.StoredProcedure;
 namespace TransactionStore.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class TransactionController : Controller
+    [Route("[Controller]")]
+    public class TransactionController : ControllerBase
     {
         private readonly ILogger<TransactionController> _logger;
 
