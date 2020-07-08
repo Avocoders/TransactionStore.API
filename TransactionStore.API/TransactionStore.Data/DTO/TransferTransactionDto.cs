@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace TransactionStore.API.Models.Output
+namespace TransactionStore.Data.DTO
 {
-    public class TransactionOutputModel
+    public class TransferTransactionDto
     {
-        public long Id { get; set; }
+        public long? Id { get; set; }
         public long LeadId { get; set; }
         public byte TypeId { get; set; }
         public byte CurrencyId { get; set; }
         public decimal Amount { get; set; }
         public DateTime Timestamp { get; set; }
+        public long DestinationLeadId { get; set; }
     }
 }

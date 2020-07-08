@@ -25,6 +25,14 @@ namespace TransactionStore.Data
             string sqlExpression = "Transaction_GetByLeadId @leadId";
             return connection.Query<TransactionDto>(sqlExpression, new { leadId }).ToList();
         }
+
+        public List<long> AddTransaction(TransferTransactionDto transferDto)
+        {
+            var connection = Connection.GetConnection();
+            connection.Open();
+            string sqlExpression = "Transaction_AddTransfer  @leadId, @typeId, @currencyId, @amount, @destinationLeadId";
+            return connection.Query<long>(sqlExpression, transferDto).ToList();
+        }
         
         public List<TransactionDto> GetById(long id)
         {
