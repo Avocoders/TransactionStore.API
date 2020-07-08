@@ -25,7 +25,7 @@ namespace TransactionStore.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<long> PostTransaction(TransactionInputModel transactionModel)
+        public ActionResult<long> PostTransaction([FromBody]TransactionInputModel transactionModel)
         {
             TransactionDto transactionDto = mapper.ConvertTransactionInputModelToTransactionDto(transactionModel);
             TransactionRepository transaction = new TransactionRepository();
