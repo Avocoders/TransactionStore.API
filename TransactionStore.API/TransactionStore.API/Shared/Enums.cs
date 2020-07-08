@@ -10,7 +10,7 @@ namespace TransactionStore.API.Shared
         public enum TransactionType
         {
             Deposit=1,
-            WithDrow,
+            Withdraw,
             Transfer
         }
     }

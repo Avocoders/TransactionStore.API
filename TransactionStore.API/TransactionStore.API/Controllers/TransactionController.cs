@@ -28,7 +28,7 @@ namespace TransactionStore.API.Controllers
         [HttpPost("deposit")] // прописать BadRequests
         public ActionResult<long> CreateDepositTransaction([FromBody]TransactionInputModel transactionModel)
         {
-            TransactionDto transactionDto = mapper.ConvertTransactionInputModelToTransactionDto(transactionModel);
+            TransactionDto transactionDto = mapper.ConvertTransactionInputModelDepositToTransactionDto(transactionModel);
             TransactionRepository transaction = new TransactionRepository();
             return transaction.Add(transactionDto);
         }
@@ -37,7 +37,7 @@ namespace TransactionStore.API.Controllers
         public ActionResult<long> CreateWithdrawTransaction([FromBody]TransactionInputModel transactionModel)
         {
             // менять значение на отрицательное в mapper
-            TransactionDto transactionDto = mapper.ConvertTransactionInputModelToTransactionDto(transactionModel);
+            TransactionDto transactionDto = mapper.ConvertTransactionInputModelWithdrawToTransactionDto(transactionModel);
             TransactionRepository transaction = new TransactionRepository();
             return transaction.Add(transactionDto);
         }
@@ -45,7 +45,7 @@ namespace TransactionStore.API.Controllers
         [HttpPost("transfer")] // прописать BadRequests
         public ActionResult<long> CreateTransferTransaction([FromBody]TransferInputModel transactionModel) // добавить DestinationLeadId
         {
-            TransactionDto transactionDto = mapper.ConvertTransactionInputModelToTransactionDto(transactionModel);
+            TransactionDto transactionDto = mapper.ConvertTransactionInputModelTransferToTransactionDto(transactionModel);
             TransactionRepository transaction = new TransactionRepository();
             return transaction.Add(transactionDto);
         }
