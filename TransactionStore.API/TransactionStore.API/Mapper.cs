@@ -43,7 +43,7 @@ namespace TransactionStore.API
                 models.Add(
                     new TransactionOutputModel()
                     {
-                        Id = dto.Id,
+                        Id = dto.Id ?? -1,
                         TypeId = dto.TypeId,
                         CurrencyId = dto.CurrencyId,
                         Amount = dto.Amount,
