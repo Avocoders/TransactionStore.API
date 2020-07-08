@@ -6,7 +6,7 @@ using Dapper;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 
-namespace TransactionStore.Data.StoredProcedure
+namespace TransactionStore.Data
 {
     public class TransactionRepository
     {
