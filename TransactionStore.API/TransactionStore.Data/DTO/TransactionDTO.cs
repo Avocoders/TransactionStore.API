@@ -18,7 +18,7 @@ namespace TransactionStore.Data.DTO
         }
 
 
-        public long Id { get; set; }
+        public long? Id { get; set; }
         public long LeadId { get; set; }
         public byte TypeId { get; set; }
         public byte CurrencyId { get; set; }
