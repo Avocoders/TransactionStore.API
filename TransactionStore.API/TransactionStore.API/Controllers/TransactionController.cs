@@ -25,22 +25,39 @@ namespace TransactionStore.API.Controllers
             mapper = new Mapper();
         }
 
-        [HttpPost]
-        public ActionResult<long> PostTransaction([FromBody]TransactionInputModel transactionModel)
+        [HttpPost("deposit")] // прописать BadRequests
+        public ActionResult<long> CreateDepositTransaction([FromBody]TransactionInputModel transactionModel)
+        {
+            TransactionDto transactionDto = mapper.ConvertTransactionInputModelToTransactionDto(transactionModel);
+            TransactionRepository transaction = new TransactionRepository();
+            return transaction.Add(transactionDto);
+        }
+        
+        [HttpPost("withdraw")] // прописать BadRequests
+        public ActionResult<long> CreateWithdrawTransaction([FromBody]TransactionInputModel transactionModel)
+        {
+            // менять значение на отрицательное в mapper
+            TransactionDto transactionDto = mapper.ConvertTransactionInputModelToTransactionDto(transactionModel);
+            TransactionRepository transaction = new TransactionRepository();
+            return transaction.Add(transactionDto);
+        }
+        
+        [HttpPost("transfer")] // прописать BadRequests
+        public ActionResult<long> CreateTransferTransaction([FromBody]TransferInputModel transactionModel) // добавить DestinationLeadId
         {
             TransactionDto transactionDto = mapper.ConvertTransactionInputModelToTransactionDto(transactionModel);
             TransactionRepository transaction = new TransactionRepository();
             return transaction.Add(transactionDto);
         }
 
-        [HttpGet("lead/{leadId}")]
+        [HttpGet("by-lead-id/{leadId}")] // прописать BadRequests
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
         {
             TransactionRepository transaction = new TransactionRepository();
             return Ok(mapper.ConvertTransactionDtoToTransactionOutputModels(transaction.GetByLeadId(leadId)));
         }
         
-        [HttpGet("{Id}")]
+        [HttpGet("{Id}")] // прописать BadRequests
         public ActionResult<List<TransactionOutputModel>> GetTransactionsById(long id)
         {
             TransactionRepository transaction = new TransactionRepository();
