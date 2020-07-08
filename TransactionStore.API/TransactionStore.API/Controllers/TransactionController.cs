@@ -18,6 +18,7 @@ namespace TransactionStore.API.Controllers
     {
         private readonly ILogger<TransactionController> _logger;
 
+        Mapper mapper = new Mapper();
         public TransactionController(ILogger<TransactionController> logger)
         {
             _logger = logger;
@@ -26,25 +27,22 @@ namespace TransactionStore.API.Controllers
         [HttpPost]
         public ActionResult<long> PostTransaction(TransactionInputModel transactionModel)
         {
-            Mapper mapper = new Mapper();
             TransactionDto transactionDto = mapper.ConvertTransactionInputModelToTransactionDto(transactionModel);
-            TransactionCrud transaction = new TransactionCrud();
+            TransactionRepository transaction = new TransactionRepository();
             return transaction.Add(transactionDto);
         }
 
         [HttpGet("lead/{leadId}")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
         {
-            Mapper mapper = new Mapper();
-            TransactionCrud transaction = new TransactionCrud();
+            TransactionRepository transaction = new TransactionRepository();
             return Ok(mapper.ConvertTransactionDtoToTransactionOutputModels(transaction.GetByLeadId(leadId)));
         }
         
         [HttpGet("{Id}")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionsById(long id)
         {
-            Mapper mapper = new Mapper();
-            TransactionCrud transaction = new TransactionCrud();
+            TransactionRepository transaction = new TransactionRepository();
             return Ok(mapper.ConvertTransactionDtoToTransactionOutputModels(transaction.GetById(id)));
         }
     }

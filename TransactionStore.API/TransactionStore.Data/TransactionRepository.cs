@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace TransactionStore.Data.StoredProcedure
 {
-    public class TransactionCrud
+    public class TransactionRepository
     {
         public long Add(TransactionDto transactionDTO)
         {
