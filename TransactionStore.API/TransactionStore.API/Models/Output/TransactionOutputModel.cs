@@ -7,7 +7,7 @@ namespace TransactionStore.API.Models.Output
 {
     public class TransactionOutputModel
     {
-        public long Id { get; set; }
+        public long? Id { get; set; }
         public byte TypeId { get; set; }
         public byte CurrencyId { get; set; }
         public decimal Amount { get; set; }
