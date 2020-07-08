@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using TransactionStore.API.Models.Input;
 using TransactionStore.API.Models.Output;
 using TransactionStore.Data.DTO;
-using TransactionStore.Data.StoredProcedure;
+using TransactionStore.Data;
 
 namespace TransactionStore.API.Controllers
 {
@@ -18,10 +18,11 @@ namespace TransactionStore.API.Controllers
     {
         private readonly ILogger<TransactionController> _logger;
 
-        Mapper mapper = new Mapper();
+        private Mapper mapper;
         public TransactionController(ILogger<TransactionController> logger)
         {
             _logger = logger;
+            mapper = new Mapper();
         }
 
         [HttpPost]
