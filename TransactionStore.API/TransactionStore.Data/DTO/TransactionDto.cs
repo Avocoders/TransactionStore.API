@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TransactionStore.Data.DTO
 {
-    public class TransactionDTO
+    public class TransactionDto
     {
-        public TransactionDTO() { }
-        public TransactionDTO(long id, long leadId, byte typeId, byte currencyId, decimal amount, DateTime timestamp)
+        public TransactionDto() { }
+        public TransactionDto(long id, long leadId, byte typeId, byte currencyId, decimal amount, DateTime timestamp)
         {
             Id = id;
             LeadId = leadId;

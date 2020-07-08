@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TransactionStore.Data.DTO
 {
-    public class CurrencyDTO
+    public class CurrencyDto
     {
-        public CurrencyDTO(byte id, string name, string code)
+        public CurrencyDto(byte id, string name, string code)
         {
             Id = id;
             Name = name;

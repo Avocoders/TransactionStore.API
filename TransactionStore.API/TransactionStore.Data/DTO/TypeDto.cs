@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TransactionStore.Data.DTO
 {
-    public class TypeDTO
+    public class TypeDto
     {
-        public TypeDTO(byte id, string name)
+        public TypeDto(byte id, string name)
         {
             Id = id;
             Name = name;

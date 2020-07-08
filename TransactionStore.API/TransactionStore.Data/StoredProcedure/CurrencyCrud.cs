@@ -7,14 +7,14 @@ using System.Linq;
 
 namespace TransactionStore.Data.StoredProcedure
 {
-    public class TypeCRUD
+    public class CurrencyCrud
     {
-        public byte Add(TypeDTO typeDTO)
+        public byte Add(CurrencyDto currencyDTO)
         {
             var connection = Connection.GetConnection();
             connection.Open();
-            string sqlExpression = "Type_Add @name";
-            return connection.Query<byte>(sqlExpression, typeDTO).FirstOrDefault();
+            string sqlExpression = "Currency_Add @name, @code";
+            return connection.Query<byte>(sqlExpression, currencyDTO).FirstOrDefault();
         }
     }
 }

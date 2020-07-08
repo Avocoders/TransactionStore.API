@@ -8,9 +8,9 @@ using System.Linq;
 
 namespace TransactionStore.Data.StoredProcedure
 {
-    public class TransactionCRUD
+    public class TransactionCrud
     {
-        public long Add(TransactionDTO transactionDTO)
+        public long Add(TransactionDto transactionDTO)
         {
             var connection = Connection.GetConnection();
             connection.Open();
@@ -18,20 +18,20 @@ namespace TransactionStore.Data.StoredProcedure
             return connection.Query<long>(sqlExpression, transactionDTO).FirstOrDefault();
         }
 
-        public List<TransactionDTO> GetByLeadId(long leadId)
+        public List<TransactionDto> GetByLeadId(long leadId)
         {
             var connection = Connection.GetConnection();
             connection.Open();
             string sqlExpression = "Transaction_GetByLeadId @leadId";
-            return connection.Query<TransactionDTO>(sqlExpression, new { leadId }).ToList();
+            return connection.Query<TransactionDto>(sqlExpression, new { leadId }).ToList();
         }
         
-        public List<TransactionDTO> GetById(long id)
+        public List<TransactionDto> GetById(long id)
         {
             var connection = Connection.GetConnection();
             connection.Open();
             string sqlExpression = "Transaction_GetById @id";
-            return connection.Query<TransactionDTO>(sqlExpression, new { id }).ToList();
+            return connection.Query<TransactionDto>(sqlExpression, new { id }).ToList();
         }
     }
 }
