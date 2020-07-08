@@ -27,25 +27,25 @@ namespace TransactionStore.API.Controllers
         public ActionResult<long> PostTransaction(TransactionInputModel transactionModel)
         {
             Mapper mapper = new Mapper();
-            TransactionDTO transactionDTO = mapper.ConvertTransactionInputModelToTransactionDTO(transactionModel);
-            TransactionCRUD transactionCRUD = new TransactionCRUD();
-            return transactionCRUD.Add(transactionDTO);
+            TransactionDto transactionDto = mapper.ConvertTransactionInputModelToTransactionDto(transactionModel);
+            TransactionCrud transaction = new TransactionCrud();
+            return transaction.Add(transactionDto);
         }
 
         [HttpGet("lead/{leadId}")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
         {
             Mapper mapper = new Mapper();
-            TransactionCRUD transaction = new TransactionCRUD();
-            return Ok(mapper.ConvertTransactionDTOsToTransactionOutputModels(transaction.GetByLeadId(leadId)));
+            TransactionCrud transaction = new TransactionCrud();
+            return Ok(mapper.ConvertTransactionDtoToTransactionOutputModels(transaction.GetByLeadId(leadId)));
         }
         
         [HttpGet("{Id}")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionsById(long id)
         {
             Mapper mapper = new Mapper();
-            TransactionCRUD transaction = new TransactionCRUD();
-            return Ok(mapper.ConvertTransactionDTOsToTransactionOutputModels(transaction.GetById(id)));
+            TransactionCrud transaction = new TransactionCrud();
+            return Ok(mapper.ConvertTransactionDtoToTransactionOutputModels(transaction.GetById(id)));
         }
     }
 }
