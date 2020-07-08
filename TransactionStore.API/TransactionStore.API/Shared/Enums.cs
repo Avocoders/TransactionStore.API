@@ -13,5 +13,12 @@ namespace TransactionStore.API.Shared
             Withdraw,
             Transfer
         }
+
+        public enum TransactionCurrency
+        {
+            RUR=1,
+            USD,
+            EUR
+        }
     }
 }

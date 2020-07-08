@@ -9,36 +9,37 @@ namespace TransactionStore.API
 {
     public class Mapper
     {
-        public TransactionDto ConvertTransactionInputModelDepositToTransactionDto(TransactionInputModel transaction)
+        public TransactionDto ConvertTransactionInputModelDepositToTransactionDto(TransactionInputModel deposit)
         {
             return new TransactionDto()
             {
-                LeadId = transaction.LeadId,
+                LeadId = deposit.LeadId,
                 TypeId = Convert.ToByte(Enums.TransactionType.Deposit),
-                CurrencyId = transaction.CurrencyId,
-                Amount = transaction.Amount
+                CurrencyId = deposit.CurrencyId,
+                Amount = deposit.Amount
             };
         }
 
-        public TransactionDto ConvertTransactionInputModelWithdrawToTransactionDto(TransactionInputModel transaction)
+        public TransactionDto ConvertTransactionInputModelWithdrawToTransactionDto(TransactionInputModel withdraw)
         {
             return new TransactionDto()
             {
-                LeadId = transaction.LeadId,
+                LeadId = withdraw.LeadId,
                 TypeId = Convert.ToByte(Enums.TransactionType.Withdraw),
-                CurrencyId = transaction.CurrencyId,
-                Amount = transaction.Amount
+                CurrencyId = withdraw.CurrencyId,
+                Amount = -withdraw.Amount
             };
         }
 
-        public TransactionDto ConvertTransactionInputModelTransferToTransactionDto(TransactionInputModel transaction)
+        public TransferTransactionDto ConvertTransferInputModelToTransferTransactionDto(TransferInputModel transfer)
         {
-            return new TransactionDto()
+            return new TransferTransactionDto()
             {
-                LeadId = transaction.LeadId,
+                LeadId = transfer.LeadId,
                 TypeId = Convert.ToByte(Enums.TransactionType.Transfer),
-                CurrencyId = transaction.CurrencyId,
-                Amount = transaction.Amount
+                CurrencyId = transfer.CurrencyId,
+                Amount = transfer.Amount,
+                DestinationLeadId = transfer.DestinationLeadId
             };
         }
 

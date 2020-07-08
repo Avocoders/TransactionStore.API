@@ -25,43 +25,44 @@ namespace TransactionStore.API.Controllers
             mapper = new Mapper();
         }
 
-        [HttpPost("deposit")] // прописать BadRequests
+        [HttpPost("deposit")]
         public ActionResult<long> CreateDepositTransaction([FromBody]TransactionInputModel transactionModel)
         {
+            if (transactionModel.Amount <= 0) return BadRequest("The amount is missing");
             TransactionDto transactionDto = mapper.ConvertTransactionInputModelDepositToTransactionDto(transactionModel);
-            TransactionRepository transaction = new TransactionRepository();
-            return transaction.Add(transactionDto);
+            TransactionRepository repo = new TransactionRepository();
+            return Ok(repo.Add(transactionDto));
         }
         
         [HttpPost("withdraw")] // прописать BadRequests
         public ActionResult<long> CreateWithdrawTransaction([FromBody]TransactionInputModel transactionModel)
         {
-            // менять значение на отрицательное в mapper
+            
+            TransactionRepository repo = new TransactionRepository();
             TransactionDto transactionDto = mapper.ConvertTransactionInputModelWithdrawToTransactionDto(transactionModel);
-            TransactionRepository transaction = new TransactionRepository();
-            return transaction.Add(transactionDto);
+            return repo.Add(transactionDto);
         }
         
         [HttpPost("transfer")] // прописать BadRequests
-        public ActionResult<long> CreateTransferTransaction([FromBody]TransferInputModel transactionModel) // добавить DestinationLeadId
+        public ActionResult<List<long>> CreateTransferTransaction([FromBody]TransferInputModel transactionModel)
         {
-            TransactionDto transactionDto = mapper.ConvertTransactionInputModelTransferToTransactionDto(transactionModel);
-            TransactionRepository transaction = new TransactionRepository();
-            return transaction.Add(transactionDto);
+            TransferTransactionDto transfer = mapper.ConvertTransferInputModelToTransferTransactionDto(transactionModel);
+            TransactionRepository repo = new TransactionRepository();
+            return repo.AddTransaction(transfer);
         }
 
         [HttpGet("by-lead-id/{leadId}")] // прописать BadRequests
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
         {
-            TransactionRepository transaction = new TransactionRepository();
-            return Ok(mapper.ConvertTransactionDtoToTransactionOutputModels(transaction.GetByLeadId(leadId)));
+            TransactionRepository repo = new TransactionRepository();
+            return Ok(mapper.ConvertTransactionDtoToTransactionOutputModels(repo.GetByLeadId(leadId)));
         }
         
         [HttpGet("{Id}")] // прописать BadRequests
         public ActionResult<List<TransactionOutputModel>> GetTransactionsById(long id)
         {
-            TransactionRepository transaction = new TransactionRepository();
-            return Ok(mapper.ConvertTransactionDtoToTransactionOutputModels(transaction.GetById(id)));
+            TransactionRepository repo = new TransactionRepository();
+            return Ok(mapper.ConvertTransactionDtoToTransactionOutputModels(repo.GetById(id)));
         }
     }
 }
