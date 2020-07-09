@@ -41,5 +41,13 @@ namespace TransactionStore.Data
             string sqlExpression = "Transaction_GetById @id";
             return connection.Query<TransactionDto>(sqlExpression, new { id }).ToList();
         }
+
+        public decimal GetTotalAmount(long leadId)
+        {
+            var connection = Connection.GetConnection();
+            connection.Open();
+            string sqlExpression = "TotalAmount @leadId";
+            return connection.Query<decimal>(sqlExpression, leadId).FirstOrDefault();
+        }
     }
 }
