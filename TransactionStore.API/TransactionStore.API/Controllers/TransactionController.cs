@@ -36,8 +36,11 @@ namespace TransactionStore.API.Controllers
         
         [HttpPost("withdraw")] // прописать BadRequests
         public ActionResult<long> CreateWithdrawTransaction([FromBody]TransactionInputModel transactionModel)
-        {            
+        {
+            if (transactionModel.Amount <= 0) return BadRequest("The amount is missing");
             TransactionRepository repo = new TransactionRepository();
+            if (repo.GetTotalAmount(transactionModel.LeadId)<0) return BadRequest("The amount of minus");
+            if (repo.GetTotalAmount(transactionModel.LeadId) < transactionModel.Amount) return BadRequest("Not enough money");
             TransactionDto transactionDto = _mapper.ConvertTransactionInputModelWithdrawToTransactionDto(transactionModel);
             return repo.Add(transactionDto);
         }
@@ -45,8 +48,11 @@ namespace TransactionStore.API.Controllers
         [HttpPost("transfer")] // прописать BadRequests
         public ActionResult<List<long>> CreateTransferTransaction([FromBody]TransferInputModel transactionModel)
         {
-            TransferTransactionDto transfer = _mapper.ConvertTransferInputModelToTransferTransactionDto(transactionModel);
+            if (transactionModel.Amount <= 0) return BadRequest("The amount is missing");
             TransactionRepository repo = new TransactionRepository();
+            if (repo.GetTotalAmount(transactionModel.LeadId) < 0) return BadRequest("The amount of minus");
+            if (repo.GetTotalAmount(transactionModel.LeadId)<transactionModel.Amount) return BadRequest("Not enough money");
+            TransferTransactionDto transfer = _mapper.ConvertTransferInputModelToTransferTransactionDto(transactionModel);
             return repo.AddTransfer(transfer);
         }
 

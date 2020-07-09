@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
+using System.Data;
+using System.Linq;
+using System.Collections.Generic;
 using TransactionStore.Data.DTO;
 using Dapper;
-using Microsoft.AspNetCore.Http;
-using System.Linq;
 
 namespace TransactionStore.Data
 {
@@ -47,7 +47,7 @@ namespace TransactionStore.Data
             var connection = Connection.GetConnection();
             connection.Open();
             string sqlExpression = "TotalAmount @leadId";
-            return connection.Query<decimal>(sqlExpression, leadId).FirstOrDefault();
+            return connection.Query<decimal>(sqlExpression, new { leadId }).FirstOrDefault();
         }
     }
 }
