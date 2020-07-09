@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
+using System.Data;
+using System.Linq;
+using System.Collections.Generic;
 using TransactionStore.Data.DTO;
 using Dapper;
-using Microsoft.AspNetCore.Http;
-using System.Linq;
 
 namespace TransactionStore.Data
 {
@@ -14,7 +14,7 @@ namespace TransactionStore.Data
         {
             var connection = Connection.GetConnection();
             connection.Open();
-            string sqlExpression = "Transaction_Add @leadId, @typeId, @currencyId, @amount, @timestamp";
+            string sqlExpression = "Transaction_Add @leadId, @typeId, @currencyId, @amount";
             return connection.Query<long>(sqlExpression, transactionDTO).FirstOrDefault();
         }
 
@@ -26,20 +26,28 @@ namespace TransactionStore.Data
             return connection.Query<TransactionDto>(sqlExpression, new { leadId }).ToList();
         }
 
-        public List<long> AddTransaction(TransferTransactionDto transferDto)
+        public List<long> AddTransfer(TransferTransactionDto transfer)
         {
             var connection = Connection.GetConnection();
             connection.Open();
             string sqlExpression = "Transaction_AddTransfer  @leadId, @typeId, @currencyId, @amount, @destinationLeadId";
-            return connection.Query<long>(sqlExpression, transferDto).ToList();
+            return connection.Query<long>(sqlExpression, transfer).ToList();
         }
-        
-        public List<TransactionDto> GetById(long id)
+
+        public TransactionDto GetById(long id)
         {
             var connection = Connection.GetConnection();
             connection.Open();
             string sqlExpression = "Transaction_GetById @id";
-            return connection.Query<TransactionDto>(sqlExpression, new { id }).ToList();
+            return connection.Query<TransactionDto>(sqlExpression, new { id }).FirstOrDefault();
+        }
+
+        public decimal GetTotalAmount(long leadId)
+        {
+            var connection = Connection.GetConnection();
+            connection.Open();
+            string sqlExpression = "TotalAmount @leadId";
+            return connection.Query<decimal>(sqlExpression, new { leadId }).FirstOrDefault();
         }
     }
 }
