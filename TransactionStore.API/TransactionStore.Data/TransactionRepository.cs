@@ -14,7 +14,7 @@ namespace TransactionStore.Data
         {
             var connection = Connection.GetConnection();
             connection.Open();
-            string sqlExpression = "Transaction_Add @leadId, @typeId, @currencyId, @amount, @timestamp";
+            string sqlExpression = "Transaction_Add @leadId, @typeId, @currencyId, @amount";
             return connection.Query<long>(sqlExpression, transactionDTO).FirstOrDefault();
         }
 
@@ -34,12 +34,12 @@ namespace TransactionStore.Data
             return connection.Query<long>(sqlExpression, transfer).ToList();
         }
 
-        public List<TransactionDto> GetById(long id)
+        public TransactionDto GetById(long id)
         {
             var connection = Connection.GetConnection();
             connection.Open();
             string sqlExpression = "Transaction_GetById @id";
-            return connection.Query<TransactionDto>(sqlExpression, new { id }).ToList();
+            return connection.Query<TransactionDto>(sqlExpression, new { id }).FirstOrDefault();
         }
 
         public decimal GetTotalAmount(long leadId)

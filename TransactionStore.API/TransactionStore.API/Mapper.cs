@@ -48,6 +48,7 @@ namespace TransactionStore.API
             return new TransactionOutputModel()
             {
                 Id = transaction.Id ?? -1,
+                LeadId = transaction.LeadId,
                 TypeId = transaction.TypeId,
                 CurrencyId = transaction.CurrencyId,
                 Amount = transaction.Amount,
