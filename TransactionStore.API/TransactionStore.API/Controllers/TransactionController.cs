@@ -47,7 +47,7 @@ namespace TransactionStore.API.Controllers
         {
             TransferTransactionDto transfer = _mapper.ConvertTransferInputModelToTransferTransactionDto(transactionModel);
             TransactionRepository repo = new TransactionRepository();
-            return repo.AddTransaction(transfer);
+            return repo.AddTransfer(transfer);
         }
 
         [HttpGet("by-lead-id/{leadId}")] // прописать BadRequests

@@ -26,7 +26,7 @@ namespace TransactionStore.Data
             return connection.Query<TransactionDto>(sqlExpression, new { leadId }).ToList();
         }
 
-        public List<long> AddTransaction(TransferTransactionDto transfer)
+        public List<long> AddTransfer(TransferTransactionDto transfer)
         {
             var connection = Connection.GetConnection();
             connection.Open();
