@@ -14,7 +14,7 @@ namespace TransactionStore.API
             return new TransactionDto()
             {
                 LeadId = deposit.LeadId,
-                TypeId = Convert.ToByte(Enums.TransactionType.Deposit),
+                TypeId = (byte)Enums.TransactionType.Deposit,
                 CurrencyId = deposit.CurrencyId,
                 Amount = deposit.Amount
             };
@@ -25,7 +25,7 @@ namespace TransactionStore.API
             return new TransactionDto()
             {
                 LeadId = withdraw.LeadId,
-                TypeId = Convert.ToByte(Enums.TransactionType.Withdraw),
+                TypeId = (byte)Enums.TransactionType.Withdraw,
                 CurrencyId = withdraw.CurrencyId,
                 Amount = -withdraw.Amount
             };
@@ -36,7 +36,7 @@ namespace TransactionStore.API
             return new TransferTransactionDto()
             {
                 LeadId = transfer.LeadId,
-                TypeId = Convert.ToByte(Enums.TransactionType.Transfer),
+                TypeId = (byte)Enums.TransactionType.Transfer,
                 CurrencyId = transfer.CurrencyId,
                 Amount = transfer.Amount,
                 DestinationLeadId = transfer.DestinationLeadId

@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TransactionStore.Data.DTO
+﻿namespace TransactionStore.Data.DTO
 {
-    public class CurrencyDto
+    public class CurrencyDto : NamedDto
     {
-        public byte? Id { get; set; }
-        public string Name { get; set; }
         public string Code { get; set; }
     }
 }
