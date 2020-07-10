@@ -57,15 +57,15 @@ namespace TransactionStore.API.Controllers
         }
 
         [HttpGet("by-lead-id/{leadId}")]
-        public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
+        public ActionResult<List<TransferOutputModel>> GetTransactionsByLeadId(long leadId)
         {
-            return Ok(_mapper.ConvertTransactionDtoToTransactionOutputModels(_repo.GetByLeadId(leadId)));
+            return Ok(_mapper.ConvertTransferTransactionDtosToTransferOutputModels(_repo.GetByLeadId(leadId)));
         }
         
         [HttpGet("{Id}")]
         public ActionResult<TransactionOutputModel> GetTransactionById(long id)
         {
-            return Ok(_mapper.ConvertTransactionDtoToTransactionOutputModel(_repo.GetById(id)));
+            return Ok(_mapper.ConvertTransferTransactionDtoToTransferOutputModel(_repo.GetById(id)));
         }
     }
 }
