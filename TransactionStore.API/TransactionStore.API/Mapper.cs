@@ -47,13 +47,13 @@ namespace TransactionStore.API
         {
             return new TransferOutputModel()
             {
+                DestinationLeadId = transaction.DestinationLeadId,
                 Id = transaction.Id ?? -1,
                 LeadId = transaction.LeadId,
                 TypeId = transaction.TypeId,
                 CurrencyId = transaction.CurrencyId,
                 Amount = transaction.Amount,
-                Timestamp = transaction.Timestamp,
-                DestinationLeadId = transaction.DestinationLeadId
+                Timestamp = transaction.Timestamp
             };
         }
 
