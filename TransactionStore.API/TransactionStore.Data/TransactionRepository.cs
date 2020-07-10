@@ -29,10 +29,10 @@ namespace TransactionStore.Data
             }
         }
 
-        public List<TransactionDto> GetByLeadId(long leadId)
+        public List<TransferTransactionDto> GetByLeadId(long leadId)
         {
             string sqlExpression = "Transaction_GetByLeadId @leadId";
-            return _connection.Query<TransactionDto>(sqlExpression, new { leadId }).ToList();
+            return _connection.Query<TransferTransactionDto>(sqlExpression, new { leadId }).ToList();
         }
 
         public List<long> AddTransfer(TransferTransactionDto transfer)
@@ -41,10 +41,10 @@ namespace TransactionStore.Data
             return _connection.Query<long>(sqlExpression, transfer).ToList();
         }
 
-        public TransactionDto GetById(long id)
+        public TransferTransactionDto GetById(long id)
         {
             string sqlExpression = "Transaction_GetById @id";
-            return _connection.Query<TransactionDto>(sqlExpression, new { id }).FirstOrDefault();
+            return _connection.Query<TransferTransactionDto>(sqlExpression, new { id }).FirstOrDefault();
         }
 
         public decimal GetTotalAmount(long leadId)
