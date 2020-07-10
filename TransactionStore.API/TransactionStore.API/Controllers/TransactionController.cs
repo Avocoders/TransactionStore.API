@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TransactionStore.API.Models.Input;
@@ -37,10 +33,8 @@ namespace TransactionStore.API.Controllers
         [HttpPost("withdraw")]
         public ActionResult<long> CreateWithdrawTransaction([FromBody]TransactionInputModel transactionModel)
         {
-            if (transactionModel.Amount <= 0) return BadRequest("The amount is missing");
-            decimal balance = _repo.GetTotalAmount(transactionModel.LeadId);
-            if (balance < 0) return BadRequest("The total amount of minus");
-            if (balance < transactionModel.Amount) return BadRequest("Not enough money");
+            string badRequest = _repo.FormBadRequest(transactionModel.Amount, transactionModel.LeadId);
+            if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);            
             TransactionDto transactionDto = _mapper.ConvertTransactionInputModelWithdrawToTransactionDto(transactionModel);
             return Ok(_repo.Add(transactionDto));
         }
@@ -48,10 +42,8 @@ namespace TransactionStore.API.Controllers
         [HttpPost("transfer")]
         public ActionResult<List<long>> CreateTransferTransaction([FromBody]TransferInputModel transactionModel)
         {
-            if (transactionModel.Amount <= 0) return BadRequest("The amount is missing"); //
-            decimal balance = _repo.GetTotalAmount(transactionModel.LeadId); //
-            if (balance < 0) return BadRequest("The total amount of minus"); //                Вынести в отдельный метод?
-            if (balance < transactionModel.Amount) return BadRequest("Not enough money"); // 
+            string badRequest = _repo.FormBadRequest(transactionModel.Amount, transactionModel.LeadId);
+            if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);            
             TransferTransactionDto transfer = _mapper.ConvertTransferInputModelToTransferTransactionDto(transactionModel);
             return Ok(_repo.AddTransfer(transfer));
         }
