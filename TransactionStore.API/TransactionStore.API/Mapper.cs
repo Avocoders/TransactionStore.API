@@ -43,25 +43,26 @@ namespace TransactionStore.API
             };
         }
 
-        public TransactionOutputModel ConvertTransactionDtoToTransactionOutputModel(TransactionDto transaction)
+        public TransferOutputModel ConvertTransferTransactionDtoToTransferOutputModel(TransferTransactionDto transaction)
         {
-            return new TransactionOutputModel()
+            return new TransferOutputModel()
             {
                 Id = transaction.Id ?? -1,
                 LeadId = transaction.LeadId,
                 TypeId = transaction.TypeId,
                 CurrencyId = transaction.CurrencyId,
                 Amount = transaction.Amount,
-                Timestamp = transaction.Timestamp
+                Timestamp = transaction.Timestamp,
+                DestinationLeadId = transaction.DestinationLeadId
             };
         }
 
-        public List<TransactionOutputModel> ConvertTransactionDtoToTransactionOutputModels(List<TransactionDto> transactions)
+        public List<TransferOutputModel> ConvertTransferTransactionDtosToTransferOutputModels(List<TransferTransactionDto> transactions)
         {
-            List<TransactionOutputModel> models = new List<TransactionOutputModel>();
+            List<TransferOutputModel> models = new List<TransferOutputModel>();
             foreach(var dto in transactions)
             {
-                models.Add(ConvertTransactionDtoToTransactionOutputModel(dto));
+                models.Add(ConvertTransferTransactionDtoToTransferOutputModel(dto));
             }
             return models;
         }
