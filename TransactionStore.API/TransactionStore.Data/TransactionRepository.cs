@@ -52,5 +52,14 @@ namespace TransactionStore.Data
             string sqlExpression = "TotalAmount @leadId";
             return _connection.Query<decimal>(sqlExpression, new { leadId }).FirstOrDefault();
         }
+
+        public string FormBadRequest(decimal amount, long leadId)
+        {
+            if (amount <= 0) return "The amount is missing";
+            decimal balance = GetTotalAmount(leadId);
+            if (balance < 0) return "The total amount of minus";
+            if (balance < amount) return "Not enough money";
+            return "";
+        }
     }
 }
