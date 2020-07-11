@@ -59,5 +59,11 @@ namespace TransactionStore.API.Controllers
         {
             return Ok(_mapper.ConvertTransferTransactionDtoToTransferOutputModel(_repo.GetById(id)));
         }
+
+        [HttpGet("{leadId}/balance/{currencyId}")]
+        public ActionResult<decimal> GetBalanceByLeadIdInCurrency(long leadId, byte currencyId)
+        {
+            return _repo.GetTotalAmountInCurrency(leadId, currencyId);
+        }
     }
 }

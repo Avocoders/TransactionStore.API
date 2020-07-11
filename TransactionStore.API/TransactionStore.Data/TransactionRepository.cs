@@ -51,7 +51,7 @@ namespace TransactionStore.Data
         {
             if (amount <= 0) return "The amount is missing";
             decimal balance = GetTotalAmountInCurrency(leadId, currencyId);
-            if (balance < 0) return "The total amount of minus";
+            if (balance < 0) return "The balance of minus";
             if (balance < amount) return "Not enough money";
             return "";
         }
@@ -59,7 +59,8 @@ namespace TransactionStore.Data
         public decimal GetTotalAmountInCurrency(long leadId, byte currency)
         {
             decimal balance=0;
-            List<TransferTransactionDto> transactions = GetByLeadId(leadId);
+            List<TransferTransactionDto> transactions = new List<TransferTransactionDto>();
+            transactions = GetByLeadId(leadId);
             foreach(var transaction in transactions)
             {
                 if (currency == 1)
@@ -70,12 +71,12 @@ namespace TransactionStore.Data
                 
                 if(currency == 2)
                 {
-                    if (transaction.CurrencyId == 1) transaction.Amount *= (decimal)0.014;
+                    if (transaction.CurrencyId == 1) transaction.Amount /= 71;
                     if (transaction.CurrencyId == 3) transaction.Amount *= (decimal)0.89;
                 }
                 if(currency == 3)
                 {
-                    if (transaction.CurrencyId == 1) transaction.Amount *= (decimal)0.012;
+                    if (transaction.CurrencyId == 1) transaction.Amount /= 80;
                     if (transaction.CurrencyId == 2) transaction.Amount *= (decimal)1.13;
                 }
 
