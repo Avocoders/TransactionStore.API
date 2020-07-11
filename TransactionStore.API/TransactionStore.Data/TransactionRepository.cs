@@ -56,10 +56,23 @@ namespace TransactionStore.Data
         public string FormBadRequest(decimal amount, long leadId)
         {
             if (amount <= 0) return "The amount is missing";
-            decimal balance = GetTotalAmount(leadId);
+            decimal balance = GetTotalAmountInRUR(leadId);
             if (balance < 0) return "The total amount of minus";
             if (balance < amount) return "Not enough money";
             return "";
+        }
+
+        public decimal GetTotalAmountInRUR(long leadId)
+        {
+            decimal balance=0;
+            List<TransferTransactionDto> transactions = GetByLeadId(leadId);
+            foreach(var transaction in transactions)
+            {
+                if (transaction.CurrencyId == 2) transaction.Amount *= 71;
+                if (transaction.CurrencyId == 3) transaction.Amount *= 80;
+                balance += transaction.Amount;
+            }
+            return balance;
         }
     }
 }
