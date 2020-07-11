@@ -38,7 +38,7 @@ namespace TransactionStore.API
                 TypeId = (byte)Enums.TransactionType.Transfer,
                 CurrencyId = transfer.CurrencyId,
                 Amount = transfer.Amount,
-                DestinationLeadId = transfer.DestinationLeadId
+                TransientLeadId = transfer.DestinationLeadId
             };
         }
 
@@ -46,7 +46,7 @@ namespace TransactionStore.API
         {
             return new TransferOutputModel()
             {
-                DestinationLeadId = transaction.DestinationLeadId,
+                TransientLeadId = transaction.TransientLeadId,
                 Id = transaction.Id ?? -1,
                 LeadId = transaction.LeadId,
                 TypeId = transaction.TypeId,
