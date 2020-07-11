@@ -3,6 +3,9 @@ using TransactionStore.API.Models.Output;
 using TransactionStore.Data.DTO;
 using System.Collections.Generic;
 using TransactionStore.API.Shared;
+using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace TransactionStore.API
 {
@@ -38,7 +41,7 @@ namespace TransactionStore.API
                 TypeId = (byte)Enums.TransactionType.Transfer,
                 CurrencyId = transfer.CurrencyId,
                 Amount = transfer.Amount,
-                TransientLeadId = transfer.DestinationLeadId
+                DestinationLeadId = transfer.DestinationLeadId
             };
         }
 
@@ -46,14 +49,14 @@ namespace TransactionStore.API
         {
             return new TransferOutputModel()
             {
-                TransientLeadId = transaction.TransientLeadId,
+                TransientLeadId = transaction.DestinationLeadId,
                 Id = transaction.Id ?? -1,
                 LeadId = transaction.LeadId,
-                TypeId = transaction.TypeId,
-                CurrencyId = transaction.CurrencyId,
+                Type = (string)Enum.GetName(typeof(Enums.TransactionType), transaction.TypeId),
+                Currency = (string)Enum.GetName(typeof(Enums.TransactionCurrency), transaction.CurrencyId),
                 Amount = transaction.Amount,
                 Timestamp = transaction.Timestamp
-            };
+            }; 
         }
 
         public List<TransferOutputModel> ConvertTransferTransactionDtosToTransferOutputModels(List<TransferTransactionDto> transactions)

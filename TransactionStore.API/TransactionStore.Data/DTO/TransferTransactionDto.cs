@@ -2,6 +2,6 @@
 {
     public class TransferTransactionDto : TransactionDto
     { 
-        public long TransientLeadId { get; set; }
+        public long DestinationLeadId { get; set; }
     }
 }

@@ -37,7 +37,7 @@ namespace TransactionStore.Data
 
         public List<long> AddTransfer(TransferTransactionDto transfer)
         {
-            string sqlExpression = "Transaction_AddTransfer  @leadId, @typeId, @currencyId, @amount, @destinationLeadId";
+            string sqlExpression = "Transaction_AddTransfer @leadId, @typeId, @currencyId, @amount, @destinationLeadId";
             return _connection.Query<long>(sqlExpression, transfer).ToList();
         }
 
