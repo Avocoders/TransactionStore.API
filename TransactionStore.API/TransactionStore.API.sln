@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionStore.API", "TransactionStore.API\TransactionStore.API.csproj", "{6C76C802-DC06-49A5-B01F-6C7384847AAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionStore.API", "TransactionStore.API\TransactionStore.API.csproj", "{6C76C802-DC06-49A5-B01F-6C7384847AAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionStore.Data", "TransactionStore.Data\TransactionStore.Data.csproj", "{19BDCC58-1F26-4418-A84E-BBBECAA6D279}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionStore.Data", "TransactionStore.Data\TransactionStore.Data.csproj", "{19BDCC58-1F26-4418-A84E-BBBECAA6D279}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TransactionStore.Database", "TransactionStore.Database\TransactionStore.Database.sqlproj", "{4CD5B6EF-64B0-4F18-9D0B-0109683B5C9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,12 @@ Global
 		{19BDCC58-1F26-4418-A84E-BBBECAA6D279}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19BDCC58-1F26-4418-A84E-BBBECAA6D279}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19BDCC58-1F26-4418-A84E-BBBECAA6D279}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CD5B6EF-64B0-4F18-9D0B-0109683B5C9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CD5B6EF-64B0-4F18-9D0B-0109683B5C9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CD5B6EF-64B0-4F18-9D0B-0109683B5C9C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{4CD5B6EF-64B0-4F18-9D0B-0109683B5C9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CD5B6EF-64B0-4F18-9D0B-0109683B5C9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CD5B6EF-64B0-4F18-9D0B-0109683B5C9C}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
