@@ -47,29 +47,38 @@ namespace TransactionStore.Data
             return _connection.Query<TransferTransactionDto>(sqlExpression, new { id }).FirstOrDefault();
         }
 
-        public decimal GetTotalAmount(long leadId)
-        {
-            string sqlExpression = "TotalAmount @leadId";
-            return _connection.Query<decimal>(sqlExpression, new { leadId }).FirstOrDefault();
-        }
-
-        public string FormBadRequest(decimal amount, long leadId)
+        public string FormBadRequest(decimal amount, long leadId, byte currencyId)
         {
             if (amount <= 0) return "The amount is missing";
-            decimal balance = GetTotalAmountInRUR(leadId);
+            decimal balance = GetTotalAmountInCurrency(leadId, currencyId);
             if (balance < 0) return "The total amount of minus";
             if (balance < amount) return "Not enough money";
             return "";
         }
 
-        public decimal GetTotalAmountInRUR(long leadId)
+        public decimal GetTotalAmountInCurrency(long leadId, byte currency)
         {
             decimal balance=0;
             List<TransferTransactionDto> transactions = GetByLeadId(leadId);
             foreach(var transaction in transactions)
             {
-                if (transaction.CurrencyId == 2) transaction.Amount *= 71;
-                if (transaction.CurrencyId == 3) transaction.Amount *= 80;
+                if (currency == 1)
+                {
+                    if (transaction.CurrencyId == 2) transaction.Amount *= 71;
+                    if (transaction.CurrencyId == 3) transaction.Amount *= 80;
+                }
+                
+                if(currency == 2)
+                {
+                    if (transaction.CurrencyId == 1) transaction.Amount *= (decimal)0.014;
+                    if (transaction.CurrencyId == 3) transaction.Amount *= (decimal)0.89;
+                }
+                if(currency == 3)
+                {
+                    if (transaction.CurrencyId == 1) transaction.Amount *= (decimal)0.012;
+                    if (transaction.CurrencyId == 2) transaction.Amount *= (decimal)1.13;
+                }
+
                 balance += transaction.Amount;
             }
             return balance;

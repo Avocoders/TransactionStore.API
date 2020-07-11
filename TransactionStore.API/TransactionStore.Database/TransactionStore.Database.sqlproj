@@ -70,7 +70,6 @@
     <Build Include="dbo\Stored Procedures\Transaction_GetByLeadId.sql" />
     <Build Include="dbo\Stored Procedures\Transaction_GetById.sql" />
     <Build Include="dbo\Stored Procedures\Transaction_AddTransfer.sql" />
-    <Build Include="dbo\Stored Procedures\TotalAmount.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TransactionStore.Database.publish.xml" />

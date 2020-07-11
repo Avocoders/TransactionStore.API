@@ -33,7 +33,7 @@ namespace TransactionStore.API.Controllers
         [HttpPost("withdraw")]
         public ActionResult<long> CreateWithdrawTransaction([FromBody]TransactionInputModel transactionModel)
         {
-            string badRequest = _repo.FormBadRequest(transactionModel.Amount, transactionModel.LeadId);
+            string badRequest = _repo.FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);            
             TransactionDto transactionDto = _mapper.ConvertTransactionInputModelWithdrawToTransactionDto(transactionModel);
             return Ok(_repo.Add(transactionDto));
@@ -42,7 +42,7 @@ namespace TransactionStore.API.Controllers
         [HttpPost("transfer")]
         public ActionResult<List<long>> CreateTransferTransaction([FromBody]TransferInputModel transactionModel)
         {
-            string badRequest = _repo.FormBadRequest(transactionModel.Amount, transactionModel.LeadId);
+            string badRequest = _repo.FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);            
             TransferTransactionDto transfer = _mapper.ConvertTransferInputModelToTransferTransactionDto(transactionModel);
             return Ok(_repo.AddTransfer(transfer));
