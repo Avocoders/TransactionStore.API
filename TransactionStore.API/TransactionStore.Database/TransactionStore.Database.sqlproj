@@ -72,4 +72,7 @@
     <Build Include="dbo\Stored Procedures\Transaction_AddTransfer.sql" />
     <Build Include="dbo\Stored Procedures\TotalAmount.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="TransactionStore.Database.publish.xml" />
+  </ItemGroup>
 </Project>
