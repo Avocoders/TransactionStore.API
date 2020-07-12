@@ -59,8 +59,7 @@ namespace TransactionStore.Data
         public decimal GetTotalAmountInCurrency(long leadId, byte currency)
         {
             decimal balance=0;
-            List<TransferTransactionDto> transactions = new List<TransferTransactionDto>();
-            transactions = GetByLeadId(leadId);
+            List<TransferTransactionDto> transactions = GetByLeadId(leadId);
             foreach(var transaction in transactions)
             {
                 if (currency == 1)
@@ -83,6 +82,18 @@ namespace TransactionStore.Data
                 balance += transaction.Amount;
             }
             return balance;
+        }
+
+        public List<TransferTransactionDto> GetRangeDateByLeadId(long leadId, DateTime fromData, DateTime tillDate)
+        {
+            List<TransferTransactionDto> transactions = GetByLeadId(leadId);
+            List<TransferTransactionDto> range = new List<TransferTransactionDto>();
+            foreach(var transact in transactions)
+            {
+                if (transact.Timestamp >= fromData && transact.Timestamp <= tillDate) range.Add(transact);
+            }
+            return range;
+
         }
     }
 }
