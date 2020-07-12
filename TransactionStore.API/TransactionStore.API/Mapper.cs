@@ -68,5 +68,15 @@ namespace TransactionStore.API
             }
             return models;
         }
+
+        public RangeDateDto ConvertRangeDateInputModelToRangeDateDto(RangeDateInputModel range)
+        {
+            return new RangeDateDto
+            {
+                LeadId = range.LeadId,
+                FromDate = Convert.ToDateTime(range.FromDate),
+                TillDate = Convert.ToDateTime(range.TillDate)
+            };
+        }
     }
 }

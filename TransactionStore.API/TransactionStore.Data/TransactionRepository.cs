@@ -84,13 +84,13 @@ namespace TransactionStore.Data
             return balance;
         }
 
-        public List<TransferTransactionDto> GetRangeDateByLeadId(long leadId, DateTime fromData, DateTime tillDate)
+        public List<TransferTransactionDto> GetRangeDateByLeadId(RangeDateDto rangeDate)
         {
-            List<TransferTransactionDto> transactions = GetByLeadId(leadId);
+            List<TransferTransactionDto> transactions = GetByLeadId(rangeDate.LeadId);
             List<TransferTransactionDto> range = new List<TransferTransactionDto>();
             foreach(var transact in transactions)
             {
-                if (transact.Timestamp >= fromData && transact.Timestamp <= tillDate) range.Add(transact);
+                if (transact.Timestamp >= rangeDate.FromDate && transact.Timestamp <= rangeDate.TillDate) range.Add(transact);
             }
             return range;
 
