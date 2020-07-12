@@ -9,6 +9,6 @@ namespace TransactionStore.API.Models.Output
         public string Type { get; set; }
         public string Currency { get; set; }
         public decimal Amount { get; set; }
-        public DateTime Timestamp { get; set; }
+        public string Timestamp { get; set; }
     }
 }

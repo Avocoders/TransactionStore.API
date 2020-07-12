@@ -55,7 +55,7 @@ namespace TransactionStore.API
                 Type = (string)Enum.GetName(typeof(Enums.TransactionType), transaction.TypeId),
                 Currency = (string)Enum.GetName(typeof(Enums.TransactionCurrency), transaction.CurrencyId),
                 Amount = transaction.Amount,
-                Timestamp = transaction.Timestamp
+                Timestamp = transaction.Timestamp.ToString("dd.MM.yyyy HH:mm:ss")
             }; 
         }
 
