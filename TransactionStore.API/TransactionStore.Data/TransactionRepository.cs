@@ -127,5 +127,26 @@ namespace TransactionStore.Data
             }
             return balance;
         }
+        public DataWrapper<List<TransferTransactionDto>> GetTransactionByLeadIdAndRange(long leadId, RangeDateDto rangeDate)
+        {
+            try
+            {
+                DataWrapper<List<TransferTransactionDto>> transactions = GetByLeadId(leadId);
+                DataWrapper<List <TransferTransactionDto>> range = new DataWrapper<List<TransferTransactionDto>>();
+                /*foreach (var transact in transactions)
+                {
+                    if (transact.Timestamp >= rangeDate.FromDate && transact.Timestamp <= rangeDate.TillDate) range.Add(transact);
+                }*/
+                return range;
+            }
+            catch(Exception e)
+            {
+                return new DataWrapper<List<TransferTransactionDto>>()
+                {
+                    ExceptionMessage = e.Message
+                };
+            }
+
+        }
     }
 }
