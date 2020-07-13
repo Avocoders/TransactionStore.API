@@ -23,7 +23,7 @@ namespace TransactionStore.Data
                 return new DataWrapper<long>()
                 {
                     Data = _connection.Query<long>(sqlExpression, transactionDto).FirstOrDefault(),
-                    WasWithoutExceptions = true
+                    IsOk = true
                 };
             }
 
@@ -44,7 +44,7 @@ namespace TransactionStore.Data
                 return new DataWrapper<List<TransferTransactionDto>>()
                 {
                     Data = _connection.Query<TransferTransactionDto>(sqlExpression, new { leadId }).ToList(),
-                    WasWithoutExceptions = true
+                    IsOk = true
                 };
             }
 
@@ -65,7 +65,7 @@ namespace TransactionStore.Data
                 return new DataWrapper<List<long>>()
                 {
                     Data = _connection.Query<long>(sqlExpression, transfer).ToList(),
-                    WasWithoutExceptions = true
+                    IsOk = true
                 };
             }
 
@@ -86,7 +86,7 @@ namespace TransactionStore.Data
                 return new DataWrapper<TransferTransactionDto>()
                 {
                     Data = _connection.Query<TransferTransactionDto>(sqlExpression, new { id }).FirstOrDefault(),
-                    WasWithoutExceptions = true
+                    IsOk = true
                 };
             }
 
@@ -135,18 +135,6 @@ namespace TransactionStore.Data
                 balance += transaction.Amount;
             }
             return balance;
-        }
-
-        public List<TransferTransactionDto> GetRangeDateByLeadId(RangeDateDto rangeDate)
-        {
-            List<TransferTransactionDto> transactions = GetByLeadId(rangeDate.LeadId);
-            List<TransferTransactionDto> range = new List<TransferTransactionDto>();
-            foreach(var transact in transactions)
-            {
-                if (transact.Timestamp >= rangeDate.FromDate && transact.Timestamp <= rangeDate.TillDate) range.Add(transact);
-            }
-            return range;
-
         }
     }
 }
