@@ -97,16 +97,7 @@ namespace TransactionStore.Data
                     ExceptionMessage = e.Message
                 };
             }
-        }
-
-        public string FormBadRequest(decimal amount, long leadId, byte currencyId)
-        {
-            if (amount <= 0) return "The amount is missing";
-            decimal balance = GetTotalAmountInCurrency(leadId, currencyId);
-            if (balance < 0) return "The balance of minus";
-            if (balance < amount) return "Not enough money";
-            return "";
-        }
+        }        
 
         public decimal GetTotalAmountInCurrency(long leadId, byte currency)
         {

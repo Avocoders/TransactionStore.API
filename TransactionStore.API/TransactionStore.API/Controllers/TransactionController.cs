@@ -22,6 +22,15 @@ namespace TransactionStore.API.Controllers
             _repo = new TransactionRepository();
         }
 
+        private string FormBadRequest(decimal amount, long leadId, byte currencyId)
+        {
+            if (amount <= 0) return "The amount is missing";
+            decimal balance = _repo.GetTotalAmountInCurrency(leadId, currencyId);
+            if (balance < 0) return "The balance of minus";
+            if (balance < amount) return "Not enough money";
+            return "";
+        }
+
         [HttpPost("deposit")]
         public ActionResult<long> CreateDepositTransaction([FromBody]TransactionInputModel transactionModel)
         {
@@ -38,7 +47,7 @@ namespace TransactionStore.API.Controllers
         [HttpPost("withdraw")]
         public ActionResult<long> CreateWithdrawTransaction([FromBody]TransactionInputModel transactionModel)
         {
-            string badRequest = _repo.FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
+            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);            
             TransactionDto transactionDto = _mapper.ConvertTransactionInputModelWithdrawToTransactionDto(transactionModel);
             DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
@@ -52,7 +61,7 @@ namespace TransactionStore.API.Controllers
         [HttpPost("transfer")]
         public ActionResult<List<long>> CreateTransferTransaction([FromBody]TransferInputModel transactionModel)
         {
-            string badRequest = _repo.FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
+            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);            
             TransferTransactionDto transfer = _mapper.ConvertTransferInputModelToTransferTransactionDto(transactionModel);
             DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
