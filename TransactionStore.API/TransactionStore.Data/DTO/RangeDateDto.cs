@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TransactionStore.Data.DTO
 {
-    public class RangeDateDto: TransactionDto
+    public class RangeDateDto
     {
         public DateTime FromDate { get; set; }
         public DateTime TillDate { get; set; }

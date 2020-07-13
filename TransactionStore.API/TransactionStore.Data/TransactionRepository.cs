@@ -99,33 +99,33 @@ namespace TransactionStore.Data
             }
         }        
 
-        public decimal GetTotalAmountInCurrency(long leadId, byte currency)
-        {
-            decimal balance=0;
-            List<TransferTransactionDto> transactions = new List<TransferTransactionDto>();
-            transactions = GetByLeadId(leadId).Data;
-            foreach(var transaction in transactions)
-            {
-                if (currency == 1)
-                {
-                    if (transaction.CurrencyId == 2) transaction.Amount *= 71;
-                    if (transaction.CurrencyId == 3) transaction.Amount *= 80;
-                }
-                
-                if(currency == 2)
-                {
-                    if (transaction.CurrencyId == 1) transaction.Amount /= 71;
-                    if (transaction.CurrencyId == 3) transaction.Amount *= (decimal)0.89;
-                }
-                if(currency == 3)
-                {
-                    if (transaction.CurrencyId == 1) transaction.Amount /= 80;
-                    if (transaction.CurrencyId == 2) transaction.Amount *= (decimal)1.13;
-                }
-
-                balance += transaction.Amount;
-            }
-            return balance;
+        public decimal GetTotalAmountInCurrency(long leadId, byte currency)
+        {
+            decimal balance=0;
+            List<TransferTransactionDto> transactions = new List<TransferTransactionDto>();
+            transactions = GetByLeadId(leadId).Data;
+            foreach(var transaction in transactions)
+            {
+                if (currency == 1)
+                {
+                    if (transaction.CurrencyId == 2) transaction.Amount *= 71;
+                    if (transaction.CurrencyId == 3) transaction.Amount *= 80;
+                }
+                
+                if(currency == 2)
+                {
+                    if (transaction.CurrencyId == 1) transaction.Amount /= 71;
+                    if (transaction.CurrencyId == 3) transaction.Amount *= (decimal)0.89;
+                }
+                if(currency == 3)
+                {
+                    if (transaction.CurrencyId == 1) transaction.Amount /= 80;
+                    if (transaction.CurrencyId == 2) transaction.Amount *= (decimal)1.13;
+                }
+
+                balance += transaction.Amount;
+            }
+            return balance;
         }
     }
 }
