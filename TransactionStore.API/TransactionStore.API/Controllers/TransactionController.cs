@@ -49,7 +49,7 @@ namespace TransactionStore.API.Controllers
         }
 
         [HttpGet("by-lead-id/{leadId}")]
-        public ActionResult<List<TransferOutputModel>> GetTransactionsByLeadId(long leadId)
+        public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
         {
             return Ok(_mapper.ConvertTransferTransactionDtosToTransactionOutputModel(_repo.GetByLeadId(leadId)));
         }
@@ -67,7 +67,7 @@ namespace TransactionStore.API.Controllers
         }
 
         [HttpGet("by-lead-id/{leadId}/range-date")]
-        public ActionResult<List<TransferOutputModel>> GetRangeDateTransactionByLeadId([FromBody]RangeDateInputModel rangeModel)
+        public ActionResult<List<TransactionOutputModel>> GetRangeDateTransactionByLeadId([FromBody]RangeDateInputModel rangeModel)
         {
             return _mapper.ConvertTransferTransactionDtosToTransactionOutputModel(_repo.GetRangeDateByLeadId(_mapper.ConvertRangeDateInputModelToRangeDateDto(rangeModel)));
         }
