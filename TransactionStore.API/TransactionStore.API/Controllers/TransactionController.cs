@@ -91,5 +91,14 @@ namespace TransactionStore.API.Controllers
         {
             return _repo.GetTotalAmountInCurrency(leadId, currencyId);
         }
+<<<<<<< HEAD
+=======
+
+        [HttpGet("by-lead-id/{leadId}/range-date")]
+        public ActionResult<List<TransactionOutputModel>> GetRangeDateTransactionByLeadId([FromBody]RangeDateInputModel rangeModel)
+        {
+            return _mapper.ConvertTransferTransactionDtosToTransactionOutputModel(_repo.GetRangeDateByLeadId(_mapper.ConvertRangeDateInputModelToRangeDateDto(rangeModel)));
+        }
+>>>>>>> dev
     }
 }
