@@ -15,36 +15,88 @@ namespace TransactionStore.Data
             _connection = Connection.GetConnection();
         }
         
-        public long Add(TransactionDto transactionDto) // дженерик с OK, ErrorMessage, Data
+        public DataWrapper<long> Add(TransactionDto transactionDto) // дженерик с OK, ErrorMessage, Data
         {
             try
             {
                 string sqlExpression = "Transaction_Add @leadId, @typeId, @currencyId, @amount";
-                return _connection.Query<long>(sqlExpression, transactionDto).FirstOrDefault();
+                return new DataWrapper<long>()
+                {
+                    Data = _connection.Query<long>(sqlExpression, transactionDto).FirstOrDefault(),
+                    WasWithoutExceptions = true
+                };
             }
+
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                return new DataWrapper<long>()
+                {
+                    ExceptionMessage = e.Message
+                };
             }
         }
 
-        public List<TransferTransactionDto> GetByLeadId(long leadId)
+        public DataWrapper<List<TransferTransactionDto>> GetByLeadId(long leadId)
         {
-            string sqlExpression = "Transaction_GetByLeadId @leadId";
-            return _connection.Query<TransferTransactionDto>(sqlExpression, new { leadId }).ToList();
+            try
+            {
+                string sqlExpression = "Transaction_GetByLeadId @leadId";
+                return new DataWrapper<List<TransferTransactionDto>>()
+                {
+                    Data = _connection.Query<TransferTransactionDto>(sqlExpression, new { leadId }).ToList(),
+                    WasWithoutExceptions = true
+                };
+            }
+
+            catch (Exception e)
+            {
+                return new DataWrapper<List<TransferTransactionDto>>()
+                {
+                    ExceptionMessage = e.Message
+                };
+            }
         }
 
-        public List<long> AddTransfer(TransferTransactionDto transfer)
+        public DataWrapper<List<long>> AddTransfer(TransferTransactionDto transfer)
         {
-            string sqlExpression = "Transaction_AddTransfer @leadId, @typeId, @currencyId, @amount, @destinationLeadId";
-            return _connection.Query<long>(sqlExpression, transfer).ToList();
+            try
+            {
+                string sqlExpression = "Transaction_AddTransfer @leadId, @typeId, @currencyId, @amount, @destinationLeadId";
+                return new DataWrapper<List<long>>()
+                {
+                    Data = _connection.Query<long>(sqlExpression, transfer).ToList(),
+                    WasWithoutExceptions = true
+                };
+            }
+
+            catch (Exception e)
+            {
+                return new DataWrapper<List<long>>()
+                {
+                    ExceptionMessage = e.Message
+                };
+            }
         }
 
-        public TransferTransactionDto GetById(long id)
+        public DataWrapper<TransferTransactionDto> GetById(long id)
         {
-            string sqlExpression = "Transaction_GetById @id";
-            return _connection.Query<TransferTransactionDto>(sqlExpression, new { id }).FirstOrDefault();
+            try
+            {
+                string sqlExpression = "Transaction_GetById @id";
+                return new DataWrapper<TransferTransactionDto>()
+                {
+                    Data = _connection.Query<TransferTransactionDto>(sqlExpression, new { id }).FirstOrDefault(),
+                    WasWithoutExceptions = true
+                };
+            }
+
+            catch (Exception e)
+            {
+                return new DataWrapper<TransferTransactionDto>()
+                {
+                    ExceptionMessage = e.Message
+                };
+            }
         }
 
         public string FormBadRequest(decimal amount, long leadId, byte currencyId)
@@ -59,7 +111,8 @@ namespace TransactionStore.Data
         public decimal GetTotalAmountInCurrency(long leadId, byte currency)
         {
             decimal balance=0;
-            List<TransferTransactionDto> transactions = GetByLeadId(leadId);
+            List<TransferTransactionDto> transactions = new List<TransferTransactionDto>();
+            transactions = GetByLeadId(leadId).Data;
             foreach(var transaction in transactions)
             {
                 if (currency == 1)
