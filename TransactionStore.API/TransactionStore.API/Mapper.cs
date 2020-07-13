@@ -4,8 +4,6 @@ using TransactionStore.Data.DTO;
 using System.Collections.Generic;
 using TransactionStore.API.Shared;
 using System;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace TransactionStore.API
 {
@@ -45,9 +43,9 @@ namespace TransactionStore.API
             };
         }
 
-        public TransferOutputModel ConvertTransferTransactionDtoToTransferOutputModel(TransferTransactionDto transaction)
+        public TransactionOutputModel ConvertTransferTransactionDtoToTransactionOutputModel(TransferTransactionDto transaction)
         {
-            return new TransferOutputModel()
+            return new TransactionOutputModel()
             {
                 TransientLeadId = transaction.DestinationLeadId,
                 Id = transaction.Id ?? -1,
@@ -59,12 +57,12 @@ namespace TransactionStore.API
             }; 
         }
 
-        public List<TransferOutputModel> ConvertTransferTransactionDtosToTransferOutputModels(List<TransferTransactionDto> transactions)
+        public List<TransactionOutputModel> ConvertTransferTransactionDtosToTransactionOutputModel(List<TransferTransactionDto> transactions)
         {
-            List<TransferOutputModel> models = new List<TransferOutputModel>();
+            List<TransactionOutputModel> models = new List<TransactionOutputModel>();
             foreach(var dto in transactions)
             {
-                models.Add(ConvertTransferTransactionDtoToTransferOutputModel(dto));
+                models.Add(ConvertTransferTransactionDtoToTransactionOutputModel(dto));
             }
             return models;
         }

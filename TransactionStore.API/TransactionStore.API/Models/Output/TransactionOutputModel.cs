@@ -10,5 +10,6 @@ namespace TransactionStore.API.Models.Output
         public string Currency { get; set; }
         public decimal Amount { get; set; }
         public string Timestamp { get; set; }
+        public long TransientLeadId { get; set; }
     }
 }
