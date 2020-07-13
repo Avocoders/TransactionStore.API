@@ -49,7 +49,7 @@ namespace TransactionStore.Data
 
         public string FormBadRequest(decimal amount, long leadId, byte currencyId)
         {
-            if (amount <= 0) return "The amount is missing";
+            if (amount <= 0) return "The amount is minus";
             decimal balance = GetTotalAmountInCurrency(leadId, currencyId);
             if (balance < 0) return "The balance of minus";
             if (balance < amount) return "Not enough money";
@@ -84,9 +84,9 @@ namespace TransactionStore.Data
             return balance;
         }
 
-        public List<TransferTransactionDto> GetRangeDateByLeadId(RangeDateDto rangeDate)
+        public List<TransferTransactionDto> GetTransactionByLeadIdAndRange(long leadId,RangeDateDto rangeDate)
         {
-            List<TransferTransactionDto> transactions = GetByLeadId(rangeDate.LeadId);
+            List<TransferTransactionDto> transactions = GetByLeadId(leadId);
             List<TransferTransactionDto> range = new List<TransferTransactionDto>();
             foreach(var transact in transactions)
             {
