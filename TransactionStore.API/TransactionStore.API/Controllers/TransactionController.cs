@@ -27,7 +27,12 @@ namespace TransactionStore.API.Controllers
         {
             if (transactionModel.Amount <= 0) return BadRequest("The amount is missing");
             TransactionDto transactionDto = _mapper.ConvertTransactionInputModelDepositToTransactionDto(transactionModel);
-            return Ok(_repo.Add(transactionDto));
+            DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
+            if (!dataWrapper.WasWithoutExceptions)
+            {
+                return BadRequest(dataWrapper.ExceptionMessage);
+            }
+            return Ok(dataWrapper.Data);
         }
         
         [HttpPost("withdraw")]
@@ -36,7 +41,12 @@ namespace TransactionStore.API.Controllers
             string badRequest = _repo.FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);            
             TransactionDto transactionDto = _mapper.ConvertTransactionInputModelWithdrawToTransactionDto(transactionModel);
-            return Ok(_repo.Add(transactionDto));
+            DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
+            if (!dataWrapper.WasWithoutExceptions)
+            {
+                return BadRequest(dataWrapper.ExceptionMessage);
+            }
+            return Ok(dataWrapper.Data);
         }
         
         [HttpPost("transfer")]
@@ -45,19 +55,35 @@ namespace TransactionStore.API.Controllers
             string badRequest = _repo.FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);            
             TransferTransactionDto transfer = _mapper.ConvertTransferInputModelToTransferTransactionDto(transactionModel);
-            return Ok(_repo.AddTransfer(transfer));
+            DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
+            if (!dataWrapper.WasWithoutExceptions)
+            {
+                return BadRequest(dataWrapper.ExceptionMessage);
+            }
+            return Ok(dataWrapper.Data);
         }
 
         [HttpGet("by-lead-id/{leadId}")]
         public ActionResult<List<TransferOutputModel>> GetTransactionsByLeadId(long leadId)
         {
-            return Ok(_mapper.ConvertTransferTransactionDtosToTransferOutputModels(_repo.GetByLeadId(leadId)));
+            DataWrapper<List<TransferTransactionDto>> dataWrapper = _repo.GetByLeadId(leadId);
+            if (!dataWrapper.WasWithoutExceptions)
+            {
+                return BadRequest(dataWrapper.ExceptionMessage);
+            }
+
+            return Ok(_mapper.ConvertTransferTransactionDtosToTransferOutputModels(dataWrapper.Data));
         }
         
         [HttpGet("{Id}")]
         public ActionResult<TransactionOutputModel> GetTransactionById(long id)
         {
-            return Ok(_mapper.ConvertTransferTransactionDtoToTransferOutputModel(_repo.GetById(id)));
+            DataWrapper<TransferTransactionDto> dataWrapper = _repo.GetById(id);
+            if (!dataWrapper.WasWithoutExceptions)
+            {
+                return BadRequest(dataWrapper.ExceptionMessage);
+            }
+            return Ok(_mapper.ConvertTransferTransactionDtoToTransferOutputModel(dataWrapper.Data));
         }
 
         [HttpGet("{leadId}/balance/{currencyId}")]
