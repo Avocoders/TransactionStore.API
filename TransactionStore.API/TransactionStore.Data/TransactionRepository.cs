@@ -100,11 +100,11 @@ namespace TransactionStore.Data
             }
         }       
         
-        public DataWrapper<List<TransferTransactionDto>> GetSearchByTransaction(SearchByTransactionDto search)
+        public DataWrapper<List<TransferTransactionDto>> GetTransactionSearchParameters(TransactionSearchParameters search)
         {
             try
             {
-                string sqlExpression = "SearchByTransaction @leadId, @type, @currency, @amount, @fromDate, @tillDate";
+                string sqlExpression = "Transaction_SearchParameters @leadId, @type, @currency, @amount, @fromDate, @tillDate";
                 return new DataWrapper<List<TransferTransactionDto>>()
                 {
                     Data = _connection.Query<TransferTransactionDto>(sqlExpression, search).ToList(),

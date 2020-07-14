@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace TransactionStore.Data.DTO
+namespace TransactionStore.Data
 {
-    public class SearchByTransactionDto
+    public class TransactionSearchParameters
     {
         public long LeadId { get; set; }
         public string Type { get; set; }
