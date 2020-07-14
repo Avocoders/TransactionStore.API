@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using TransactionStore.Data.DTO;
 using Dapper;
+using System.Transactions;
 
 namespace TransactionStore.Data
 {
@@ -99,7 +100,26 @@ namespace TransactionStore.Data
             }
         }       
         
-        public DataWrapper<List<TransferTransactionDto>> GetSearchByTransaction()
+        public DataWrapper<List<TransferTransactionDto>> GetSearchByTransaction(SearchByTransactionDto search)
+        {
+            try
+            {
+                string sqlExpression = "SearchByTransaction @leadId, @type, @currency, @amount, @fromDate, @tillDate";
+                return new DataWrapper<List<TransferTransactionDto>>()
+                {
+                    Data = _connection.Query<TransferTransactionDto>(sqlExpression, new { search }).ToList(),
+                    IsOk = true
+                };
+            }
+            catch(Exception e)
+            {
+                return new DataWrapper<List<TransferTransactionDto>>()
+                {
+                    ExceptionMessage = e.Message
+                }
+                ;
+            }
+        }
 
         public decimal GetTotalAmountInCurrency(long leadId, byte currency)
         {
