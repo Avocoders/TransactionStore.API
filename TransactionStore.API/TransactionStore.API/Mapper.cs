@@ -1,6 +1,7 @@
 ﻿using TransactionStore.API.Models.Input;
 using TransactionStore.API.Models.Output;
 using TransactionStore.Data.DTO;
+using TransactionStore.Data;
 using System.Collections.Generic;
 using TransactionStore.API.Shared;
 using System;
@@ -67,6 +68,18 @@ namespace TransactionStore.API
             return models;
         }
 
-        
+        public TransactionSearchParameters ConvertSearchParametersInputModelToTransactionSearchParameters(SearchParametersInputModel parameters)
+        {
+            return new TransactionSearchParameters()
+            {
+                LeadId = parameters.LeadId,
+                Type = parameters.Type,
+                Currency = parameters.Currency,
+                Amount = parameters.Amount,
+                FromDate = Convert.ToDateTime(parameters.FromDate),
+                TillDate = Convert.ToDateTime(parameters.TillDate)
+            };
+        }
+
     }
 }
