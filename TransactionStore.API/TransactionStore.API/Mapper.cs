@@ -67,13 +67,6 @@ namespace TransactionStore.API
             return models;
         }
 
-        public RangeDateDto ConvertRangeDateInputModelToRangeDateDto(RangeDateInputModel range)
-        {
-            return new RangeDateDto
-            {
-                FromDate = Convert.ToDateTime(range.FromDate),
-                TillDate = Convert.ToDateTime(range.TillDate)
-            };
-        }
+        
     }
 }
