@@ -80,6 +80,5 @@ namespace TransactionStore.API
                 TillDate = Convert.ToDateTime(parameters.TillDate)
             };
         }
-
     }
 }

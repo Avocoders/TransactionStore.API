@@ -101,6 +101,16 @@ namespace TransactionStore.API.Controllers
             return _repo.GetTotalAmountInCurrency(leadId, currencyId);
         }
 
-        
+        [HttpGet("search")]
+        public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters(SearchParametersInputModel searchModel)
+        {
+            
+            DataWrapper<List<TransferTransactionDto>> dataWrapper = _repo.GetTransactionSearchParameters(_mapper.ConvertSearchParametersInputModelToTransactionSearchParameters(searchModel));
+            if (!dataWrapper.IsOk)
+            {
+                return BadRequest(dataWrapper.ExceptionMessage);
+            }
+            return _mapper.ConvertTransferTransactionDtosToTransactionOutputModel(dataWrapper.Data);
+        }
     }
 }
