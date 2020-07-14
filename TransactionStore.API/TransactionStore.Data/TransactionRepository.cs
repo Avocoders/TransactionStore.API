@@ -107,7 +107,7 @@ namespace TransactionStore.Data
                 string sqlExpression = "SearchByTransaction @leadId, @type, @currency, @amount, @fromDate, @tillDate";
                 return new DataWrapper<List<TransferTransactionDto>>()
                 {
-                    Data = _connection.Query<TransferTransactionDto>(sqlExpression, new { search }).ToList(),
+                    Data = _connection.Query<TransferTransactionDto>(sqlExpression, search).ToList(),
                     IsOk = true
                 };
             }
