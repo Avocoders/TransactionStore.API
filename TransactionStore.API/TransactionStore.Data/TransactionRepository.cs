@@ -17,86 +17,71 @@ namespace TransactionStore.Data
         
         public DataWrapper<long> Add(TransactionDto transactionDto) // дженерик с OK, ErrorMessage, Data
         {
+            var result = new DataWrapper<long>();
             try
             {
                 string sqlExpression = "Transaction_Add @leadId, @typeId, @currencyId, @amount";
-                return new DataWrapper<long>()
-                {
-                    Data = _connection.Query<long>(sqlExpression, transactionDto).FirstOrDefault(),
-                    IsOk = true
-                };
+                result.Data = _connection.Query<long>(sqlExpression, transactionDto).FirstOrDefault();
+                result.IsOk = true;
             }
 
             catch (Exception e)
             {
-                return new DataWrapper<long>()
-                {
-                    ExceptionMessage = e.Message
-                };
+                result.ExceptionMessage = e.Message;
             }
+            return result;
         }
 
         public DataWrapper<List<TransferTransactionDto>> GetByLeadId(long leadId)
         {
+            var result = new DataWrapper<List<TransferTransactionDto>>();
             try
             {
                 string sqlExpression = "Transaction_GetByLeadId @leadId";
-                return new DataWrapper<List<TransferTransactionDto>>()
-                {
-                    Data = _connection.Query<TransferTransactionDto>(sqlExpression, new { leadId }).ToList(),
-                    IsOk = true
-                };
+                result.Data = _connection.Query<TransferTransactionDto>(sqlExpression, new { leadId }).ToList();
+                result.IsOk = true;
             }
 
             catch (Exception e)
             {
-                return new DataWrapper<List<TransferTransactionDto>>()
-                {
-                    ExceptionMessage = e.Message
-                };
+                result.ExceptionMessage = e.Message;
             }
+            return result;
         }
 
         public DataWrapper<List<long>> AddTransfer(TransferTransactionDto transfer)
         {
+
+            var result = new DataWrapper<List<long>>();
             try
             {
                 string sqlExpression = "Transaction_AddTransfer @leadId, @typeId, @currencyId, @amount, @destinationLeadId";
-                return new DataWrapper<List<long>>()
-                {
-                    Data = _connection.Query<long>(sqlExpression, transfer).ToList(),
-                    IsOk = true
-                };
+                result.Data = _connection.Query<long>(sqlExpression, transfer).ToList();
+                result.IsOk = true;
             }
 
             catch (Exception e)
             {
-                return new DataWrapper<List<long>>()
-                {
-                    ExceptionMessage = e.Message
-                };
+                result.ExceptionMessage = e.Message;
             }
+            return result;
         }
 
         public DataWrapper<TransferTransactionDto> GetById(long id)
         {
+            var result = new DataWrapper<TransferTransactionDto>();
             try
             {
                 string sqlExpression = "Transaction_GetById @id";
-                return new DataWrapper<TransferTransactionDto>()
-                {
-                    Data = _connection.Query<TransferTransactionDto>(sqlExpression, new { id }).FirstOrDefault(),
-                    IsOk = true
-                };
+                result.Data = _connection.Query<TransferTransactionDto>(sqlExpression, new { id }).FirstOrDefault();
+                result.IsOk = true;
             }
 
             catch (Exception e)
             {
-                return new DataWrapper<TransferTransactionDto>()
-                {
-                    ExceptionMessage = e.Message
-                };
+                result.ExceptionMessage = e.Message;
             }
+            return result;
         }        
 
         public decimal GetTotalAmountInCurrency(long leadId, byte currency)
