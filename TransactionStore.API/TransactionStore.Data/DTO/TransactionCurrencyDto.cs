@@ -1,6 +1,6 @@
 ﻿namespace TransactionStore.Data.DTO
 {
-    public class CurrencyDto : NamedDto
+    public class TransactionCurrencyDto : NamedDto
     {
         public string Code { get; set; }
     }

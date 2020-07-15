@@ -5,6 +5,7 @@ using System.Data;
 using TransactionStore.Data.DTO;
 using Dapper;
 using System.Transactions;
+using TransactionStore.Core.Shared;
 
 namespace TransactionStore.Data
 {
@@ -100,14 +101,17 @@ namespace TransactionStore.Data
             }
         }       
         
-        public DataWrapper<List<TransferTransactionDto>> GetTransactionSearchParameters(TransactionSearchParameters search)
+        public DataWrapper<List<TransferTransactionDto>> SearchTransactions(TransactionSearchParameters searchParameters)
         {
             try
             {
-                string sqlExpression = "Transaction_SearchParameters @leadId, @type, @currency, @amount, @fromDate, @tillDate";
+                string sqlExpression = "Transaction_Search @leadId, @type, @currency, @amount, @fromDate, @tillDate";
+                var data = _connection.Query<TransferTransactionDto>(sqlExpression, searchParameters);
+                var transferTransactions = data.Where(t => t.Type.Id == (byte)TransactionType.Transfer).ToList();
+                var nonTransferTransactions = data.Where(t => t.Type.Id != (byte)TransactionType.Transfer).ToList();
                 return new DataWrapper<List<TransferTransactionDto>>()
                 {
-                    Data = _connection.Query<TransferTransactionDto>(sqlExpression, search).ToList(),
+                    Data = _connection.Query<TransferTransactionDto>(sqlExpression, searchParameters).ToList(),
                     IsOk = true
                 };
             }

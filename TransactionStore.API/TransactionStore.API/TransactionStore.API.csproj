@@ -5,10 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Firewall" Version="2.2.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TransactionStore.Core\TransactionStore.Core.csproj" />
     <ProjectReference Include="..\TransactionStore.Data\TransactionStore.Data.csproj" />
   </ItemGroup>
 
