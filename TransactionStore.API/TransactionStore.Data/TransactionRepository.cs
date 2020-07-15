@@ -100,23 +100,23 @@ namespace TransactionStore.Data
             }
         }       
         
-        public DataWrapper<List<TransferTransactionDto>> SearchTransactions(TransactionSearchParameters searchParameters)
+        public DataWrapper<List<TransactionDto>> SearchTransactions(TransactionSearchParameters searchParameters)
         {
             try
             {
                 string sqlExpression = "Transaction_Search @leadId, @type, @currency, @amount, @fromDate, @tillDate";
-                var data = _connection.Query<TransferTransactionDto>(sqlExpression, searchParameters);
+                var data = _connection.Query<TransactionDto>(sqlExpression, searchParameters);
                 var transferTransactions = data.Where(t => t.Type.Id == (byte)TransactionType.Transfer).ToList();
                 var nonTransferTransactions = data.Where(t => t.Type.Id != (byte)TransactionType.Transfer).ToList();
-                return new DataWrapper<List<TransferTransactionDto>>()
+                return new DataWrapper<List<TransactionDto>>()
                 {
-                    Data = _connection.Query<TransferTransactionDto>(sqlExpression, searchParameters).ToList(),
+                    Data = _connection.Query<TransactionDto>(sqlExpression, searchParameters).ToList(),
                     IsOk = true
                 };
             }
             catch(Exception e)
             {
-                return new DataWrapper<List<TransferTransactionDto>>()
+                return new DataWrapper<List<TransactionDto>>()
                 {
                     ExceptionMessage = e.Message
                 }

@@ -3,8 +3,8 @@ using TransactionStore.API.Models.Output;
 using TransactionStore.Data.DTO;
 using TransactionStore.Data;
 using System.Collections.Generic;
-using TransactionStore.API.Shared;
 using System;
+using TransactionStore.Core.Shared;
 
 namespace TransactionStore.API
 {
@@ -17,7 +17,7 @@ namespace TransactionStore.API
                 LeadId = deposit.LeadId,
                 Type = new TransactionTypeDto()
                 {
-                    Id = (byte)Enums.TransactionType.Deposit
+                    Id = (byte)TransactionType.Deposit
                 },
                 Currency = new TransactionCurrencyDto()
                 {
@@ -34,7 +34,7 @@ namespace TransactionStore.API
                 LeadId = withdraw.LeadId,
                 Type = new TransactionTypeDto()
                 {
-                    Id = (byte)Enums.TransactionType.Withdraw
+                    Id = (byte)TransactionType.Withdraw
                 },
                 Currency = new TransactionCurrencyDto()
                 {
@@ -51,7 +51,7 @@ namespace TransactionStore.API
                 LeadId = transfer.LeadId,
                 Type = new TransactionTypeDto()
                 {
-                    Id = (byte)Enums.TransactionType.Transfer
+                    Id = (byte)TransactionType.Transfer
                 },
                 Currency = new TransactionCurrencyDto()
                 {
@@ -69,8 +69,8 @@ namespace TransactionStore.API
                 TransientLeadId = transaction.DestinationLeadId,
                 Id = transaction.Id ?? -1,
                 LeadId = transaction.LeadId,
-                Type = (string)Enum.GetName(typeof(Enums.TransactionType), transaction.Type.Id),
-                Currency = (string)Enum.GetName(typeof(Enums.TransactionCurrency), transaction.Currency.Id),
+                Type = (string)Enum.GetName(typeof(TransactionType), transaction.Type.Id),
+                Currency = (string)Enum.GetName(typeof(TransactionCurrency), transaction.Currency.Id),
                 Amount = transaction.Amount,
                 Timestamp = transaction.Timestamp.ToString("dd.MM.yyyy HH:mm:ss")
             }; 

@@ -105,7 +105,7 @@ namespace TransactionStore.API.Controllers
         public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters(SearchParametersInputModel searchModel)
         {
             
-            DataWrapper<List<TransferTransactionDto>> dataWrapper = _repo.SearchTransactions(_mapper.ConvertSearchParametersInputModelToTransactionSearchParameters(searchModel));
+            DataWrapper<List<TransactionDto>> dataWrapper = _repo.SearchTransactions(_mapper.ConvertSearchParametersInputModelToTransactionSearchParameters(searchModel));
             if (!dataWrapper.IsOk)
             {
                 return BadRequest(dataWrapper.ExceptionMessage);
