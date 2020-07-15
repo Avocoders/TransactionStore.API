@@ -8,7 +8,6 @@ using TransactionStore.Data;
 
 namespace TransactionStore.API.Controllers
 {
-    [ServiceFilter(typeof(ClientIpCheckActionFilter))]
     [ApiController]
     [Route("[Controller]")]
     public class TransactionController : Controller

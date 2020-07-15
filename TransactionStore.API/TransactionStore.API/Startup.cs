@@ -1,9 +1,11 @@
+using System.Collections.Generic;
+using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Firewall;
 
 namespace TransactionStore.API
 {
@@ -20,14 +22,7 @@ namespace TransactionStore.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddScoped<ClientIpCheckActionFilter>(container =>
-            {
-                var loggerFactory = container.GetRequiredService<ILoggerFactory>();
-                ILogger logger = loggerFactory.CreateLogger<ClientIpCheckActionFilter>();
-
-                return new ClientIpCheckActionFilter(
-                    Configuration["AdminSafeList"], logger);
-            });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +43,12 @@ namespace TransactionStore.API
             {
                 endpoints.MapControllers();
             });
+
+            app.UseFirewall(
+                FirewallRulesEngine
+                .DenyAllAccess()
+                .ExceptFromLocalhost()
+                .ExceptFromIPAddresses(new List<IPAddress>() {IPAddress.Parse("192.186.0.1")}));
         }
     }
 }
