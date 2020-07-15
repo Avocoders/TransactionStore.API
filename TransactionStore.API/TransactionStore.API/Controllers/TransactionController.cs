@@ -88,7 +88,7 @@ namespace TransactionStore.API.Controllers
         }
         */
 
-        private delegate T MapperHandler<T, K>(K mapper);
+        private delegate T DtoConverter<T, K>(K dto);
 
         private ActionResult<T> MakeResponse<T>(DataWrapper<T> dataWrapper)
         {
@@ -106,7 +106,7 @@ namespace TransactionStore.API.Controllers
             {
                 return BadRequest(dataWrapper.ExceptionMessage);
             }
-            return Ok(mapperHandler(dataWrapper.Data));
+            return Ok(dtoConverter(dataWrapper.Data));
         }
     }
 }
