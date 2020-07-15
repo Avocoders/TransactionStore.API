@@ -100,7 +100,7 @@ namespace TransactionStore.API.Controllers
         }
 
 
-        private ActionResult<T> MakeResponse<T, K>(DataWrapper<K> dataWrapper, MapperHandler<T, K> mapperHandler)
+        private ActionResult<T> MakeResponse<T, K>(DataWrapper<K> dataWrapper, DtoConverter<T, K> dtoConverter)
         {
             if (!dataWrapper.IsOk)
             {
