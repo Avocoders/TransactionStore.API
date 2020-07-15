@@ -15,8 +15,14 @@ namespace TransactionStore.API
             return new TransactionDto()
             {
                 LeadId = deposit.LeadId,
-                TypeId = (byte)Enums.TransactionType.Deposit,
-                CurrencyId = deposit.CurrencyId,
+                Type = new TransactionTypeDto()
+                {
+                    Id = (byte)Enums.TransactionType.Deposit
+                },
+                Currency = new TransactionCurrencyDto()
+                {
+                    Id = deposit.CurrencyId
+                },
                 Amount = deposit.Amount
             };
         }
@@ -26,8 +32,14 @@ namespace TransactionStore.API
             return new TransactionDto()
             {
                 LeadId = withdraw.LeadId,
-                TypeId = (byte)Enums.TransactionType.Withdraw,
-                CurrencyId = withdraw.CurrencyId,
+                Type = new TransactionTypeDto()
+                {
+                    Id = (byte)Enums.TransactionType.Withdraw
+                },
+                Currency = new TransactionCurrencyDto()
+                {
+                    Id = withdraw.CurrencyId
+                },
                 Amount = -withdraw.Amount
             };
         }
@@ -37,8 +49,14 @@ namespace TransactionStore.API
             return new TransferTransactionDto()
             {
                 LeadId = transfer.LeadId,
-                TypeId = (byte)Enums.TransactionType.Transfer,
-                CurrencyId = transfer.CurrencyId,
+                Type = new TransactionTypeDto()
+                {
+                    Id = (byte)Enums.TransactionType.Transfer
+                },
+                Currency = new TransactionCurrencyDto()
+                {
+                    Id = transfer.CurrencyId
+                },
                 Amount = transfer.Amount,
                 DestinationLeadId = transfer.DestinationLeadId
             };
@@ -51,8 +69,8 @@ namespace TransactionStore.API
                 TransientLeadId = transaction.DestinationLeadId,
                 Id = transaction.Id ?? -1,
                 LeadId = transaction.LeadId,
-                Type = (string)Enum.GetName(typeof(Enums.TransactionType), transaction.TypeId),
-                Currency = (string)Enum.GetName(typeof(Enums.TransactionCurrency), transaction.CurrencyId),
+                Type = (string)Enum.GetName(typeof(Enums.TransactionType), transaction.Type.Id),
+                Currency = (string)Enum.GetName(typeof(Enums.TransactionCurrency), transaction.Currency.Id),
                 Amount = transaction.Amount,
                 Timestamp = transaction.Timestamp.ToString("dd.MM.yyyy HH:mm:ss")
             }; 

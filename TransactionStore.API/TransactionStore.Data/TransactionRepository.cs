@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Data;
 using TransactionStore.Data.DTO;
 using Dapper;
-using System.Transactions;
 using TransactionStore.Core.Shared;
 
 namespace TransactionStore.Data
@@ -134,19 +133,19 @@ namespace TransactionStore.Data
             {
                 if (currency == 1)
                 {
-                    if (transaction.CurrencyId == 2) transaction.Amount *= 71;
-                    if (transaction.CurrencyId == 3) transaction.Amount *= 80;
+                    if (transaction.Currency.Id == 2) transaction.Amount *= 71;
+                    if (transaction.Currency.Id == 3) transaction.Amount *= 80;
                 }
                 
                 if(currency == 2)
                 {
-                    if (transaction.CurrencyId == 1) transaction.Amount /= 71;
-                    if (transaction.CurrencyId == 3) transaction.Amount *= (decimal)0.89;
+                    if (transaction.Currency.Id == 1) transaction.Amount /= 71;
+                    if (transaction.Currency.Id == 3) transaction.Amount *= (decimal)0.89;
                 }
                 if(currency == 3)
                 {
-                    if (transaction.CurrencyId == 1) transaction.Amount /= 80;
-                    if (transaction.CurrencyId == 2) transaction.Amount *= (decimal)1.13;
+                    if (transaction.Currency.Id == 1) transaction.Amount /= 80;
+                    if (transaction.Currency.Id == 2) transaction.Amount *= (decimal)1.13;
                 }
 
                 balance += transaction.Amount;
