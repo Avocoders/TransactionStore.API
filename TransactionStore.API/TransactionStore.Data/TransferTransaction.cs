@@ -3,6 +3,6 @@ namespace TransactionStore.Data
 {
     public class TransferTransaction : TransactionDto
     { 
-        public long LeadIdRecipient { get; set; }
+        public long LeadIdReceiver { get; set; }
     }
 }

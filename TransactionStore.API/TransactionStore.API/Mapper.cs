@@ -58,7 +58,7 @@ namespace TransactionStore.API
                     Id = transfer.CurrencyId
                 },
                 Amount = transfer.Amount,
-                LeadIdRecipient = transfer.DestinationLeadId
+                LeadIdReceiver = transfer.DestinationLeadId
             };
         }
 
@@ -66,7 +66,7 @@ namespace TransactionStore.API
         {
             return new TransactionOutputModel()
             {
-                TransientLeadId = transaction.LeadIdRecipient,
+                TransientLeadId = transaction.LeadIdReceiver,
                 Id = transaction.Id ?? -1,
                 LeadId = transaction.LeadId,
                 Type = (string)Enum.GetName(typeof(TransactionType), transaction.Type.Id),
