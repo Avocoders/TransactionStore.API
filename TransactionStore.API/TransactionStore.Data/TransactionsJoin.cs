@@ -6,9 +6,11 @@ using TransactionStore.Data.DTO;
 
 namespace TransactionStore.Data
 {
-    public class TransactionsJoin
+    public class TransactionsJoin<N,T>
     {
-        public List<TransactionDto> NonTransfers { get; set; }
-        public List<TransferTransaction> Transfers { get; set; }
+        public N NonTransfers { get; set; }
+        public T Transfers { get; set; }
+        public bool IsOk { get; set; } = false;
+        public string ExceptionMessage { get; set; }
     }
 }

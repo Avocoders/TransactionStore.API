@@ -85,8 +85,9 @@ namespace TransactionStore.Data
             return result;
         }        
         
-        public DataWrapper<List<TransactionDto>> SearchTransactions(TransactionSearchParameters searchParameters)
+        public TransactionsJoin<List<TransactionDto>, List<TransferTransaction>> SearchTransactions(TransactionSearchParameters searchParameters)
         {
+            TransactionsJoin<List<TransactionDto>, List<TransferTransaction>> result = new TransactionsJoin<List<TransactionDto>, List<TransferTransaction>>();
             try
             {
                 var transactions = new List<TransactionDto>();
@@ -106,38 +107,45 @@ namespace TransactionStore.Data
                     searchParameters,
                     splitOn: "Id").ToList();
 
-                var nonTransferTransactions = transactions.Where(t => t.Type.Id != (byte)TransactionType.Transfer).ToList();
-                var transferTransactions = transactions.Where(t => t.Type.Id == (byte)TransactionType.Transfer).ToList();
-                List<TransferTransaction> transfers = new List<TransferTransaction>();
-                foreach (var transfer in transferTransactions)
-                {
-                    if (transfer.Amount < 0)
-                    {
-                        var transferReceiver = transferTransactions.Where(  t => t.Amount > 0 && 
-                                                           t.Currency == transfer.Currency &&
-                                                           t.Timestamp == transfer.Timestamp &&
-                                                           t.Amount == Math.Abs(transfer.Amount)).FirstOrDefault();
-                        transfers.Add( new TransferTransaction()
-                        {
-                           Id = transfer.Id,
-                           LeadId = transfer.LeadId,
-                           Type = transfer.Type,
-                           Currency = transfer.Currency,
-                           Amount = transfer.Amount,
-                           Timestamp = transfer.Timestamp,
-                           LeadIdReceiver = transferReceiver.LeadId
-                        });
-                    }
-                }
-                
+                result = LayoutTransactions(transactions);
+                result.IsOk = true;
             }
             catch(Exception e)
             {
-                return new DataWrapper<List<TransactionDto>>()
-                {
-                    ExceptionMessage = e.Message
-                };
+                result.ExceptionMessage = e.Message;
             }
+            return result;
+        }
+
+        private TransactionsJoin<List<TransactionDto>,List<TransferTransaction>> LayoutTransactions(List<TransactionDto> transactions)
+        {
+            TransactionsJoin<List<TransactionDto>, List<TransferTransaction>> transactionsJoin = new TransactionsJoin<List<TransactionDto>, List<TransferTransaction>>();
+            var nonTransferTransactions = transactions.Where(t => t.Type.Id != (byte)TransactionType.Transfer).ToList();
+            var transferTransactions = transactions.Where(t => t.Type.Id == (byte)TransactionType.Transfer).ToList();
+            List<TransferTransaction> transfers = new List<TransferTransaction>();
+            foreach (var transfer in transferTransactions)
+            {
+                if (transfer.Amount < 0)
+                {
+                    var transferReceiver = transferTransactions.Where(t => t.Amount > 0 &&
+                                                     t.Currency == transfer.Currency &&
+                                                     t.Timestamp == transfer.Timestamp &&
+                                                     t.Amount == Math.Abs(transfer.Amount)).FirstOrDefault();
+                    transfers.Add(new TransferTransaction()
+                    {
+                        Id = transfer.Id,
+                        LeadId = transfer.LeadId,
+                        Type = transfer.Type,
+                        Currency = transfer.Currency,
+                        Amount = transfer.Amount,
+                        Timestamp = transfer.Timestamp,
+                        LeadIdReceiver = transferReceiver.LeadId
+                    });
+                }
+            }
+            transactionsJoin.NonTransfers = nonTransferTransactions;
+            transactionsJoin.Transfers = transfers;
+            return transactionsJoin;
         }
 
         public decimal GetTotalAmountInCurrency(long leadId, byte currency)

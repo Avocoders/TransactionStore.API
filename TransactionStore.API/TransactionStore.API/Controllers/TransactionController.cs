@@ -63,14 +63,14 @@ namespace TransactionStore.API.Controllers
         [HttpGet("by-lead-id/{leadId}")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
         {
-            DataWrapper<List<TransferTransactionDto>> dataWrapper = _repo.GetByLeadId(leadId);
+            DataWrapper<List<TransferTransaction>> dataWrapper = _repo.GetByLeadId(leadId);
             return MakeResponse(dataWrapper, _mapper.ConvertTransferTransactionDtosToTransactionOutputModel);
         }
         
         [HttpGet("{Id}")]
         public ActionResult<TransactionOutputModel> GetTransactionById(long id)
         {
-            DataWrapper<TransferTransactionDto> dataWrapper = _repo.GetById(id);
+            DataWrapper<TransferTransaction> dataWrapper = _repo.GetById(id);
             return MakeResponse(dataWrapper, _mapper.ConvertTransferTransactionDtoToTransactionOutputModel);
         }
 
