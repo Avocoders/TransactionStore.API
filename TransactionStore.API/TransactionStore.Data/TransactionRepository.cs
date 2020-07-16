@@ -83,11 +83,11 @@ namespace TransactionStore.Data
                 result.ExceptionMessage = e.Message;
             }
             return result;
-        }        
-        
-        public TransactionsJoin<List<TransactionDto>, List<TransferTransaction>> SearchTransactions(TransactionSearchParameters searchParameters)
+        }
+
+        public DataWrapper<List<TransactionDto>> SearchTransactions(TransactionSearchParameters searchParameters)
         {
-            TransactionsJoin<List<TransactionDto>, List<TransferTransaction>> result = new TransactionsJoin<List<TransactionDto>, List<TransferTransaction>>();
+            var result = new DataWrapper<List<TransactionDto>>();
             try
             {
                 var transactions = new List<TransactionDto>();
@@ -107,7 +107,7 @@ namespace TransactionStore.Data
                     searchParameters,
                     splitOn: "Id").ToList();
 
-                result = LayoutTransactions(transactions);
+                result.Data = LayoutTransactions(transactions).ToList();
                 result.IsOk = true;
             }
             catch(Exception e)
@@ -117,9 +117,9 @@ namespace TransactionStore.Data
             return result;
         }
 
-        private TransactionsJoin<List<TransactionDto>,List<TransferTransaction>> LayoutTransactions(List<TransactionDto> transactions)
+        private List<TransactionDto> LayoutTransactions(List<TransactionDto> transactions)
         {
-            TransactionsJoin<List<TransactionDto>, List<TransferTransaction>> transactionsJoin = new TransactionsJoin<List<TransactionDto>, List<TransferTransaction>>();
+            List<TransactionDto> transactionsDto = new List<TransactionDto>();
             var nonTransferTransactions = transactions.Where(t => t.Type.Id != (byte)TransactionType.Transfer).ToList();
             var transferTransactions = transactions.Where(t => t.Type.Id == (byte)TransactionType.Transfer).ToList();
             List<TransferTransaction> transfers = new List<TransferTransaction>();
@@ -143,9 +143,9 @@ namespace TransactionStore.Data
                     });
                 }
             }
-            transactionsJoin.NonTransfers = nonTransferTransactions;
-            transactionsJoin.Transfers = transfers;
-            return transactionsJoin;
+            transactionsDto = nonTransferTransactions;
+            transactionsDto.AddRange(transfers);
+            return transactionsDto;
         }
 
         public decimal GetTotalAmountInCurrency(long leadId, byte currency)

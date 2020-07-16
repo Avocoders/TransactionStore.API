@@ -62,11 +62,11 @@ namespace TransactionStore.API
             };
         }
 
-        public TransactionOutputModel ConvertTransferTransactionDtoToTransactionOutputModel(TransferTransaction transaction)
+        public TransactionOutputModel ConvertTransferTransactionToTransactionOutputModel(TransferTransaction transaction)
         {
             return new TransactionOutputModel()
             {
-                TransientLeadId = transaction.LeadIdReceiver,
+                LeadIdReceiver = transaction.LeadIdReceiver,
                 Id = transaction.Id ?? -1,
                 LeadId = transaction.LeadId,
                 Type = (string)Enum.GetName(typeof(TransactionType), transaction.Type.Id),
@@ -76,12 +76,12 @@ namespace TransactionStore.API
             }; 
         }
 
-        public List<TransactionOutputModel> ConvertTransferTransactionDtosToTransactionOutputModel(List<TransferTransaction> transactions)
+        public List<TransactionOutputModel> ConvertTransferTransactionsToTransactionOutputModel(List<TransferTransaction> transactions)
         {
             List<TransactionOutputModel> models = new List<TransactionOutputModel>();
             foreach(var dto in transactions)
             {
-                models.Add(ConvertTransferTransactionDtoToTransactionOutputModel(dto));
+                models.Add(ConvertTransferTransactionToTransactionOutputModel(dto));
             }
             return models;
         }
@@ -98,5 +98,6 @@ namespace TransactionStore.API
                 TillDate = Convert.ToDateTime(parameters.TillDate)
             };
         }
+
     }
 }
