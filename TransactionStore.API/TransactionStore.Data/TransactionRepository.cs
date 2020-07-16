@@ -37,28 +37,28 @@ namespace TransactionStore.Data
             }
         }
 
-        public DataWrapper<List<TransferTransactionDto>> GetByLeadId(long leadId)
+        public DataWrapper<List<TransferTransaction>> GetByLeadId(long leadId)
         {
             try
             {
                 string sqlExpression = "Transaction_GetByLeadId @leadId";
-                return new DataWrapper<List<TransferTransactionDto>>()
+                return new DataWrapper<List<TransferTransaction>>()
                 {
-                    Data = _connection.Query<TransferTransactionDto>(sqlExpression, new { leadId }).ToList(),
+                    Data = _connection.Query<TransferTransaction>(sqlExpression, new { leadId }).ToList(),
                     IsOk = true
                 };
             }
 
             catch (Exception e)
             {
-                return new DataWrapper<List<TransferTransactionDto>>()
+                return new DataWrapper<List<TransferTransaction>>()
                 {
                     ExceptionMessage = e.Message
                 };
             }
         }
 
-        public DataWrapper<List<long>> AddTransfer(TransferTransactionDto transfer)
+        public DataWrapper<List<long>> AddTransfer(TransferTransaction transfer)
         {
             try
             {
@@ -79,21 +79,21 @@ namespace TransactionStore.Data
             }
         }
 
-        public DataWrapper<TransferTransactionDto> GetById(long id)
+        public DataWrapper<TransferTransaction> GetById(long id)
         {
             try
             {
                 string sqlExpression = "Transaction_GetById @id";
-                return new DataWrapper<TransferTransactionDto>()
+                return new DataWrapper<TransferTransaction>()
                 {
-                    Data = _connection.Query<TransferTransactionDto>(sqlExpression, new { id }).FirstOrDefault(),
+                    Data = _connection.Query<TransferTransaction>(sqlExpression, new { id }).FirstOrDefault(),
                     IsOk = true
                 };
             }
 
             catch (Exception e)
             {
-                return new DataWrapper<TransferTransactionDto>()
+                return new DataWrapper<TransferTransaction>()
                 {
                     ExceptionMessage = e.Message
                 };
@@ -106,28 +106,32 @@ namespace TransactionStore.Data
             {
                 string sqlExpression = "Transaction_Search @leadId, @type, @currency, @amount, @fromDate, @tillDate";
                 var data = _connection.Query<TransactionDto>(sqlExpression, searchParameters);
-                var transferTransactions = data.Where(t => t.Type.Id == (byte)TransactionType.Transfer).ToList();
                 var nonTransferTransactions = data.Where(t => t.Type.Id != (byte)TransactionType.Transfer).ToList();
-                return new DataWrapper<List<TransactionDto>>()
-                {
-                    Data = _connection.Query<TransactionDto>(sqlExpression, searchParameters).ToList(),
-                    IsOk = true
-                };
+                var transferTransactions = ConvertTransactionDtosToTransferTransactions(data.Where(t => t.Type.Id == (byte)TransactionType.Transfer).ToList());
+
+                return ;
             }
             catch(Exception e)
             {
                 return new DataWrapper<List<TransactionDto>>()
                 {
                     ExceptionMessage = e.Message
-                }
-                ;
+                };
             }
+        }
+
+        private DataWrapper<List<TransferTransaction>> ConvertTransactionDtosToTransferTransactions(List<TransactionDto> transactions)
+        {
+            List<TransferTransaction> res = new List<TransferTransaction>();
+            var transfers = transactions.Where(t => t.Amount < 0).ToList();
+            var transfersRecipient = transactions.Where(t => t.Amount > 0).ToList();
+            
         }
 
         public decimal GetTotalAmountInCurrency(long leadId, byte currency)
         {
             decimal balance=0;
-            List<TransferTransactionDto> transactions = new List<TransferTransactionDto>();
+            List<TransferTransaction> transactions = new List<TransferTransaction>();
             transactions = GetByLeadId(leadId).Data;
             foreach(var transaction in transactions)
             {

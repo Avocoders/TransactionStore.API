@@ -19,7 +19,7 @@ namespace TransactionStore.API
                 {
                     Id = (byte)TransactionType.Deposit
                 },
-                Currency = new TransactionCurrencyDto()
+                Currency = new CurrencyDto()
                 {
                     Id = deposit.CurrencyId
                 },
@@ -36,7 +36,7 @@ namespace TransactionStore.API
                 {
                     Id = (byte)TransactionType.Withdraw
                 },
-                Currency = new TransactionCurrencyDto()
+                Currency = new CurrencyDto()
                 {
                     Id = withdraw.CurrencyId
                 },
@@ -44,29 +44,29 @@ namespace TransactionStore.API
             };
         }
 
-        public TransferTransactionDto ConvertTransferInputModelToTransferTransactionDto(TransferInputModel transfer)
+        public TransferTransaction ConvertTransferInputModelToTransferTransactionDto(TransferInputModel transfer)
         {
-            return new TransferTransactionDto()
+            return new TransferTransaction()
             {
                 LeadId = transfer.LeadId,
                 Type = new TransactionTypeDto()
                 {
                     Id = (byte)TransactionType.Transfer
                 },
-                Currency = new TransactionCurrencyDto()
+                Currency = new CurrencyDto()
                 {
                     Id = transfer.CurrencyId
                 },
                 Amount = transfer.Amount,
-                DestinationLeadId = transfer.DestinationLeadId
+                LeadIdRecipient = transfer.DestinationLeadId
             };
         }
 
-        public TransactionOutputModel ConvertTransferTransactionDtoToTransactionOutputModel(TransferTransactionDto transaction)
+        public TransactionOutputModel ConvertTransferTransactionDtoToTransactionOutputModel(TransferTransaction transaction)
         {
             return new TransactionOutputModel()
             {
-                TransientLeadId = transaction.DestinationLeadId,
+                TransientLeadId = transaction.LeadIdRecipient,
                 Id = transaction.Id ?? -1,
                 LeadId = transaction.LeadId,
                 Type = (string)Enum.GetName(typeof(TransactionType), transaction.Type.Id),
@@ -76,7 +76,7 @@ namespace TransactionStore.API
             }; 
         }
 
-        public List<TransactionOutputModel> ConvertTransferTransactionDtosToTransactionOutputModel(List<TransferTransactionDto> transactions)
+        public List<TransactionOutputModel> ConvertTransferTransactionDtosToTransactionOutputModel(List<TransferTransaction> transactions)
         {
             List<TransactionOutputModel> models = new List<TransactionOutputModel>();
             foreach(var dto in transactions)

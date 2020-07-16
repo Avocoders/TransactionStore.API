@@ -63,7 +63,7 @@ namespace TransactionStore.API.Controllers
         {
             string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);            
-            TransferTransactionDto transfer = _mapper.ConvertTransferInputModelToTransferTransactionDto(transactionModel);
+            TransferTransaction transfer = _mapper.ConvertTransferInputModelToTransferTransactionDto(transactionModel);
             DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
             if (!dataWrapper.IsOk)
             {
@@ -75,7 +75,7 @@ namespace TransactionStore.API.Controllers
         [HttpGet("by-lead-id/{leadId}")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
         {
-            DataWrapper<List<TransferTransactionDto>> dataWrapper = _repo.GetByLeadId(leadId);
+            DataWrapper<List<TransferTransaction>> dataWrapper = _repo.GetByLeadId(leadId);
             if (!dataWrapper.IsOk)
             {
                 return BadRequest(dataWrapper.ExceptionMessage);
@@ -87,7 +87,7 @@ namespace TransactionStore.API.Controllers
         [HttpGet("{Id}")]
         public ActionResult<TransactionOutputModel> GetTransactionById(long id)
         {
-            DataWrapper<TransferTransactionDto> dataWrapper = _repo.GetById(id);
+            DataWrapper<TransferTransaction> dataWrapper = _repo.GetById(id);
             if (!dataWrapper.IsOk)
             {
                 return BadRequest(dataWrapper.ExceptionMessage);

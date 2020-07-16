@@ -1,5 +1,4 @@
-﻿using System;
-namespace TransactionStore.Data
+﻿namespace TransactionStore.Data
 {
     public class DataWrapper<T>
     {
