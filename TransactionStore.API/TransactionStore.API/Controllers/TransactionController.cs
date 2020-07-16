@@ -37,11 +37,7 @@ namespace TransactionStore.API.Controllers
             if (transactionModel.Amount <= 0) return BadRequest("The amount is missing");
             TransactionDto transactionDto = _mapper.ConvertTransactionInputModelDepositToTransactionDto(transactionModel);
             DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
-            if (!dataWrapper.IsOk)
-            {
-                return BadRequest(dataWrapper.ExceptionMessage);
-            }
-            return Ok(dataWrapper.Data);
+            return MakeResponse(dataWrapper);
         }
         
         [HttpPost("withdraw")]
@@ -51,11 +47,7 @@ namespace TransactionStore.API.Controllers
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);            
             TransactionDto transactionDto = _mapper.ConvertTransactionInputModelWithdrawToTransactionDto(transactionModel);
             DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
-            if (!dataWrapper.IsOk)
-            {
-                return BadRequest(dataWrapper.ExceptionMessage);
-            }
-            return Ok(dataWrapper.Data);
+            return MakeResponse(dataWrapper);
         }
         
         [HttpPost("transfer")]
@@ -65,34 +57,21 @@ namespace TransactionStore.API.Controllers
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);            
             TransferTransaction transfer = _mapper.ConvertTransferInputModelToTransferTransactionDto(transactionModel);
             DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
-            if (!dataWrapper.IsOk)
-            {
-                return BadRequest(dataWrapper.ExceptionMessage);
-            }
-            return Ok(dataWrapper.Data);
+            return MakeResponse(dataWrapper);
         }
 
         [HttpGet("by-lead-id/{leadId}")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
         {
-            DataWrapper<List<TransferTransaction>> dataWrapper = _repo.GetByLeadId(leadId);
-            if (!dataWrapper.IsOk)
-            {
-                return BadRequest(dataWrapper.ExceptionMessage);
-            }
-
-            return Ok(_mapper.ConvertTransferTransactionDtosToTransactionOutputModel(dataWrapper.Data));
+            DataWrapper<List<TransferTransactionDto>> dataWrapper = _repo.GetByLeadId(leadId);
+            return MakeResponse(dataWrapper, _mapper.ConvertTransferTransactionDtosToTransactionOutputModel);
         }
         
         [HttpGet("{Id}")]
         public ActionResult<TransactionOutputModel> GetTransactionById(long id)
         {
-            DataWrapper<TransferTransaction> dataWrapper = _repo.GetById(id);
-            if (!dataWrapper.IsOk)
-            {
-                return BadRequest(dataWrapper.ExceptionMessage);
-            }
-            return Ok(_mapper.ConvertTransferTransactionDtoToTransactionOutputModel(dataWrapper.Data));
+            DataWrapper<TransferTransactionDto> dataWrapper = _repo.GetById(id);
+            return MakeResponse(dataWrapper, _mapper.ConvertTransferTransactionDtoToTransactionOutputModel);
         }
 
         [HttpGet("{leadId}/balance/{currencyId}")]
@@ -111,6 +90,27 @@ namespace TransactionStore.API.Controllers
                 return BadRequest(dataWrapper.ExceptionMessage);
             }
             return _mapper.ConvertTransferTransactionDtosToTransactionOutputModel(dataWrapper.Data);
+        }
+
+        private delegate T DtoConverter<T, K>(K dto);
+
+        private ActionResult<T> MakeResponse<T>(DataWrapper<T> dataWrapper)
+        {
+            if (!dataWrapper.IsOk)
+            {
+                return BadRequest(dataWrapper.ExceptionMessage);
+            }
+            return Ok(dataWrapper.Data);
+        }
+
+
+        private ActionResult<T> MakeResponse<T, K>(DataWrapper<K> dataWrapper, DtoConverter<T, K> dtoConverter)
+        {
+            if (!dataWrapper.IsOk)
+            {
+                return BadRequest(dataWrapper.ExceptionMessage);
+            }
+            return Ok(dtoConverter(dataWrapper.Data));
         }
     }
 }
