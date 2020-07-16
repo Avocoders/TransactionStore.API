@@ -99,5 +99,53 @@ namespace TransactionStore.API
             };
         }
 
+
+        public TransactionOutputModel ConvertTransactionDtoToTransactionOutputModelForSearch(TransactionDto transactionDto)
+        {
+            return new TransactionOutputModel()
+            {
+                Id = transactionDto.Id ?? -1,
+                LeadId = transactionDto.LeadId,
+                Type = transactionDto.Type.Name,
+                Currency = transactionDto.Currency.Name,
+                Amount = transactionDto.Amount,
+                Timestamp = transactionDto.Timestamp.ToString("dd.MM.yyyy HH:mm:ss")
+            };
+        }
+
+        public List<TransactionOutputModel> ConvertTransactionDtosToTransactionOutputModelsForSearch(List<TransactionDto> transactions)
+        {
+            List<TransactionOutputModel> models = new List<TransactionOutputModel>();
+            foreach (var transaction in transactions)
+            {
+                if (transaction.Type.Name == "Transfer" )
+                {
+                    models.Add(ConvertTransferTransactionToTransactionOutputModelForSearch((TransferTransaction)transaction));
+                }
+                else
+                {
+
+                    models.Add(ConvertTransactionDtoToTransactionOutputModelForSearch(transaction));
+                }
+
+
+            }
+            return models;
+        }
+
+
+        public TransactionOutputModel ConvertTransferTransactionToTransactionOutputModelForSearch(TransferTransaction transaction)
+        {
+            return new TransactionOutputModel()
+            {
+                LeadIdReceiver = transaction.LeadIdReceiver,
+                Id = transaction.Id ?? -1,
+                LeadId = transaction.LeadId,
+                Type = transaction.Type.Name,
+                Currency = transaction.Currency.Name,
+                Amount = transaction.Amount,
+                Timestamp = transaction.Timestamp.ToString("dd.MM.yyyy HH:mm:ss")
+            };
+        }
     }
 }

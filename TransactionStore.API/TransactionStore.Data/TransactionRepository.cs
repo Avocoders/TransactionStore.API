@@ -91,7 +91,7 @@ namespace TransactionStore.Data
             try
             {
                 var transactions = new List<TransactionDto>();
-                string sqlExpression = "Transaction_Search @leadId, @type, @currency, @amount, @fromDate, @tillDate";
+                string sqlExpression = "Transaction_Searchz @leadId, @type, @currency, @amount, @fromDate, @tillDate";
                 var data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression, 
                     (transaction, type, currency) =>
                     {
@@ -105,7 +105,7 @@ namespace TransactionStore.Data
                         return transactionEntry;
                     },
                     searchParameters,
-                    splitOn: "Id").ToList();
+                    splitOn: "Name").ToList();
 
                 result.Data = LayoutTransactions(transactions).ToList();
                 result.IsOk = true;
