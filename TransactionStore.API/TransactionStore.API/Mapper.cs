@@ -1,9 +1,10 @@
 ﻿using TransactionStore.API.Models.Input;
 using TransactionStore.API.Models.Output;
 using TransactionStore.Data.DTO;
+using TransactionStore.Data;
 using System.Collections.Generic;
-using TransactionStore.API.Shared;
 using System;
+using TransactionStore.Core.Shared;
 
 namespace TransactionStore.API
 {
@@ -14,8 +15,14 @@ namespace TransactionStore.API
             return new TransactionDto()
             {
                 LeadId = deposit.LeadId,
-                TypeId = (byte)Enums.TransactionType.Deposit,
-                CurrencyId = deposit.CurrencyId,
+                Type = new TransactionTypeDto()
+                {
+                    Id = (byte)TransactionType.Deposit
+                },
+                Currency = new CurrencyDto()
+                {
+                    Id = deposit.CurrencyId
+                },
                 Amount = deposit.Amount
             };
         }
@@ -25,39 +32,51 @@ namespace TransactionStore.API
             return new TransactionDto()
             {
                 LeadId = withdraw.LeadId,
-                TypeId = (byte)Enums.TransactionType.Withdraw,
-                CurrencyId = withdraw.CurrencyId,
+                Type = new TransactionTypeDto()
+                {
+                    Id = (byte)TransactionType.Withdraw
+                },
+                Currency = new CurrencyDto()
+                {
+                    Id = withdraw.CurrencyId
+                },
                 Amount = -withdraw.Amount
             };
         }
 
-        public TransferTransactionDto ConvertTransferInputModelToTransferTransactionDto(TransferInputModel transfer)
+        public TransferTransaction ConvertTransferInputModelToTransferTransactionDto(TransferInputModel transfer)
         {
-            return new TransferTransactionDto()
+            return new TransferTransaction()
             {
                 LeadId = transfer.LeadId,
-                TypeId = (byte)Enums.TransactionType.Transfer,
-                CurrencyId = transfer.CurrencyId,
+                Type = new TransactionTypeDto()
+                {
+                    Id = (byte)TransactionType.Transfer
+                },
+                Currency = new CurrencyDto()
+                {
+                    Id = transfer.CurrencyId
+                },
                 Amount = transfer.Amount,
-                DestinationLeadId = transfer.DestinationLeadId
+                LeadIdRecipient = transfer.DestinationLeadId
             };
         }
 
-        public TransactionOutputModel ConvertTransferTransactionDtoToTransactionOutputModel(TransferTransactionDto transaction)
+        public TransactionOutputModel ConvertTransferTransactionDtoToTransactionOutputModel(TransferTransaction transaction)
         {
             return new TransactionOutputModel()
             {
-                TransientLeadId = transaction.DestinationLeadId,
+                TransientLeadId = transaction.LeadIdRecipient,
                 Id = transaction.Id ?? -1,
                 LeadId = transaction.LeadId,
-                Type = (string)Enum.GetName(typeof(Enums.TransactionType), transaction.TypeId),
-                Currency = (string)Enum.GetName(typeof(Enums.TransactionCurrency), transaction.CurrencyId),
+                Type = (string)Enum.GetName(typeof(TransactionType), transaction.Type.Id),
+                Currency = (string)Enum.GetName(typeof(TransactionCurrency), transaction.Currency.Id),
                 Amount = transaction.Amount,
                 Timestamp = transaction.Timestamp.ToString("dd.MM.yyyy HH:mm:ss")
             }; 
         }
 
-        public List<TransactionOutputModel> ConvertTransferTransactionDtosToTransactionOutputModel(List<TransferTransactionDto> transactions)
+        public List<TransactionOutputModel> ConvertTransferTransactionDtosToTransactionOutputModel(List<TransferTransaction> transactions)
         {
             List<TransactionOutputModel> models = new List<TransactionOutputModel>();
             foreach(var dto in transactions)
@@ -67,12 +86,16 @@ namespace TransactionStore.API
             return models;
         }
 
-        public RangeDateDto ConvertRangeDateInputModelToRangeDateDto(RangeDateInputModel range)
+        public TransactionSearchParameters ConvertSearchParametersInputModelToTransactionSearchParameters(SearchParametersInputModel parameters)
         {
-            return new RangeDateDto
+            return new TransactionSearchParameters()
             {
-                FromDate = Convert.ToDateTime(range.FromDate),
-                TillDate = Convert.ToDateTime(range.TillDate)
+                LeadId = parameters.LeadId,
+                Type = parameters.Type,
+                Currency = parameters.Currency,
+                Amount = parameters.Amount,
+                FromDate = Convert.ToDateTime(parameters.FromDate),
+                TillDate = Convert.ToDateTime(parameters.TillDate)
             };
         }
     }

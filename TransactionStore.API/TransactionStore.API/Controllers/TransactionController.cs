@@ -55,7 +55,7 @@ namespace TransactionStore.API.Controllers
         {
             string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);            
-            TransferTransactionDto transfer = _mapper.ConvertTransferInputModelToTransferTransactionDto(transactionModel);
+            TransferTransaction transfer = _mapper.ConvertTransferInputModelToTransferTransactionDto(transactionModel);
             DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
             return MakeResponse(dataWrapper);
         }
@@ -80,13 +80,17 @@ namespace TransactionStore.API.Controllers
             return _repo.GetTotalAmountInCurrency(leadId, currencyId);
         }
 
-        /*
-        [HttpGet("by-lead-id/{leadId}/range-date")]
-        public ActionResult<List<TransactionOutputModel>> GetRangeDateTransactionByLeadId(long leadId, [FromBody]RangeDateInputModel rangeModel)
+        [HttpGet("search")]
+        public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters(SearchParametersInputModel searchModel)
         {
-            return _mapper.ConvertTransferTransactionDtosToTransactionOutputModel(_repo.GetTransactionByLeadIdAndRange(leadId, _mapper.ConvertRangeDateInputModelToRangeDateDto(rangeModel)));
+            
+            DataWrapper<List<TransactionDto>> dataWrapper = _repo.SearchTransactions(_mapper.ConvertSearchParametersInputModelToTransactionSearchParameters(searchModel));
+            if (!dataWrapper.IsOk)
+            {
+                return BadRequest(dataWrapper.ExceptionMessage);
+            }
+            return _mapper.ConvertTransferTransactionDtosToTransactionOutputModel(dataWrapper.Data);
         }
-        */
 
         private delegate T DtoConverter<T, K>(K dto);
 
