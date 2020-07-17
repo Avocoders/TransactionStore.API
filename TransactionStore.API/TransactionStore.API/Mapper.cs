@@ -5,6 +5,8 @@ using TransactionStore.Data;
 using System.Collections.Generic;
 using System;
 using TransactionStore.Core.Shared;
+using System.Globalization;
+using NUnit.Framework;
 
 namespace TransactionStore.API
 {
@@ -94,8 +96,8 @@ namespace TransactionStore.API
                 Type = parameters.Type,
                 Currency = parameters.Currency,
                 Amount = parameters.Amount,
-                FromDate = Convert.ToDateTime(parameters.FromDate),
-                TillDate = Convert.ToDateTime(parameters.TillDate)
+                FromDate = string.IsNullOrEmpty(parameters.FromDate)? null : (DateTime?)DateTime.ParseExact(parameters.FromDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+                TillDate = string.IsNullOrEmpty(parameters.TillDate) ? null : (DateTime?)DateTime.ParseExact(parameters.TillDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture)
             };
         }
 
