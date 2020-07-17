@@ -63,15 +63,15 @@ namespace TransactionStore.API.Controllers
         [HttpGet("by-lead-id/{leadId}")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
         {
-            DataWrapper<List<TransferTransactionDto>> dataWrapper = _repo.GetByLeadId(leadId);
-            return MakeResponse(dataWrapper, _mapper.ConvertTransferTransactionDtosToTransactionOutputModel);
+            DataWrapper<List<TransferTransaction>> dataWrapper = _repo.GetByLeadId(leadId);
+            return MakeResponse(dataWrapper, _mapper.ConvertTransferTransactionsToTransactionOutputModel);
         }
         
         [HttpGet("{Id}")]
         public ActionResult<TransactionOutputModel> GetTransactionById(long id)
         {
-            DataWrapper<TransferTransactionDto> dataWrapper = _repo.GetById(id);
-            return MakeResponse(dataWrapper, _mapper.ConvertTransferTransactionDtoToTransactionOutputModel);
+            DataWrapper<TransferTransaction> dataWrapper = _repo.GetById(id);
+            return MakeResponse(dataWrapper, _mapper.ConvertTransferTransactionToTransactionOutputModel);
         }
 
         [HttpGet("{leadId}/balance/{currencyId}")]
@@ -81,15 +81,10 @@ namespace TransactionStore.API.Controllers
         }
 
         [HttpGet("search")]
-        public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters(SearchParametersInputModel searchModel)
+        public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters([FromBody] SearchParametersInputModel searchModel)
         {
-            
-            DataWrapper<List<TransactionDto>> dataWrapper = _repo.SearchTransactions(_mapper.ConvertSearchParametersInputModelToTransactionSearchParameters(searchModel));
-            if (!dataWrapper.IsOk)
-            {
-                return BadRequest(dataWrapper.ExceptionMessage);
-            }
-            return _mapper.ConvertTransferTransactionDtosToTransactionOutputModel(dataWrapper.Data);
+            var dataWrapper = _repo.SearchTransactions(_mapper.ConvertSearchParametersInputModelToTransactionSearchParameters(searchModel));
+            return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModelsForSearch);
         }
 
         private delegate T DtoConverter<T, K>(K dto);
