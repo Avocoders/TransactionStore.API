@@ -1,8 +1,11 @@
+using System.Collections.Generic;
+using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Firewall;
 
 namespace TransactionStore.API
 {
@@ -19,6 +22,7 @@ namespace TransactionStore.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,6 +43,12 @@ namespace TransactionStore.API
             {
                 endpoints.MapControllers();
             });
+
+            app.UseFirewall(
+                FirewallRulesEngine
+                .DenyAllAccess()
+                .ExceptFromLocalhost()
+                .ExceptFromIPAddresses(new List<IPAddress>() {IPAddress.Parse("127.0.0.1")}));
         }
     }
 }
