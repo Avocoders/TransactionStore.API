@@ -48,7 +48,7 @@ namespace TransactionStore.API
                 FirewallRulesEngine
                 .DenyAllAccess()
                 .ExceptFromLocalhost()
-                .ExceptFromIPAddresses(new List<IPAddress>() {IPAddress.Parse("192.186.0.1")}));
+                .ExceptFromIPAddresses(new List<IPAddress>() {IPAddress.Parse("127.0.0.1")}));
         }
     }
 }
