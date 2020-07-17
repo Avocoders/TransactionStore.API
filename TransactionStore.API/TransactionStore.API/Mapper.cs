@@ -120,13 +120,12 @@ namespace TransactionStore.API
             List<TransactionOutputModel> models = new List<TransactionOutputModel>();
             foreach (var transaction in transactions)
             {
-                if (transaction.Type.Name == "Transfer" )
+                if (transaction.GetType() == typeof(TransferTransaction))
                 {
                     models.Add(ConvertTransferTransactionToTransactionOutputModelForSearch((TransferTransaction)transaction));
                 }
                 else
                 {
-
                     models.Add(ConvertTransactionDtoToTransactionOutputModelForSearch(transaction));
                 }
 
