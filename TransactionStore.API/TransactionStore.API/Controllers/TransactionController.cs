@@ -81,12 +81,10 @@ namespace TransactionStore.API.Controllers
         }
 
         [HttpGet("search")]
-        public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters(SearchParametersInputModel searchModel)
+        public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters([FromBody] SearchParametersInputModel searchModel)
         {
-            DataWrapper<List<TransactionDto>> dataWrapper;
-            dataWrapper = _repo.SearchTransactions(_mapper.ConvertSearchParametersInputModelToTransactionSearchParameters(searchModel));
-            if (!dataWrapper.IsOk) return BadRequest(dataWrapper.ExceptionMessage);
-            return dataWrapper;
+            var dataWrapper = _repo.SearchTransactions(_mapper.ConvertSearchParametersInputModelToTransactionSearchParameters(searchModel));
+            return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModelsForSearch);
         }
 
         private delegate T DtoConverter<T, K>(K dto);
