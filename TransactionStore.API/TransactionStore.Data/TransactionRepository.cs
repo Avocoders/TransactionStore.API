@@ -127,10 +127,10 @@ namespace TransactionStore.Data
                 if (transfer.Amount < 0)
                 {
                     var transferReceiver = transferTransactions
-                        .Where(t => t.Amount > 0)
-                        .Where(t => t.Currency == transfer.Currency)
-                        .Where(t => t.Timestamp == transfer.Timestamp)
-                        .FirstOrDefault(t => t.Amount == Math.Abs(transfer.Amount));
+                        .Where(tT => tT.Amount > 0)
+                        .Where(tT => tT.Currency == transfer.Currency)
+                        .Where(tT => tT.Timestamp == transfer.Timestamp)
+                        .FirstOrDefault(tT => tT.Amount == Math.Abs(transfer.Amount));
                     transfers.Add(new TransferTransaction()
                     {
                         Id = transfer.Id,
