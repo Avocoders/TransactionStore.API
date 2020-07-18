@@ -120,7 +120,7 @@ namespace TransactionStore.API
             List<TransactionOutputModel> models = new List<TransactionOutputModel>();
             foreach (var transaction in transactions)
             {
-                if (transaction.GetType() == typeof(TransferTransaction))
+                if(transaction.Type.Id==3)//if (transaction.GetType() == typeof(TransferTransaction))
                 {
                     models.Add(ConvertTransferTransactionToTransactionOutputModelForSearch((TransferTransaction)transaction));
                 }
