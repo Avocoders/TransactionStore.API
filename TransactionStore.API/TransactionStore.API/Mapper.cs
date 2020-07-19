@@ -108,8 +108,8 @@ namespace TransactionStore.API
             {
                 Id = transactionDto.Id ?? -1,
                 LeadId = transactionDto.LeadId,
-                Type = transactionDto.Type.Name,
-                Currency = transactionDto.Currency.Name,
+                Type = (string)Enum.GetName(typeof(TransactionType), transactionDto.Type.Id),
+                Currency = (string)Enum.GetName(typeof(TransactionCurrency), transactionDto.Currency.Id),
                 Amount = transactionDto.Amount,
                 Timestamp = transactionDto.Timestamp.ToString("dd.MM.yyyy HH:mm:ss")
             };
@@ -142,8 +142,8 @@ namespace TransactionStore.API
                 LeadIdReceiver = transaction.LeadIdReceiver,
                 Id = transaction.Id ?? -1,
                 LeadId = transaction.LeadId,
-                Type = transaction.Type.Name,
-                Currency = transaction.Currency.Name,
+                Type = (string)Enum.GetName(typeof(TransactionType), transaction.Type.Id),
+                Currency = (string)Enum.GetName(typeof(TransactionCurrency), transaction.Currency.Id),
                 Amount = transaction.Amount,
                 Timestamp = transaction.Timestamp.ToString("dd.MM.yyyy HH:mm:ss")
             };

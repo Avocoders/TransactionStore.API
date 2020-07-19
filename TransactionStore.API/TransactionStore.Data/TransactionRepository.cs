@@ -105,7 +105,7 @@ namespace TransactionStore.Data
                         return transactionEntry;
                     },
                     searchParameters,
-                    splitOn: "typeId, currencyId").ToList();
+                    splitOn: "id").ToList();
 
                 result.Data = ProcessTransactions(transactions);
                 result.IsOk = true;
@@ -128,7 +128,7 @@ namespace TransactionStore.Data
                 {
                     var transferReceiver = transferTransactions
                         .Where(tT => tT.Amount > 0)
-                        .Where(tT => tT.Currency == transfer.Currency)
+                        .Where(tT => tT.Currency.Id == transfer.Currency.Id)
                         .Where(tT => tT.Timestamp == transfer.Timestamp)
                         .FirstOrDefault(tT => tT.Amount == Math.Abs(transfer.Amount));
                     transfers.Add(new TransferTransaction()
