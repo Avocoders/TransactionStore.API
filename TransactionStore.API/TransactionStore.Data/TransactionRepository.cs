@@ -105,7 +105,7 @@ namespace TransactionStore.Data
                         return transactionEntry;
                     },
                     searchParameters,
-                    splitOn: "Id").ToList();
+                    splitOn: "typeId, currencyId").ToList();
 
                 result.Data = ProcessTransactions(transactions);
                 result.IsOk = true;
