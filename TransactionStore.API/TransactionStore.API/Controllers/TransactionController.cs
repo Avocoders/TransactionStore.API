@@ -34,7 +34,8 @@ namespace TransactionStore.API.Controllers
         [HttpPost("deposit")]
         public ActionResult<long> CreateDepositTransaction([FromBody]TransactionInputModel transactionModel)
         {
-            if (transactionModel.Amount <= 0) return BadRequest("The amount is missing");
+            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
+            if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
             TransactionDto transactionDto = _mapper.ConvertTransactionInputModelDepositToTransactionDto(transactionModel);
             DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
             return MakeResponse(dataWrapper);
@@ -63,6 +64,7 @@ namespace TransactionStore.API.Controllers
         [HttpGet("by-lead-id/{leadId}")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
         {
+            if (leadId <= 0) return BadRequest("Lead was not found");
             DataWrapper<List<TransferTransaction>> dataWrapper = _repo.GetByLeadId(leadId);
             return MakeResponse(dataWrapper, _mapper.ConvertTransferTransactionsToTransactionOutputModel);
         }
@@ -70,6 +72,7 @@ namespace TransactionStore.API.Controllers
         [HttpGet("{Id}")]
         public ActionResult<TransactionOutputModel> GetTransactionById(long id)
         {
+            if (id <= 0) return BadRequest("Transactions were not found");
             DataWrapper<TransferTransaction> dataWrapper = _repo.GetById(id);
             return MakeResponse(dataWrapper, _mapper.ConvertTransferTransactionToTransactionOutputModel);
         }
@@ -77,6 +80,8 @@ namespace TransactionStore.API.Controllers
         [HttpGet("{leadId}/balance/{currencyId}")]
         public ActionResult<decimal> GetBalanceByLeadIdInCurrency(long leadId, byte currencyId)
         {
+            if (leadId <= 0) return BadRequest("Lead was not found");
+            if (currencyId <= 0) return BadRequest("Currency was not found");
             return _repo.GetTotalAmountInCurrency(leadId, currencyId);
         }
 
