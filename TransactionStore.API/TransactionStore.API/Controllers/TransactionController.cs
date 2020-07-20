@@ -36,8 +36,7 @@ namespace TransactionStore.API.Controllers
         [HttpPost("deposit")]
         public ActionResult<long> CreateDepositTransaction([FromBody] TransactionInputModel transactionModel)
         {
-            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
-            if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
+            if (transactionModel.Amount <= 0) return BadRequest("The amount is missing");
             TransactionDto transactionDto = _mapper.ConvertTransactionInputModelDepositToTransactionDto(transactionModel);
             DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
             return MakeResponse(dataWrapper);
@@ -58,7 +57,7 @@ namespace TransactionStore.API.Controllers
         {
             string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
-            TransferTransaction transfer = _mapper.ConvertTransferInputModelToTransferTransactionDto(transactionModel);
+            TransferTransaction transfer = _mapper.ConvertTransferInputModelToTransferTransaction(transactionModel);
             DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
             return MakeResponse(dataWrapper);
         }
@@ -82,7 +81,6 @@ namespace TransactionStore.API.Controllers
         public ActionResult<decimal> GetBalanceByLeadIdInCurrency(long leadId, byte currencyId)
         {
             if (leadId <= 0) return BadRequest("Lead was not found");
-            if (Enum.GetName(typeof(TransactionCurrency), currencyId) is null) return BadRequest("The currency is missing");
             return _repo.GetTotalAmountInCurrency(leadId, currencyId);
         }
 

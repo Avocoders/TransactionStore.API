@@ -22,7 +22,15 @@ namespace TransactionStore.Data
             try
             {
                 string sqlExpression = "Transaction_Add @leadId, @typeId, @currencyId, @amount";
-                result.Data = _connection.Query<long>(sqlExpression, transactionDto).FirstOrDefault();
+                result.Data = _connection.Query<long>(sqlExpression, 
+                    new
+                    {
+                        transactionDto.Id,
+                        transactionDto.LeadId,
+                        TypeId = transactionDto.Type.Id,
+                        CurrencyId =transactionDto.Currency.Id,
+                        transactionDto.Amount
+                    }).FirstOrDefault();
                 result.IsOk = true;
             }
 
@@ -39,8 +47,16 @@ namespace TransactionStore.Data
             var result = new DataWrapper<List<long>>();
             try
             {
-                string sqlExpression = "Transaction_AddTransfer @leadId, @typeId, @currencyId, @amount, @destinationLeadId";
-                result.Data = _connection.Query<long>(sqlExpression, transfer).ToList();
+                string sqlExpression = "Transaction_AddTransfer @leadId, @amount, @currencyId, @leadIdReceiver";
+                result.Data = _connection.Query<long>(sqlExpression, 
+                    new
+                    {
+                        transfer.Id,
+                        transfer.LeadId,
+                        transfer.Amount,
+                        currencyId = transfer.Currency.Id,
+                        transfer.LeadIdReceiver
+                    }).ToList();
                 result.IsOk = true;
             }
 

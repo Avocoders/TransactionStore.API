@@ -46,21 +46,17 @@ namespace TransactionStore.API
             };
         }
 
-        public TransferTransaction ConvertTransferInputModelToTransferTransactionDto(TransferInputModel transfer)
+        public TransferTransaction ConvertTransferInputModelToTransferTransaction(TransferInputModel transfer)
         {
             return new TransferTransaction()
             {
                 LeadId = transfer.LeadId,
-                Type = new TransactionTypeDto()
-                {
-                    Id = (byte)TransactionType.Transfer
-                },
+                Amount = transfer.Amount,
+                LeadIdReceiver = transfer.LeadIdReceiver,
                 Currency = new CurrencyDto()
                 {
                     Id = transfer.CurrencyId
-                },
-                Amount = transfer.Amount,
-                LeadIdReceiver = transfer.LeadIdReceiver
+                }
             };
         }
 
