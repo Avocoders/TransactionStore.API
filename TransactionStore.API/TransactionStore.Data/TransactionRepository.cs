@@ -33,23 +33,6 @@ namespace TransactionStore.Data
             return result;
         }
 
-        public DataWrapper<List<TransferTransaction>> GetByLeadId(long leadId)
-        {
-            var result = new DataWrapper<List<TransferTransaction>>();
-            try
-            {
-                string sqlExpression = "Transaction_GetByLeadId @leadId";
-                result.Data = _connection.Query<TransferTransaction>(sqlExpression, new { leadId }).ToList();
-                result.IsOk = true;
-            }
-
-            catch (Exception e)
-            {
-                result.ExceptionMessage = e.Message;
-            }
-            return result;
-        }
-
         public DataWrapper<List<long>> AddTransfer(TransferTransaction transfer)
         {
 
@@ -68,13 +51,56 @@ namespace TransactionStore.Data
             return result;
         }
 
-        public DataWrapper<TransferTransaction> GetById(long id)
+        public DataWrapper<List<TransactionDto>> GetById(long id)
         {
-            var result = new DataWrapper<TransferTransaction>();
+            var result = new DataWrapper<List<TransactionDto>>();
             try
             {
+                var transactions = new List<TransactionDto>();
                 string sqlExpression = "Transaction_GetById @id";
-                result.Data = _connection.Query<TransferTransaction>(sqlExpression, new { id }).FirstOrDefault();
+                result.Data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression,
+                    (transaction, type, currency) =>
+                    {
+                        TransactionDto transactionEntry;
+                        transactionEntry = transaction;
+                        transactionEntry.Type = type;
+                        transactionEntry.Currency = currency;
+                        transactions.Add(transactionEntry);
+                        return transactionEntry;
+                    },
+                    new { id },
+                    splitOn: "id").ToList();
+                result.Data = ProcessTransactions(transactions);
+                result.IsOk = true;
+            }
+
+            catch (Exception e)
+            {
+                result.ExceptionMessage = e.Message;
+            }
+            return result;
+        }
+
+        public DataWrapper<List<TransactionDto>> GetByLeadId(long leadId)
+        {
+            var result = new DataWrapper<List<TransactionDto>>();
+            try
+            {
+                var transactions = new List<TransactionDto>();
+                string sqlExpression = "Transaction_GetByLeadId @leadId";
+                var data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression,
+                    (transaction, type, currency) =>
+                    {
+                        TransactionDto transactionEntry;
+                        transactionEntry = transaction;
+                        transactionEntry.Type = type;
+                        transactionEntry.Currency = currency;
+                        transactions.Add(transactionEntry);
+                        return transactionEntry;
+                    },
+                    new { leadId },
+                    splitOn: "id").ToList();
+                result.Data = ProcessTransactions(transactions);
                 result.IsOk = true;
             }
 
@@ -153,7 +179,7 @@ namespace TransactionStore.Data
 
             decimal balance=0;
 
-            List<TransferTransaction> transactions = new List<TransferTransaction>();
+            List<TransactionDto> transactions;
 
             transactions = GetByLeadId(leadId).Data;
 
