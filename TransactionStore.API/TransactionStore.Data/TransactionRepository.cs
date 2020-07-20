@@ -51,23 +51,26 @@ namespace TransactionStore.Data
             return result;
         }
 
-        public DataWrapper<TransferTransaction> GetById(long id)
+        public DataWrapper<List<TransactionDto>> GetById(long id)
         {
-            var result = new DataWrapper<TransferTransaction>();
+            var result = new DataWrapper<List<TransactionDto>>();
             try
             {
+                var transactions = new List<TransactionDto>();
                 string sqlExpression = "Transaction_GetById @id";
-                result.Data = _connection.Query<TransferTransaction, TransactionTypeDto, CurrencyDto, TransferTransaction>(sqlExpression,
+                result.Data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression,
                     (transaction, type, currency) =>
                     {
-                        TransferTransaction transactionEntry;
+                        TransactionDto transactionEntry;
                         transactionEntry = transaction;
                         transactionEntry.Type = type;
                         transactionEntry.Currency = currency;
+                        transactions.Add(transactionEntry);
                         return transactionEntry;
-                    }, 
+                    },
                     new { id },
-                    splitOn: "id").FirstOrDefault();
+                    splitOn: "id").ToList();
+                result.Data = ProcessTransactions(transactions);
                 result.IsOk = true;
             }
 

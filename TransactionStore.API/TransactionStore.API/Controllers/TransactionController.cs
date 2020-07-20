@@ -5,6 +5,8 @@ using TransactionStore.API.Models.Input;
 using TransactionStore.API.Models.Output;
 using TransactionStore.Data.DTO;
 using TransactionStore.Data;
+using TransactionStore.Core.Shared;
+using System;
 
 namespace TransactionStore.API.Controllers
 {
@@ -68,15 +70,16 @@ namespace TransactionStore.API.Controllers
         }
         
         [HttpGet("{Id}")]
-        public ActionResult<TransactionOutputModel> GetTransactionById(long id)
+        public ActionResult<List<TransactionOutputModel>> GetTransactionById(long id)
         {
-            DataWrapper<TransferTransaction> dataWrapper = _repo.GetById(id);
-            return MakeResponse(dataWrapper, _mapper.ConvertTransferTransactionToTransactionOutputModel);
+            DataWrapper<List<TransactionDto>> dataWrapper = _repo.GetById(id);
+            return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModelsForSearch);
         }
 
         [HttpGet("{leadId}/balance/{currencyId}")]
         public ActionResult<decimal> GetBalanceByLeadIdInCurrency(long leadId, byte currencyId)
         {
+            if (Enum.GetName(typeof(TransactionCurrency), currencyId) is null) return BadRequest("The currency is missing");
             return _repo.GetTotalAmountInCurrency(leadId, currencyId);
         }
 

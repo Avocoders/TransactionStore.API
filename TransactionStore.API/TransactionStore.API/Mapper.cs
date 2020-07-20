@@ -64,7 +64,7 @@ namespace TransactionStore.API
             };
         }
 
-        public TransactionOutputModel ConvertTransferTransactionToTransactionOutputModel(TransferTransaction transaction)
+        public TransactionOutputModel ConvertTransferTransactionToTransactionOutputModel(TransferTransaction transaction) // к удалению
         {
             return new TransactionOutputModel()
             {
@@ -102,7 +102,7 @@ namespace TransactionStore.API
         }
 
 
-        public TransactionOutputModel ConvertTransactionDtoToTransactionOutputModelForSearch(TransactionDto transactionDto)
+        public TransactionOutputModel ConvertTransactionDtoToTransactionOutputModelForSearch(TransactionDto transactionDto) // переименовать в ConvertTransactionDtoToTransactionOutputModel после удаления других методов
         {
             return new TransactionOutputModel()
             {
@@ -115,7 +115,7 @@ namespace TransactionStore.API
             };
         }
 
-        public List<TransactionOutputModel> ConvertTransactionDtosToTransactionOutputModelsForSearch(List<TransactionDto> transactions)
+        public List<TransactionOutputModel> ConvertTransactionDtosToTransactionOutputModelsForSearch(List<TransactionDto> transactions) // переименовать в ConvertTransactionDtosToTransactionOutputModels после удаления других методов
         {
             List<TransactionOutputModel> models = new List<TransactionOutputModel>();
             foreach (var transaction in transactions)
@@ -135,7 +135,7 @@ namespace TransactionStore.API
         }
 
 
-        public TransactionOutputModel ConvertTransferTransactionToTransactionOutputModelForSearch(TransferTransaction transaction)
+        public TransactionOutputModel ConvertTransferTransactionToTransactionOutputModelForSearch(TransferTransaction transaction) // переименовать в ConvertTransferTransactionToTransactionOutputModel после удаления других методов
         {
             return new TransactionOutputModel()
             {
