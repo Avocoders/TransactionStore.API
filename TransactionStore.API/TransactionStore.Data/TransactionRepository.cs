@@ -33,23 +33,6 @@ namespace TransactionStore.Data
             return result;
         }
 
-        public DataWrapper<List<TransferTransaction>> GetByLeadId(long leadId)
-        {
-            var result = new DataWrapper<List<TransferTransaction>>();
-            try
-            {
-                string sqlExpression = "Transaction_GetByLeadId @leadId";
-                result.Data = _connection.Query<TransferTransaction>(sqlExpression, new { leadId }).ToList();
-                result.IsOk = true;
-            }
-
-            catch (Exception e)
-            {
-                result.ExceptionMessage = e.Message;
-            }
-            return result;
-        }
-
         public DataWrapper<List<long>> AddTransfer(TransferTransaction transfer)
         {
 
@@ -74,7 +57,44 @@ namespace TransactionStore.Data
             try
             {
                 string sqlExpression = "Transaction_GetById @id";
-                result.Data = _connection.Query<TransferTransaction>(sqlExpression, new { id }).FirstOrDefault();
+                result.Data = _connection.Query<TransferTransaction, TransactionTypeDto, CurrencyDto, TransferTransaction>(sqlExpression,
+                    (transaction, type, currency) =>
+                    {
+                        TransferTransaction transactionEntry;
+                        transactionEntry = transaction;
+                        transactionEntry.Type = type;
+                        transactionEntry.Currency = currency;
+                        return transactionEntry;
+                    }, 
+                    new { id },
+                    splitOn: "id").FirstOrDefault();
+                result.IsOk = true;
+            }
+
+            catch (Exception e)
+            {
+                result.ExceptionMessage = e.Message;
+            }
+            return result;
+        }
+
+        public DataWrapper<List<TransferTransaction>> GetByLeadId(long leadId)
+        {
+            var result = new DataWrapper<List<TransferTransaction>>();
+            try
+            {
+                string sqlExpression = "Transaction_GetByLeadId @leadId";
+                result.Data = _connection.Query<TransferTransaction, TransactionTypeDto, CurrencyDto, TransferTransaction>(sqlExpression,
+                    (transaction, type, currency) =>
+                    {
+                        TransferTransaction transactionEntry;
+                        transactionEntry = transaction;
+                        transactionEntry.Type = type;
+                        transactionEntry.Currency = currency;
+                        return transactionEntry;
+                    },
+                    new { leadId },
+                    splitOn: "id").ToList();
                 result.IsOk = true;
             }
 

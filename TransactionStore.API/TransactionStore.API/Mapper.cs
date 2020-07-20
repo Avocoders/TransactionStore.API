@@ -60,7 +60,7 @@ namespace TransactionStore.API
                     Id = transfer.CurrencyId
                 },
                 Amount = transfer.Amount,
-                LeadIdReceiver = transfer.DestinationLeadId
+                LeadIdReceiver = transfer.LeadIdReceiver
             };
         }
 
@@ -68,13 +68,13 @@ namespace TransactionStore.API
         {
             return new TransactionOutputModel()
             {
-                LeadIdReceiver = transaction.LeadIdReceiver,
                 Id = transaction.Id ?? -1,
                 LeadId = transaction.LeadId,
                 Type = (string)Enum.GetName(typeof(TransactionType), transaction.Type.Id),
                 Currency = (string)Enum.GetName(typeof(TransactionCurrency), transaction.Currency.Id),
                 Amount = transaction.Amount,
-                Timestamp = transaction.Timestamp.ToString("dd.MM.yyyy HH:mm:ss")
+                Timestamp = transaction.Timestamp.ToString("dd.MM.yyyy HH:mm:ss"),
+                LeadIdReceiver = transaction.LeadIdReceiver
             }; 
         }
 
