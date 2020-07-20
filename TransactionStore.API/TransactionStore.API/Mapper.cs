@@ -5,6 +5,8 @@ using TransactionStore.Data;
 using System.Collections.Generic;
 using System;
 using TransactionStore.Core.Shared;
+using System.Globalization;
+using NUnit.Framework;
 
 namespace TransactionStore.API
 {
@@ -94,8 +96,8 @@ namespace TransactionStore.API
                 Type = parameters.Type,
                 Currency = parameters.Currency,
                 Amount = parameters.Amount,
-                FromDate = Convert.ToDateTime(parameters.FromDate),
-                TillDate = Convert.ToDateTime(parameters.TillDate)
+                FromDate = string.IsNullOrEmpty(parameters.FromDate)? null : (DateTime?)DateTime.ParseExact(parameters.FromDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+                TillDate = string.IsNullOrEmpty(parameters.TillDate) ? null : (DateTime?)DateTime.ParseExact(parameters.TillDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture)
             };
         }
 
@@ -106,8 +108,8 @@ namespace TransactionStore.API
             {
                 Id = transactionDto.Id ?? -1,
                 LeadId = transactionDto.LeadId,
-                Type = transactionDto.Type.Name,
-                Currency = transactionDto.Currency.Name,
+                Type = (string)Enum.GetName(typeof(TransactionType), transactionDto.Type.Id),
+                Currency = (string)Enum.GetName(typeof(TransactionCurrency), transactionDto.Currency.Id),
                 Amount = transactionDto.Amount,
                 Timestamp = transactionDto.Timestamp.ToString("dd.MM.yyyy HH:mm:ss")
             };
@@ -118,13 +120,12 @@ namespace TransactionStore.API
             List<TransactionOutputModel> models = new List<TransactionOutputModel>();
             foreach (var transaction in transactions)
             {
-                if (transaction.Type.Name == "Transfer" )
+                if (transaction.GetType() == typeof(TransferTransaction))
                 {
                     models.Add(ConvertTransferTransactionToTransactionOutputModelForSearch((TransferTransaction)transaction));
                 }
                 else
                 {
-
                     models.Add(ConvertTransactionDtoToTransactionOutputModelForSearch(transaction));
                 }
 
@@ -141,8 +142,8 @@ namespace TransactionStore.API
                 LeadIdReceiver = transaction.LeadIdReceiver,
                 Id = transaction.Id ?? -1,
                 LeadId = transaction.LeadId,
-                Type = transaction.Type.Name,
-                Currency = transaction.Currency.Name,
+                Type = (string)Enum.GetName(typeof(TransactionType), transaction.Type.Id),
+                Currency = (string)Enum.GetName(typeof(TransactionCurrency), transaction.Currency.Id),
                 Amount = transaction.Amount,
                 Timestamp = transaction.Timestamp.ToString("dd.MM.yyyy HH:mm:ss")
             };

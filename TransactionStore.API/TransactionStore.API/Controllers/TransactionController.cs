@@ -80,7 +80,7 @@ namespace TransactionStore.API.Controllers
             return _repo.GetTotalAmountInCurrency(leadId, currencyId);
         }
 
-        [HttpGet("search")]
+        [HttpPost("search")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters([FromBody] SearchParametersInputModel searchModel)
         {
             var dataWrapper = _repo.SearchTransactions(_mapper.ConvertSearchParametersInputModelToTransactionSearchParameters(searchModel));
