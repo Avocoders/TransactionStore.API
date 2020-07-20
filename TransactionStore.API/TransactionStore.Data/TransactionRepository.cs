@@ -78,23 +78,26 @@ namespace TransactionStore.Data
             return result;
         }
 
-        public DataWrapper<List<TransferTransaction>> GetByLeadId(long leadId)
+        public DataWrapper<List<TransactionDto>> GetByLeadId(long leadId)
         {
-            var result = new DataWrapper<List<TransferTransaction>>();
+            var result = new DataWrapper<List<TransactionDto>>();
             try
             {
+                var transactions = new List<TransactionDto>();
                 string sqlExpression = "Transaction_GetByLeadId @leadId";
-                result.Data = _connection.Query<TransferTransaction, TransactionTypeDto, CurrencyDto, TransferTransaction>(sqlExpression,
+                var data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression,
                     (transaction, type, currency) =>
                     {
-                        TransferTransaction transactionEntry;
+                        TransactionDto transactionEntry;
                         transactionEntry = transaction;
                         transactionEntry.Type = type;
                         transactionEntry.Currency = currency;
+                        transactions.Add(transactionEntry);
                         return transactionEntry;
                     },
                     new { leadId },
                     splitOn: "id").ToList();
+                result.Data = ProcessTransactions(transactions);
                 result.IsOk = true;
             }
 
@@ -173,7 +176,7 @@ namespace TransactionStore.Data
 
             decimal balance=0;
 
-            List<TransferTransaction> transactions = new List<TransferTransaction>();
+            List<TransactionDto> transactions;
 
             transactions = GetByLeadId(leadId).Data;
 
