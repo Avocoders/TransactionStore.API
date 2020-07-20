@@ -60,30 +60,6 @@ namespace TransactionStore.API
             };
         }
 
-        public TransactionOutputModel ConvertTransferTransactionToTransactionOutputModel(TransferTransaction transaction) // к удалению
-        {
-            return new TransactionOutputModel()
-            {
-                Id = transaction.Id ?? -1,
-                LeadId = transaction.LeadId,
-                Type = (string)Enum.GetName(typeof(TransactionType), transaction.Type.Id),
-                Currency = (string)Enum.GetName(typeof(TransactionCurrency), transaction.Currency.Id),
-                Amount = transaction.Amount,
-                Timestamp = transaction.Timestamp.ToString("dd.MM.yyyy HH:mm:ss"),
-                LeadIdReceiver = transaction.LeadIdReceiver
-            }; 
-        }
-
-        public List<TransactionOutputModel> ConvertTransferTransactionsToTransactionOutputModel(List<TransferTransaction> transactions)
-        {
-            List<TransactionOutputModel> models = new List<TransactionOutputModel>();
-            foreach(var dto in transactions)
-            {
-                models.Add(ConvertTransferTransactionToTransactionOutputModel(dto));
-            }
-            return models;
-        }
-
         public TransactionSearchParameters ConvertSearchParametersInputModelToTransactionSearchParameters(SearchParametersInputModel parameters)
         {
             return new TransactionSearchParameters()
@@ -98,7 +74,7 @@ namespace TransactionStore.API
         }
 
 
-        public TransactionOutputModel ConvertTransactionDtoToTransactionOutputModelForSearch(TransactionDto transactionDto) // переименовать в ConvertTransactionDtoToTransactionOutputModel после удаления других методов
+        public TransactionOutputModel ConvertTransactionDtoToTransactionOutputModel(TransactionDto transactionDto)
         {
             return new TransactionOutputModel()
             {
@@ -111,18 +87,18 @@ namespace TransactionStore.API
             };
         }
 
-        public List<TransactionOutputModel> ConvertTransactionDtosToTransactionOutputModelsForSearch(List<TransactionDto> transactions) // переименовать в ConvertTransactionDtosToTransactionOutputModels после удаления других методов
+        public List<TransactionOutputModel> ConvertTransactionDtosToTransactionOutputModels(List<TransactionDto> transactions)
         {
             List<TransactionOutputModel> models = new List<TransactionOutputModel>();
             foreach (var transaction in transactions)
             {
                 if (transaction.GetType() == typeof(TransferTransaction))
                 {
-                    models.Add(ConvertTransferTransactionToTransactionOutputModelForSearch((TransferTransaction)transaction));
+                    models.Add(ConvertTransferTransactionToTransactionOutputModel((TransferTransaction)transaction));
                 }
                 else
                 {
-                    models.Add(ConvertTransactionDtoToTransactionOutputModelForSearch(transaction));
+                    models.Add(ConvertTransactionDtoToTransactionOutputModel(transaction));
                 }
 
 
@@ -131,7 +107,7 @@ namespace TransactionStore.API
         }
 
 
-        public TransactionOutputModel ConvertTransferTransactionToTransactionOutputModelForSearch(TransferTransaction transaction) // переименовать в ConvertTransferTransactionToTransactionOutputModel после удаления других методов
+        public TransactionOutputModel ConvertTransferTransactionToTransactionOutputModel(TransferTransaction transaction) 
         {
             return new TransactionOutputModel()
             {

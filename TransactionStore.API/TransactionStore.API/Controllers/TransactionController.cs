@@ -66,7 +66,7 @@ namespace TransactionStore.API.Controllers
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
         {
             DataWrapper<List<TransactionDto>> dataWrapper = _repo.GetByLeadId(leadId);
-            return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModelsForSearch);
+            return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModels);
         }
 
         [HttpGet("{Id}")]
@@ -74,7 +74,7 @@ namespace TransactionStore.API.Controllers
         {
             if (id <= 0) return BadRequest("Transactions were not found");
             DataWrapper<List<TransactionDto>> dataWrapper = _repo.GetById(id);
-            return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModelsForSearch);
+            return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModels);
         }
 
         [HttpGet("{leadId}/balance/{currencyId}")]
@@ -88,7 +88,7 @@ namespace TransactionStore.API.Controllers
         public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters([FromBody] SearchParametersInputModel searchModel)
         {
             var dataWrapper = _repo.SearchTransactions(_mapper.ConvertSearchParametersInputModelToTransactionSearchParameters(searchModel));
-            return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModelsForSearch);
+            return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModels);
         }
 
         private delegate T DtoConverter<T, K>(K dto);
