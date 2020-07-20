@@ -58,7 +58,7 @@ namespace TransactionStore.API.Controllers
         {
             string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
-            TransferTransaction transfer = _mapper.ConvertTransferInputModelToTransferTransactionDto(transactionModel);
+            TransferTransaction transfer = _mapper.ConvertTransferInputModelToTransferTransaction(transactionModel);
             DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
             return MakeResponse(dataWrapper);
         }
