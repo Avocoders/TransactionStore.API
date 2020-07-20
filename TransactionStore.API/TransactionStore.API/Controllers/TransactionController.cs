@@ -36,8 +36,7 @@ namespace TransactionStore.API.Controllers
         [HttpPost("deposit")]
         public ActionResult<long> CreateDepositTransaction([FromBody] TransactionInputModel transactionModel)
         {
-            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
-            if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
+            if (transactionModel.Amount <= 0) return BadRequest("The amount is missing");
             TransactionDto transactionDto = _mapper.ConvertTransactionInputModelDepositToTransactionDto(transactionModel);
             DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
             return MakeResponse(dataWrapper);

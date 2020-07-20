@@ -22,7 +22,15 @@ namespace TransactionStore.Data
             try
             {
                 string sqlExpression = "Transaction_Add @leadId, @typeId, @currencyId, @amount";
-                result.Data = _connection.Query<long>(sqlExpression, transactionDto).FirstOrDefault();
+                result.Data = _connection.Query<long>(sqlExpression, 
+                    new
+                    {
+                        transactionDto.Id,
+                        transactionDto.LeadId,
+                        TypeId = transactionDto.Type.Id,
+                        CurrencyId =transactionDto.Currency.Id,
+                        transactionDto.Amount
+                    }).FirstOrDefault();
                 result.IsOk = true;
             }
 
