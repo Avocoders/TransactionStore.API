@@ -81,7 +81,6 @@ namespace TransactionStore.API.Controllers
         public ActionResult<decimal> GetBalanceByLeadIdInCurrency(long leadId, byte currencyId)
         {
             if (leadId <= 0) return BadRequest("Lead was not found");
-            if (Enum.GetName(typeof(TransactionCurrency), currencyId) is null) return BadRequest("The currency is missing");
             return _repo.GetTotalAmountInCurrency(leadId, currencyId);
         }
 
