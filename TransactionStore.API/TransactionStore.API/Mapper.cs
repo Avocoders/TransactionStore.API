@@ -63,15 +63,16 @@ namespace TransactionStore.API
         public TransactionSearchParameters ConvertSearchParametersInputModelToTransactionSearchParameters(SearchParametersInputModel parameters)
         {
             return new TransactionSearchParameters()
-            {
-                LeadId = parameters.LeadId,
-                TypeId = parameters.Type,
-                CurrencyId = parameters.Currency,
-                AmountBegin = parameters.AmountBegin,
-                AmountEnd = parameters.AmountEnd,
-                FromDate = string.IsNullOrEmpty(parameters.FromDate)? null : (DateTime?)DateTime.ParseExact(parameters.FromDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture),
-                TillDate = string.IsNullOrEmpty(parameters.TillDate) ? null : (DateTime?)DateTime.ParseExact(parameters.TillDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture)
-            };
+                {
+                    LeadId = parameters.LeadId,
+                    TypeId = parameters.Type,
+                    CurrencyId = parameters.Currency,
+                    AmountBegin = parameters.Type == (byte)TransactionType.Deposit ? parameters.AmountBegin : -parameters.AmountEnd,
+                    AmountEnd = parameters.Type == (byte)TransactionType.Deposit ? parameters.AmountEnd : -parameters.AmountBegin,
+                    FromDate = string.IsNullOrEmpty(parameters.FromDate) ? null : (DateTime?)DateTime.ParseExact(parameters.FromDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+                    TillDate = string.IsNullOrEmpty(parameters.TillDate) ? null : (DateTime?)DateTime.ParseExact(parameters.TillDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture)
+                };
+            
         }
 
 
@@ -83,7 +84,7 @@ namespace TransactionStore.API
                 LeadId = transactionDto.LeadId,
                 Type = (string)Enum.GetName(typeof(TransactionType), transactionDto.Type.Id),
                 Currency = (string)Enum.GetName(typeof(TransactionCurrency), transactionDto.Currency.Id),
-                Amount = transactionDto.Amount,
+                Amount = transactionDto.Type.Id == (byte)TransactionType.Deposit ? transactionDto.Amount : -transactionDto.Amount,
                 Timestamp = transactionDto.Timestamp.ToString("dd.MM.yyyy HH:mm:ss")
             };
         }
@@ -117,7 +118,7 @@ namespace TransactionStore.API
                 LeadId = transaction.LeadId,
                 Type = (string)Enum.GetName(typeof(TransactionType), transaction.Type.Id),
                 Currency = (string)Enum.GetName(typeof(TransactionCurrency), transaction.Currency.Id),
-                Amount = transaction.Amount,
+                Amount = transaction.Type.Id == (byte)TransactionType.Deposit ? transaction.Amount : -transaction.Amount,
                 Timestamp = transaction.Timestamp.ToString("dd.MM.yyyy HH:mm:ss")
             };
         }
