@@ -65,9 +65,10 @@ namespace TransactionStore.API
             return new TransactionSearchParameters()
             {
                 LeadId = parameters.LeadId,
-                Type = parameters.Type,
-                Currency = parameters.Currency,
-                Amount = parameters.Amount,
+                TypeId = parameters.Type,
+                CurrencyId = parameters.Currency,
+                AmountBegin = parameters.AmountBegin,
+                AmountEnd = parameters.AmountEnd,
                 FromDate = string.IsNullOrEmpty(parameters.FromDate)? null : (DateTime?)DateTime.ParseExact(parameters.FromDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture),
                 TillDate = string.IsNullOrEmpty(parameters.TillDate) ? null : (DateTime?)DateTime.ParseExact(parameters.TillDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture)
             };
