@@ -133,7 +133,7 @@ namespace TransactionStore.Data
             try
             {
                 var transactions = new List<TransactionDto>();
-                string sqlExpression = "Transaction_Search @leadId, @type, @currency, @amount, @fromDate, @tillDate";
+                string sqlExpression = "Transaction_Search @leadId, @typeId, @currencyId, @amountBegin, @amountEnd, @fromDate, @tillDate";
                 var data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression, 
                     (transaction, type, currency) =>
                     {
