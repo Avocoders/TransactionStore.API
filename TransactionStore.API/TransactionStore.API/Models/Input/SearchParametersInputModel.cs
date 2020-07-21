@@ -7,10 +7,10 @@ namespace TransactionStore.API.Models.Input
 {
     public class SearchParametersInputModel
     {
-        public long LeadId { get; set; }
-        public string Type { get; set; }
-        public string Currency { get; set; }
-        public decimal Amount { get; set; }
+        public long? LeadId { get; set; }
+        public byte? Type { get; set; }
+        public byte? Currency { get; set; }
+        public decimal? Amount { get; set; }
         public string FromDate { get; set; }
         public string TillDate { get; set; }
     }
