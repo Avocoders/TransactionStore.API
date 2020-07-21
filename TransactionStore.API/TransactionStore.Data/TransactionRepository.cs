@@ -191,11 +191,12 @@ namespace TransactionStore.Data
 
         public decimal GetTotalAmountInCurrency(long leadId, byte currency)
         {
-            decimal balance=0;
+            decimal balance = 0;
             List<TransactionDto> transactions;
             transactions = GetByLeadId(leadId).Data;
             foreach(var transaction in transactions)
             {
+                if(transaction.LeadId!=leadId)transaction.Amount*=-1;
                 if (currency == (byte)TransactionCurrency.RUR)
                 {
                     if (transaction.Currency.Id == (byte)TransactionCurrency.USD) transaction.Amount *= 71;
