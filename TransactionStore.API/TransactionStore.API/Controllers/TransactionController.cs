@@ -16,12 +16,12 @@ namespace TransactionStore.API.Controllers
     {
         private readonly ILogger<TransactionController> _logger;
         private readonly Mapper _mapper;
-        private readonly TransactionRepository _repo;
-        public TransactionController(ILogger<TransactionController> logger)
+        private readonly ITransactionRepository _repo;
+        public TransactionController(ILogger<TransactionController> logger, ITransactionRepository repo)
         {
             _logger = logger;
             _mapper = new Mapper();
-            _repo = new TransactionRepository();
+            _repo = repo;
         }
 
         private string FormBadRequest(decimal amount, long leadId, byte currencyId)

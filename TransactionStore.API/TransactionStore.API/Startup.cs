@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Firewall;
+using Autofac;
+using TransactionStore.API.Configuration;
 
 namespace TransactionStore.API
 {
@@ -49,6 +51,10 @@ namespace TransactionStore.API
                 .DenyAllAccess()
                 .ExceptFromLocalhost()
                 .ExceptFromIPAddresses(new List<IPAddress>() {IPAddress.Parse("127.0.0.1")}));
+        }
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new AutofacModule());
         }
     }
 }

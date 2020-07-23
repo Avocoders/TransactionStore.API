@@ -8,27 +8,27 @@ using TransactionStore.Core.Shared;
 
 namespace TransactionStore.Data
 {
-    public class TransactionRepository
+    public class TransactionRepository : ITransactionRepository
     {
         private readonly IDbConnection _connection;
         public TransactionRepository()
         {
             _connection = Connection.GetConnection();
         }
-        
+
         public DataWrapper<long> Add(TransactionDto transactionDto) // дженерик с OK, ErrorMessage, Data
         {
             var result = new DataWrapper<long>();
             try
             {
                 string sqlExpression = "Transaction_Add @leadId, @typeId, @currencyId, @amount";
-                result.Data = _connection.Query<long>(sqlExpression, 
+                result.Data = _connection.Query<long>(sqlExpression,
                     new
                     {
                         transactionDto.Id,
                         transactionDto.LeadId,
                         TypeId = transactionDto.Type.Id,
-                        CurrencyId =transactionDto.Currency.Id,
+                        CurrencyId = transactionDto.Currency.Id,
                         transactionDto.Amount
                     }).FirstOrDefault();
                 result.IsOk = true;
@@ -48,7 +48,7 @@ namespace TransactionStore.Data
             try
             {
                 string sqlExpression = "Transaction_AddTransfer @leadId, @amount, @currencyId, @leadIdReceiver";
-                result.Data = _connection.Query<long>(sqlExpression, 
+                result.Data = _connection.Query<long>(sqlExpression,
                     new
                     {
                         transfer.Id,
@@ -134,7 +134,7 @@ namespace TransactionStore.Data
             {
                 var transactions = new List<TransactionDto>();
                 string sqlExpression = "Transaction_Search @leadId, @typeId, @currencyId, @amountBegin, @amountEnd, @fromDate, @tillDate";
-                var data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression, 
+                var data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression,
                     (transaction, type, currency) =>
                     {
                         TransactionDto transactionEntry;
@@ -152,7 +152,7 @@ namespace TransactionStore.Data
                 result.Data = ProcessTransactions(transactions);
                 result.IsOk = true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 result.ExceptionMessage = e.Message;
             }
@@ -194,20 +194,20 @@ namespace TransactionStore.Data
             decimal balance = 0;
             List<TransactionDto> transactions;
             transactions = GetByLeadId(leadId).Data;
-            foreach(var transaction in transactions)
+            foreach (var transaction in transactions)
             {
-                if(transaction.LeadId!=leadId)transaction.Amount*=-1;
+                if (transaction.LeadId != leadId) transaction.Amount *= -1;
                 if (currency == (byte)TransactionCurrency.RUR)
                 {
                     if (transaction.Currency.Id == (byte)TransactionCurrency.USD) transaction.Amount *= 71;
                     if (transaction.Currency.Id == (byte)TransactionCurrency.EUR) transaction.Amount *= 80;
                 }
-                if(currency == (byte)TransactionCurrency.USD)
+                if (currency == (byte)TransactionCurrency.USD)
                 {
                     if (transaction.Currency.Id == (byte)TransactionCurrency.RUR) transaction.Amount /= 71;
                     if (transaction.Currency.Id == (byte)TransactionCurrency.EUR) transaction.Amount *= (decimal)0.89;
                 }
-                if(currency == (byte)TransactionCurrency.EUR)
+                if (currency == (byte)TransactionCurrency.EUR)
                 {
                     if (transaction.Currency.Id == 1) transaction.Amount /= 80;
                     if (transaction.Currency.Id == (byte)TransactionCurrency.USD) transaction.Amount *= (decimal)1.13;
