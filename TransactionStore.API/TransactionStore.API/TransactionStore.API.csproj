@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TransactionStore.Business\TransactionStore.Business.csproj" />
     <ProjectReference Include="..\TransactionStore.Core\TransactionStore.Core.csproj" />
     <ProjectReference Include="..\TransactionStore.Data\TransactionStore.Data.csproj" />
   </ItemGroup>

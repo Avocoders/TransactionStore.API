@@ -7,6 +7,7 @@ using TransactionStore.Data.DTO;
 using TransactionStore.Data;
 using TransactionStore.Core.Shared;
 using System;
+using TransactionStore.Business;
 
 namespace TransactionStore.API.Controllers
 {
@@ -17,11 +18,13 @@ namespace TransactionStore.API.Controllers
         private readonly ILogger<TransactionController> _logger;
         private readonly Mapper _mapper;
         private readonly ITransactionRepository _repo;
-        public TransactionController(ILogger<TransactionController> logger, ITransactionRepository repo)
+        private readonly ITransactionService _transactionService;
+        public TransactionController(ILogger<TransactionController> logger, ITransactionRepository repo, ITransactionService transactionService)
         {
             _logger = logger;
             _mapper = new Mapper();
             _repo = repo;
+            _transactionService = transactionService;
         }
 
         private string FormBadRequest(decimal amount, long leadId, byte currencyId)
@@ -96,7 +99,7 @@ namespace TransactionStore.API.Controllers
         [HttpPost("search")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters([FromBody] SearchParametersInputModel searchModel)
         {
-            var dataWrapper = _repo.SearchTransactions(_mapper.ConvertSearchParametersInputModelToTransactionSearchParameters(searchModel));
+            var dataWrapper = _transactionService.SearchTransactions(_mapper.ConvertSearchParametersInputModelToTransactionSearchParameters(searchModel));
             return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModels);
         }
 

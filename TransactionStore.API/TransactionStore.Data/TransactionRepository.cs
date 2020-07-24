@@ -149,7 +149,7 @@ namespace TransactionStore.Data
                     searchParameters,
                     splitOn: "id").ToList();
 
-                result.Data = ProcessTransactions(transactions);
+                result.Data =transactions;
                 result.IsOk = true;
             }
             catch (Exception e)

@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using TransactionStore.Data;
+using TransactionStore.Business;
 
 namespace TransactionStore.API.Configuration
 {
@@ -8,6 +9,7 @@ namespace TransactionStore.API.Configuration
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<TransactionRepository>().As<ITransactionRepository>();
+            builder.RegisterType<TransactionService>().As<ITransactionService>();
         }
     }
 }
