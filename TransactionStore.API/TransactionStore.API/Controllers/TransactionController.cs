@@ -9,6 +9,7 @@ using TransactionStore.Core.Shared;
 using System;
 using TransactionStore.Business;
 using Microsoft.AspNetCore.Http;
+using AutoMapper;
 
 namespace TransactionStore.API.Controllers
 {
@@ -18,14 +19,16 @@ namespace TransactionStore.API.Controllers
     {
         private readonly ILogger<TransactionController> _logger;
         private readonly Mapper _mapper;
+        private readonly IMapper _imapper;
         private readonly ITransactionRepository _repo;
         private readonly ITransactionService _transactionService;
-        public TransactionController(ILogger<TransactionController> logger, ITransactionRepository repo, ITransactionService transactionService)
+        public TransactionController(ILogger<TransactionController> logger, ITransactionRepository repo, ITransactionService transactionService, IMapper imapper)
         {
             _logger = logger;
             _mapper = new Mapper();
             _repo = repo;
             _transactionService = transactionService;
+            _imapper = imapper;
         }
 
         private string FormBadRequest(decimal amount, long leadId, byte currencyId)
@@ -44,9 +47,10 @@ namespace TransactionStore.API.Controllers
         {
             if (_repo.GetById(transactionModel.LeadId) is null) return BadRequest("The user is not found");
             if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");
-            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
-            if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
-            TransactionDto transactionDto = _mapper.ConvertTransactionInputModelDepositToTransactionDto(transactionModel);
+            //string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
+            //if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
+            TransactionDto transactionDto = _imapper.Map<TransactionDto>(transactionModel);
+            transactionDto.Type.Id = (byte)TransactionType.Deposit;
             DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
             return MakeResponse(dataWrapper);
         }

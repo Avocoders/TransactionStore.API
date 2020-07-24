@@ -12,6 +12,7 @@ using System;
 using Autofac.Extensions.DependencyInjection;
 using TransactionStore.Core;
 using Microsoft.OpenApi.Models;
+using AutoMapper;
 
 namespace TransactionStore.API
 {
@@ -68,6 +69,13 @@ namespace TransactionStore.API
                 c.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "CRM.API", Version = "v1" });
             }
             );
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+            services.AddMvc();
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
