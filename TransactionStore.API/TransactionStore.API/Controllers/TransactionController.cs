@@ -8,6 +8,7 @@ using TransactionStore.Data;
 using TransactionStore.Core.Shared;
 using System;
 using TransactionStore.Business;
+using Microsoft.AspNetCore.Http;
 
 namespace TransactionStore.API.Controllers
 {
@@ -36,6 +37,8 @@ namespace TransactionStore.API.Controllers
             return "";
         }
 
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("deposit")]
         public ActionResult<long> CreateDepositTransaction([FromBody] TransactionInputModel transactionModel)
         {
@@ -48,6 +51,8 @@ namespace TransactionStore.API.Controllers
             return MakeResponse(dataWrapper);
         }
 
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("withdraw")]
         public ActionResult<long> CreateWithdrawTransaction([FromBody] TransactionInputModel transactionModel)
         {
@@ -60,6 +65,8 @@ namespace TransactionStore.API.Controllers
             return MakeResponse(dataWrapper);
         }
 
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("transfer")]
         public ActionResult<List<long>> CreateTransferTransaction([FromBody] TransferInputModel transactionModel)
         {
@@ -72,6 +79,8 @@ namespace TransactionStore.API.Controllers
             return MakeResponse(dataWrapper);
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("by-lead-id/{leadId}")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
         {
@@ -80,6 +89,8 @@ namespace TransactionStore.API.Controllers
             return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModels);
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("{Id}")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionById(long id)
         {
@@ -88,6 +99,8 @@ namespace TransactionStore.API.Controllers
             return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModels);
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("{leadId}/balance/{currencyId}")]
         public ActionResult<decimal> GetBalanceByLeadIdInCurrency(long leadId, byte currencyId)
         {
@@ -96,6 +109,7 @@ namespace TransactionStore.API.Controllers
             return _repo.GetTotalAmountInCurrency(leadId, currencyId);
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]        
         [HttpPost("search")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters([FromBody] SearchParametersInputModel searchModel)
         {

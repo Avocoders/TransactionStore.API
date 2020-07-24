@@ -11,6 +11,7 @@ using TransactionStore.API.Configuration;
 using System;
 using Autofac.Extensions.DependencyInjection;
 using TransactionStore.Core;
+using Microsoft.OpenApi.Models;
 
 namespace TransactionStore.API
 {
@@ -29,6 +30,16 @@ namespace TransactionStore.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
 
             app.UseHttpsRedirection();
 
@@ -52,6 +63,11 @@ namespace TransactionStore.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "CRM.API", Version = "v1" });
+            }
+            );
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
