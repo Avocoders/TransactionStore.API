@@ -76,7 +76,7 @@ namespace TransactionStore.API.Controllers
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
         {
             if (leadId <= 0) return BadRequest("Lead was not found");
-            DataWrapper<List<TransactionDto>> dataWrapper = _repo.GetByLeadId(leadId);
+            DataWrapper<List<TransactionDto>> dataWrapper = _transactionService.GetByLeadId(leadId);
             return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModels);
         }
 
@@ -84,7 +84,7 @@ namespace TransactionStore.API.Controllers
         public ActionResult<List<TransactionOutputModel>> GetTransactionById(long id)
         {
             if (id <= 0) return BadRequest("Transactions were not found");
-            DataWrapper<List<TransactionDto>> dataWrapper = _repo.GetById(id);
+            DataWrapper<List<TransactionDto>> dataWrapper = _transactionService.GetById(id);
             return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModels);
         }
 

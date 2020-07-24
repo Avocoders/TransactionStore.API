@@ -14,6 +14,27 @@ namespace TransactionStore.Business
         {
             _transactionRepository = transactionRepository;
         }
+
+        public DataWrapper<List<TransactionDto>> GetById(long id) 
+        {
+            var data = _transactionRepository.GetById(id);
+            if (data.IsOk)
+            {
+                data.Data = ProcessTransactions(data.Data);
+            }
+            return data;
+        }
+
+        public DataWrapper<List<TransactionDto>> GetByLeadId(long leadId) 
+        {
+            var data = _transactionRepository.GetByLeadId(leadId);
+            if (data.IsOk)
+            {
+                data.Data = ProcessTransactions(data.Data);
+            }
+            return data;
+        }
+
         public DataWrapper<List<TransactionDto>> SearchTransactions(TransactionSearchParameters searchParameters)
         {
             var data = _transactionRepository.SearchTransactions(searchParameters);

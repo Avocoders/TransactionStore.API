@@ -8,6 +8,9 @@ using Microsoft.Extensions.Hosting;
 using Firewall;
 using Autofac;
 using TransactionStore.API.Configuration;
+using System;
+using Autofac.Extensions.DependencyInjection;
+using TransactionStore.Core;
 
 namespace TransactionStore.API
 {
@@ -19,14 +22,6 @@ namespace TransactionStore.API
         }
 
         public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddControllers();
-            
-        }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -52,6 +47,13 @@ namespace TransactionStore.API
                 .ExceptFromLocalhost()
                 .ExceptFromIPAddresses(new List<IPAddress>() {IPAddress.Parse("127.0.0.1")}));
         }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllers();
+        }
+
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterModule(new AutofacModule());

@@ -5,9 +5,5 @@
         public T Data {get; set;}
         public bool IsOk { get; set; } = false;
         public string ExceptionMessage { get; set; }
-
-
-
-
     }
 }
