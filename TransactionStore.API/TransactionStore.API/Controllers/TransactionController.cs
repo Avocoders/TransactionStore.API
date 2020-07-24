@@ -7,6 +7,7 @@ using TransactionStore.Data.DTO;
 using TransactionStore.Data;
 using TransactionStore.Core.Shared;
 using System;
+using TransactionStore.Business;
 
 namespace TransactionStore.API.Controllers
 {
@@ -16,12 +17,14 @@ namespace TransactionStore.API.Controllers
     {
         private readonly ILogger<TransactionController> _logger;
         private readonly Mapper _mapper;
-        private readonly TransactionRepository _repo;
-        public TransactionController(ILogger<TransactionController> logger)
+        private readonly ITransactionRepository _repo;
+        private readonly ITransactionService _transactionService;
+        public TransactionController(ILogger<TransactionController> logger, ITransactionRepository repo, ITransactionService transactionService)
         {
             _logger = logger;
             _mapper = new Mapper();
-            _repo = new TransactionRepository();
+            _repo = repo;
+            _transactionService = transactionService;
         }
 
         private string FormBadRequest(decimal amount, long leadId, byte currencyId)
@@ -73,7 +76,7 @@ namespace TransactionStore.API.Controllers
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
         {
             if (leadId <= 0) return BadRequest("Lead was not found");
-            DataWrapper<List<TransactionDto>> dataWrapper = _repo.GetByLeadId(leadId);
+            DataWrapper<List<TransactionDto>> dataWrapper = _transactionService.GetByLeadId(leadId);
             return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModels);
         }
 
@@ -81,7 +84,7 @@ namespace TransactionStore.API.Controllers
         public ActionResult<List<TransactionOutputModel>> GetTransactionById(long id)
         {
             if (id <= 0) return BadRequest("Transactions were not found");
-            DataWrapper<List<TransactionDto>> dataWrapper = _repo.GetById(id);
+            DataWrapper<List<TransactionDto>> dataWrapper = _transactionService.GetById(id);
             return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModels);
         }
 
@@ -96,7 +99,7 @@ namespace TransactionStore.API.Controllers
         [HttpPost("search")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters([FromBody] SearchParametersInputModel searchModel)
         {
-            var dataWrapper = _repo.SearchTransactions(_mapper.ConvertSearchParametersInputModelToTransactionSearchParameters(searchModel));
+            var dataWrapper = _transactionService.SearchTransactions(_mapper.ConvertSearchParametersInputModelToTransactionSearchParameters(searchModel));
             return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModels);
         }
 

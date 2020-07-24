@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TransactionStore.Core\TransactionStore.Core.csproj" />
+    <ProjectReference Include="..\TransactionStore.Data\TransactionStore.Data.csproj" />
+  </ItemGroup>
+
+</Project>
