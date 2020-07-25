@@ -37,6 +37,11 @@ namespace TransactionStore.API.Controllers
             return "";
         }
 
+        /// <summary>
+        /// Creates deposit operation and returns transaction's id!!!:D
+        /// </summary>
+        /// <param name="transactionModel"></param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("deposit")]
@@ -51,6 +56,11 @@ namespace TransactionStore.API.Controllers
             return MakeResponse(dataWrapper);
         }
 
+        /// <summary>
+        /// Creates withdraw operation and returns transaction's id!!!;D
+        /// </summary>
+        /// <param name="transactionModel"></param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("withdraw")]
@@ -68,6 +78,11 @@ namespace TransactionStore.API.Controllers
             return MakeResponse(dataWrapper);
         }
 
+        /// <summary>
+        /// Creates transfer operation and returns transaction's ids!!!;-)
+        /// </summary>
+        /// <param name="transactionModel"></param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("transfer")]
@@ -82,6 +97,11 @@ namespace TransactionStore.API.Controllers
             return MakeResponse(dataWrapper);
         }
 
+        /// <summary>
+        /// Gets list of transactions by leadId =)
+        /// </summary>
+        /// <param name="leadId"></param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("by-lead-id/{leadId}")]
@@ -92,6 +112,11 @@ namespace TransactionStore.API.Controllers
             return MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
         }
 
+        /// <summary>
+        /// Gets list of transactions by Id =D
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("{Id}")]
@@ -102,6 +127,12 @@ namespace TransactionStore.API.Controllers
             return MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
         }
 
+        /// <summary>
+        /// Get lead's balance by leadId in concrete currency |:-D
+        /// </summary>
+        /// <param name="leadId"></param>
+        /// <param name="currencyId"></param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("{leadId}/balance/{currencyId}")]
@@ -112,6 +143,11 @@ namespace TransactionStore.API.Controllers
             return _repo.GetTotalAmountInCurrency(leadId, currencyId);
         }
 
+        /// <summary>
+        /// Searches transactions by any parameters ^_^
+        /// </summary>
+        /// <param name="searchModel"></param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]        
         [HttpPost("search")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters([FromBody] SearchParametersInputModel searchModel)

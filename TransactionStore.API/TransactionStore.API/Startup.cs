@@ -10,6 +10,7 @@ using Autofac;
 using TransactionStore.API.Configuration;
 using Microsoft.OpenApi.Models;
 using AutoMapper;
+using System;
 
 namespace TransactionStore.API
 {
@@ -64,6 +65,7 @@ namespace TransactionStore.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "CRM.API", Version = "v1" });
+                c.IncludeXmlComments(String.Format(@"{0}\Swagger.XML", AppDomain.CurrentDomain.BaseDirectory));
             }
             );
             var mappingConfig = new MapperConfiguration(mc =>
