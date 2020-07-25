@@ -8,9 +8,6 @@ using Microsoft.Extensions.Hosting;
 using Firewall;
 using Autofac;
 using TransactionStore.API.Configuration;
-using System;
-using Autofac.Extensions.DependencyInjection;
-using TransactionStore.Core;
 using Microsoft.OpenApi.Models;
 using AutoMapper;
 

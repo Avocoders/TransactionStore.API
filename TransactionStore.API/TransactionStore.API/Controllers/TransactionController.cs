@@ -6,7 +6,6 @@ using TransactionStore.API.Models.Output;
 using TransactionStore.Data.DTO;
 using TransactionStore.Data;
 using TransactionStore.Core.Shared;
-using System;
 using TransactionStore.Business;
 using Microsoft.AspNetCore.Http;
 using AutoMapper;
@@ -17,15 +16,13 @@ namespace TransactionStore.API.Controllers
     [Route("[Controller]")]
     public class TransactionController : Controller
     {
-        private readonly ILogger<TransactionController> _logger;
-        //private readonly Mapper _mapper;
+        private readonly ILogger<TransactionController> _logger;        
         private readonly IMapper _imapper;
         private readonly ITransactionRepository _repo;
         private readonly ITransactionService _transactionService;
         public TransactionController(ILogger<TransactionController> logger, ITransactionRepository repo, ITransactionService transactionService, IMapper imapper)
         {
-            _logger = logger;
-            //_mapper = new Mapper();
+            _logger = logger;            
             _repo = repo;
             _transactionService = transactionService;
             _imapper = imapper;
@@ -66,7 +63,7 @@ namespace TransactionStore.API.Controllers
             TransactionDto transactionDto = _imapper.Map<TransactionDto>(transactionModel);
             transactionDto.Type = new TransactionTypeDto();
             transactionDto.Type.Id = (byte)TransactionType.Withdraw;
-            transactionDto.Amount = -transactionDto.Amount;
+            transactionDto.Amount *= -1;
             DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
             return MakeResponse(dataWrapper);
         }
@@ -119,12 +116,10 @@ namespace TransactionStore.API.Controllers
         [HttpPost("search")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters([FromBody] SearchParametersInputModel searchModel)
         {
-            if (string.IsNullOrEmpty(searchModel.FromDate))
-                { searchModel.FromDate = null; }
-            if (string.IsNullOrEmpty(searchModel.TillDate))
-            { searchModel.TillDate = null; }
-            if (searchModel.Type == (byte)TransactionType.Withdraw) { searchModel.AmountBegin *= -1; }
-            if (searchModel.Type == (byte)TransactionType.Withdraw) { searchModel.AmountEnd *= -1; }
+            if (string.IsNullOrEmpty(searchModel.FromDate)) searchModel.FromDate = null;            
+            if (string.IsNullOrEmpty(searchModel.TillDate)) searchModel.TillDate = null;            
+            if (searchModel.Type == (byte)TransactionType.Withdraw) searchModel.AmountBegin *= -1; 
+            if (searchModel.Type == (byte)TransactionType.Withdraw) searchModel.AmountEnd *= -1; 
             var dataWrapper = _transactionService.SearchTransactions(_imapper.Map<TransactionSearchParameters>(searchModel));
             return MakeResponse(dataWrapper, _imapper.Map<List<TransactionOutputModel>>);
         }
@@ -139,7 +134,6 @@ namespace TransactionStore.API.Controllers
             }
             return Ok(dataWrapper.Data);
         }
-
 
         private ActionResult<T> MakeResponse<T, K>(DataWrapper<K> dataWrapper, DtoConverter<T, K> dtoConverter)
         {
