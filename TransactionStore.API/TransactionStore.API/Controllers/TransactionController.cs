@@ -18,14 +18,14 @@ namespace TransactionStore.API.Controllers
     public class TransactionController : Controller
     {
         private readonly ILogger<TransactionController> _logger;
-        private readonly Mapper _mapper;
+        //private readonly Mapper _mapper;
         private readonly IMapper _imapper;
         private readonly ITransactionRepository _repo;
         private readonly ITransactionService _transactionService;
         public TransactionController(ILogger<TransactionController> logger, ITransactionRepository repo, ITransactionService transactionService, IMapper imapper)
         {
             _logger = logger;
-            _mapper = new Mapper();
+            //_mapper = new Mapper();
             _repo = repo;
             _transactionService = transactionService;
             _imapper = imapper;
@@ -46,10 +46,9 @@ namespace TransactionStore.API.Controllers
         public ActionResult<long> CreateDepositTransaction([FromBody] TransactionInputModel transactionModel)
         {
             if (_repo.GetById(transactionModel.LeadId) is null) return BadRequest("The user is not found");
-            if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");
-            //string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
-            //if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
+            if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");            
             TransactionDto transactionDto = _imapper.Map<TransactionDto>(transactionModel);
+            transactionDto.Type = new TransactionTypeDto();
             transactionDto.Type.Id = (byte)TransactionType.Deposit;
             DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
             return MakeResponse(dataWrapper);
@@ -64,7 +63,10 @@ namespace TransactionStore.API.Controllers
             if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");
             string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
-            TransactionDto transactionDto = _mapper.ConvertTransactionInputModelWithdrawToTransactionDto(transactionModel);
+            TransactionDto transactionDto = _imapper.Map<TransactionDto>(transactionModel);
+            transactionDto.Type = new TransactionTypeDto();
+            transactionDto.Type.Id = (byte)TransactionType.Withdraw;
+            transactionDto.Amount = -transactionDto.Amount;
             DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
             return MakeResponse(dataWrapper);
         }
@@ -78,7 +80,7 @@ namespace TransactionStore.API.Controllers
             if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");
             string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
-            TransferTransaction transfer = _mapper.ConvertTransferInputModelToTransferTransaction(transactionModel);
+            TransferTransaction transfer = _imapper.Map<TransferTransaction>(transactionModel);
             DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
             return MakeResponse(dataWrapper);
         }
@@ -90,7 +92,7 @@ namespace TransactionStore.API.Controllers
         {
             if (leadId <= 0) return BadRequest("Lead was not found");
             DataWrapper<List<TransactionDto>> dataWrapper = _transactionService.GetByLeadId(leadId);
-            return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModels);
+            return MakeResponse(dataWrapper, _imapper.Map<List<TransactionOutputModel>>);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -100,7 +102,7 @@ namespace TransactionStore.API.Controllers
         {
             if (id <= 0) return BadRequest("Transactions were not found");
             DataWrapper<List<TransactionDto>> dataWrapper = _transactionService.GetById(id);
-            return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModels);
+            return MakeResponse(dataWrapper, _imapper.Map<List<TransactionOutputModel>>);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -117,8 +119,14 @@ namespace TransactionStore.API.Controllers
         [HttpPost("search")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters([FromBody] SearchParametersInputModel searchModel)
         {
-            var dataWrapper = _transactionService.SearchTransactions(_mapper.ConvertSearchParametersInputModelToTransactionSearchParameters(searchModel));
-            return MakeResponse(dataWrapper, _mapper.ConvertTransactionDtosToTransactionOutputModels);
+            if (string.IsNullOrEmpty(searchModel.FromDate))
+                { searchModel.FromDate = null; }
+            if (string.IsNullOrEmpty(searchModel.TillDate))
+            { searchModel.TillDate = null; }
+            if (searchModel.Type == (byte)TransactionType.Withdraw) { searchModel.AmountBegin *= -1; }
+            if (searchModel.Type == (byte)TransactionType.Withdraw) { searchModel.AmountEnd *= -1; }
+            var dataWrapper = _transactionService.SearchTransactions(_imapper.Map<TransactionSearchParameters>(searchModel));
+            return MakeResponse(dataWrapper, _imapper.Map<List<TransactionOutputModel>>);
         }
 
         private delegate T DtoConverter<T, K>(K dto);

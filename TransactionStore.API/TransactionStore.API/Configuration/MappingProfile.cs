@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using TransactionStore.API.Models.Input;
+using TransactionStore.API.Models.Output;
 using TransactionStore.Core.Shared;
 using TransactionStore.Data;
 using TransactionStore.Data.DTO;
@@ -15,18 +13,20 @@ namespace TransactionStore.API.Configuration
         public MappingProfile()
         {
             CreateMap<TransactionInputModel, TransactionDto>()
-                .ForPath(dest => dest.Currency.Id, o => o.MapFrom(src => src.CurrencyId))            
-                .ForPath(destination => destination.Type.Id,
-                 opt => opt.MapFrom(source => Enum.GetName(typeof(TransactionType), 1)));
-
-            //CreateMap<TransactionInputModel, TransactionDto>()
-            //    .ForPath(dest => dest.Currency.Id, o => o.MapFrom(src => src.CurrencyId))
-            //    .ForPath(dest => dest.Amount, o => o.MapFrom(src => -src.Amount))
-            //    .ForMember(destination => destination.Type.Id,
-            //     opt => opt.MapFrom(source => Enum.GetName(typeof(TransactionType), 2)));
+                .ForPath(dest => dest.Currency.Id, o => o.MapFrom(src => src.CurrencyId));                
 
             CreateMap<TransferInputModel, TransferTransaction>()
                 .ForPath(dest => dest.Currency.Id, o => o.MapFrom(src => src.CurrencyId));
+
+            CreateMap<SearchParametersInputModel, TransactionSearchParameters>();
+
+            CreateMap<TransactionDto, TransactionOutputModel>()
+                .ForPath(dest => dest.Type, o => o.MapFrom(src => (string)Enum.GetName(typeof(TransactionType), src.Type.Id)))
+                .ForPath(dest => dest.Currency, o => o.MapFrom(src => (string)Enum.GetName(typeof(TransactionCurrency), src.Currency.Id)));
+
+            CreateMap<TransferTransaction, TransactionOutputModel>()
+                .ForPath(dest => dest.Type, o => o.MapFrom(src => (string)Enum.GetName(typeof(TransactionType), src.Type.Id)))
+                .ForPath(dest => dest.Currency, o => o.MapFrom(src => (string)Enum.GetName(typeof(TransactionCurrency), src.Currency.Id)));
         }
     }
 }
