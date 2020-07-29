@@ -16,7 +16,7 @@ namespace TransactionStore.Data
             _connection = Connection.GetConnection();
         }
 
-        public DataWrapper<long> Add(TransactionDto transactionDto) // дженерик с OK, ErrorMessage, Data
+        public DataWrapper<long> Add(TransactionDto transactionDto) 
         {
             var result = new DataWrapper<long>();
             try

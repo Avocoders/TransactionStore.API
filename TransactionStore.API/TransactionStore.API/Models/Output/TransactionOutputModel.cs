@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace TransactionStore.API.Models.Output
 {
     public class TransactionOutputModel

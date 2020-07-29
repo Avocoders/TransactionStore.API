@@ -8,10 +8,9 @@ using Microsoft.Extensions.Hosting;
 using Firewall;
 using Autofac;
 using TransactionStore.API.Configuration;
-using System;
-using Autofac.Extensions.DependencyInjection;
-using TransactionStore.Core;
 using Microsoft.OpenApi.Models;
+using AutoMapper;
+using System;
 
 namespace TransactionStore.API
 {
@@ -65,9 +64,17 @@ namespace TransactionStore.API
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "CRM.API", Version = "v1" });
+                c.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "TransactionStore.API", Version = "v1" });
+                c.IncludeXmlComments(String.Format(@"{0}\Swagger.XML", AppContext.BaseDirectory));
             }
             );
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+            services.AddMvc();
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
