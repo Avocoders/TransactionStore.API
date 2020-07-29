@@ -11,7 +11,12 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TransactionStore.Database",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionStore.Core", "TransactionStore.Core\TransactionStore.Core.csproj", "{4CE74369-AF20-4C72-8DAB-F0DE9D76BAAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionStore.Business", "TransactionStore.Business\TransactionStore.Business.csproj", "{9A87D82D-C1EC-4F2F-82F9-5F4CE2DB41EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionStore.Business", "TransactionStore.Business\TransactionStore.Business.csproj", "{9A87D82D-C1EC-4F2F-82F9-5F4CE2DB41EE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{56611EA5-FA51-4768-93AE-B4E34791E06A}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

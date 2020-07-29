@@ -64,8 +64,8 @@ namespace TransactionStore.API
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "CRM.API", Version = "v1" });
-                c.IncludeXmlComments(String.Format(@"{0}\Swagger.XML", AppDomain.CurrentDomain.BaseDirectory));
+                c.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "TransactionStore.API", Version = "v1" });
+                c.IncludeXmlComments(String.Format(@"{0}\Swagger.XML", AppContext.BaseDirectory));
             }
             );
             var mappingConfig = new MapperConfiguration(mc =>
