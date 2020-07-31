@@ -12,11 +12,21 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "transaction",
+      "launchUrl": "transaction/584",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
+
+    "IIST Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "transaction",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Testing"
+      }
+    },
+
     "TransactionStore.API": {
       "commandName": "Project",
       "launchBrowser": true,
