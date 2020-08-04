@@ -73,7 +73,7 @@ namespace TransactionStore.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "TransactionStore.API", Version = "v1" });
-                c.IncludeXmlComments(String.Format(@"{0}\Swagger.XML", AppContext.BaseDirectory));
+                //c.IncludeXmlComments(String.Format(@"{0}\Swagger.XML", AppContext.BaseDirectory));
             }
             );
             var mappingConfig = new MapperConfiguration(mc =>
@@ -89,6 +89,10 @@ namespace TransactionStore.API
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterModule(new AutofacModule());
+        }
+        protected virtual void ConfigureDependencies(IServiceCollection services)
+        {
+
         }
     }
 }
