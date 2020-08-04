@@ -61,6 +61,8 @@
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
     <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="dbo\Migration" />
+    <Folder Include="dbo\Migration\v1.1" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Transaction.sql" />
@@ -70,6 +72,7 @@
     <Build Include="dbo\Stored Procedures\Transaction_GetByLeadId.sql" />
     <Build Include="dbo\Stored Procedures\Transaction_GetById.sql" />
     <Build Include="dbo\Stored Procedures\Transaction_AddTransfer.sql" />
+    <Build Include="dbo\Migration\v1.1\Transaction1.1.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TransactionStore.Database.publish.xml" />
