@@ -61,6 +61,8 @@
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
     <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="dbo\Migration" />
+    <Folder Include="dbo\Migration\v1.1" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Currency.sql" />
@@ -72,5 +74,6 @@
     <Build Include="dbo\Stored Procedures\Transaction_GetByLeadId.sql" />
     <Build Include="dbo\Stored Procedures\Transaction_Search.sql" />
     <Build Include="dbo\Stored Procedures\CreateStrings.sql" />
+    <Build Include="dbo\Migration\v1.1\Transaction1.1.sql" />
   </ItemGroup>
 </Project>
