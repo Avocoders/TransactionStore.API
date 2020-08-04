@@ -5,15 +5,18 @@ using System.Data;
 using TransactionStore.Data.DTO;
 using Dapper;
 using TransactionStore.Core.Shared;
+using System.Data.SqlClient;
+using TransactionStore.Core;
+using Microsoft.Extensions.Options;
 
 namespace TransactionStore.Data
 {
     public class TransactionRepository : ITransactionRepository
     {
         private readonly IDbConnection _connection;
-        public TransactionRepository()
+        public TransactionRepository(IOptions<StorageOptions> options)
         {
-            _connection = Connection.GetConnection();
+            _connection = new SqlConnection(options.Value.DBConnectionString);
         }
 
         public DataWrapper<long> Add(TransactionDto transactionDto) 

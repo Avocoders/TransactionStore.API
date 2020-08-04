@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TransactionStore.API</name>
+    </assembly>
+    <members>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.CreateDepositTransaction(TransactionStore.API.Models.Input.TransactionInputModel)">
+            <summary>
+            Creates deposit operation and returns transaction's id!!!:D
+            </summary>
+            <param name="transactionModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.CreateWithdrawTransaction(TransactionStore.API.Models.Input.TransactionInputModel)">
+            <summary>
+            Creates withdraw operation and returns transaction's id!!!;D
+            </summary>
+            <param name="transactionModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.CreateTransferTransaction(TransactionStore.API.Models.Input.TransferInputModel)">
+            <summary>
+            Creates transfer operation and returns transaction's ids!!!;-)
+            </summary>
+            <param name="transactionModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.GetTransactionsByLeadId(System.Int64)">
+            <summary>
+            Gets list of transactions by leadId =)
+            </summary>
+            <param name="leadId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.GetTransactionById(System.Int64)">
+            <summary>
+            Gets list of transactions by Id =D
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.GetBalanceByLeadIdInCurrency(System.Int64,System.Byte)">
+            <summary>
+            Get lead's balance by leadId in concrete currency |:-D
+            </summary>
+            <param name="leadId"></param>
+            <param name="currencyId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.GetTransactionSearchParameters(TransactionStore.API.Models.Input.SearchParametersInputModel)">
+            <summary>
+            Searches transactions by any parameters ^_^
+            </summary>
+            <param name="searchModel"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
