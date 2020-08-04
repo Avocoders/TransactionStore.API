@@ -10,14 +10,12 @@ using Autofac;
 using TransactionStore.API.Configuration;
 using Microsoft.OpenApi.Models;
 using AutoMapper;
-using System;
 using TransactionStore.Core;
 
 namespace TransactionStore.API
 {
     public class Startup
     {
-
         public IConfiguration Configuration { get; set; }
         public Startup(IWebHostEnvironment env)
         {
@@ -31,8 +29,6 @@ namespace TransactionStore.API
             }
             Configuration = builder.Build();
         }
-
-
        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -52,10 +48,8 @@ namespace TransactionStore.API
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
 
-            app.UseHttpsRedirection();
-          
+            app.UseHttpsRedirection();          
             app.UseRouting();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

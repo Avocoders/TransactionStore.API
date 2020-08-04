@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using NUnit.Framework;
-using RestSharp;
 using System.Collections.Generic;
-using System.Linq;
 using TransactionStore.API.Models.Input;
-
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Text;
@@ -19,36 +16,7 @@ using TransactionStore.API.Models.Output;
 namespace NUnitTests
 {
     public class Tests
-    {
-        /*private RestClient client;
-        private RestRequest request;
-
-        [OneTimeSetUp]
-        public void Setup()
-        {
-            client = new RestClient("http://localhost:44388/transaction/");
-        }
-
-        [Test]
-        public void TestPost_CreateDepositTransaction()
-        {
-            request = new RestRequest("deposit");
-            var newTransactionInputModel = new TransactionInputModel
-            {
-                LeadId = 256,
-                CurrencyId = 2,
-                Amount = 80
-            };
-
-            request.Method = Method.POST;
-            request.AddJsonBody(newTransactionInputModel);
-            var response = client.Execute<long>(request);
-            Assert.AreEqual(true, response.IsSuccessful);
-            request.Method = Method.GET;
-            var results = client.Execute<long>(request);
-            Assert.That(results == response);
-        }*/
-
+    {        
         IWebHostBuilder webHostBuilder;
         TestServer server;
         HttpClient client;
@@ -95,6 +63,5 @@ namespace NUnitTests
             server.Dispose();
             client.Dispose();
         }
-
     }
 }
