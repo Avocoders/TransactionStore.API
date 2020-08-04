@@ -60,7 +60,7 @@ namespace NUnitTests
                   new WebHostBuilder()
                         .UseEnvironment("Development") // You can set the environment you want (development, staging, production)
                         .ConfigureServices(services => services.AddAutofac())
-                        .UseStartup<TestStartup>(); // Startup class of your web app project
+                        .UseStartup<Startup>(); // Startup class of your web app project
 
 
             server = new TestServer(webHostBuilder);
