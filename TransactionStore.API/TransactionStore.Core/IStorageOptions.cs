@@ -1,4 +1,8 @@
-﻿namespace TransactionStore.Core
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace TransactionStore.Core
 {
     public interface IStorageOptions
     {

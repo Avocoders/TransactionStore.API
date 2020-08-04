@@ -6,6 +6,7 @@ namespace TransactionStore.Data.DTO
     {
         public long? Id { get; set; }
         public long LeadId { get; set; }
+
         public decimal Amount { get; set; }
         public DateTime Timestamp { get; set; }        
         public TransactionTypeDto Type { get; set; }
