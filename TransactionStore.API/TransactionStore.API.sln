@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionStore.API", "Tra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionStore.Data", "TransactionStore.Data\TransactionStore.Data.csproj", "{19BDCC58-1F26-4418-A84E-BBBECAA6D279}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TransactionStore.Database", "TransactionStore.Database\TransactionStore.Database.sqlproj", "{4CD5B6EF-64B0-4F18-9D0B-0109683B5C9C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionStore.Core", "TransactionStore.Core\TransactionStore.Core.csproj", "{4CE74369-AF20-4C72-8DAB-F0DE9D76BAAA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionStore.Business", "TransactionStore.Business\TransactionStore.Business.csproj", "{9A87D82D-C1EC-4F2F-82F9-5F4CE2DB41EE}"
@@ -20,7 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DatabaseTransactionStore", "DatabaseTransactionStore\DatabaseTransactionStore.sqlproj", "{AE98CAE5-39F4-4503-A356-B32560CC67EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitTests", "NUnitTests\NUnitTests.csproj", "{8F41C98F-00C0-4477-BB86-347ADF8CEA9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NUnitTests", "NUnitTests\NUnitTests.csproj", "{8F41C98F-00C0-4477-BB86-347ADF8CEA9F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,12 +34,6 @@ Global
 		{19BDCC58-1F26-4418-A84E-BBBECAA6D279}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19BDCC58-1F26-4418-A84E-BBBECAA6D279}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19BDCC58-1F26-4418-A84E-BBBECAA6D279}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4CD5B6EF-64B0-4F18-9D0B-0109683B5C9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4CD5B6EF-64B0-4F18-9D0B-0109683B5C9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4CD5B6EF-64B0-4F18-9D0B-0109683B5C9C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{4CD5B6EF-64B0-4F18-9D0B-0109683B5C9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4CD5B6EF-64B0-4F18-9D0B-0109683B5C9C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4CD5B6EF-64B0-4F18-9D0B-0109683B5C9C}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{4CE74369-AF20-4C72-8DAB-F0DE9D76BAAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4CE74369-AF20-4C72-8DAB-F0DE9D76BAAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CE74369-AF20-4C72-8DAB-F0DE9D76BAAA}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -57,6 +57,29 @@ namespace NUnitTests
             Assert.AreEqual(actual.Type, "Deposit");
         }
 
+
+        [Test]
+        public async Task CreateWithdrawTest()
+        {
+            var transactionInputModel = new TransactionInputModel()
+            {
+                LeadId = 256,
+                CurrencyId = 2,
+                Amount = 80
+            };
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(transactionInputModel), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("https://localhost:44388/transaction/withdraw", jsonContent);
+            long id = Convert.ToInt64(await response.Content.ReadAsStringAsync());
+
+            string result = await client.GetStringAsync($"https://localhost:44388/transaction/{id}");
+            var actual = JsonConvert.DeserializeObject<List<TransactionOutputModel>>(result)[0];
+
+            Assert.AreEqual(actual.LeadId, 256);
+            Assert.AreEqual(actual.Currency, "USD");
+            Assert.AreEqual(actual.Amount, -80);
+            Assert.AreEqual(actual.Type, "Withdraw");
+        }
+
         [OneTimeTearDown]
         public void Teardown()
         {

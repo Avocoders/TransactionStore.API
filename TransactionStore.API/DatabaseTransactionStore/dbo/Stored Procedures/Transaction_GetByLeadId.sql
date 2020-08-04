@@ -2,9 +2,36 @@
   @leadId bigint
 as
 begin
-  select two.LeadId as TransientLeadId, one.Id, one.LeadId, one.Amount, one.CurrencyId, one.TypeId, one.[Timestamp]
-	from [dbo].[Transaction] as one
-		full outer join [dbo].[Transaction] as two on one.CurrencyId=two.CurrencyId and one.TypeId = two.TypeId
-			and one.[Timestamp]=two.[Timestamp] and one.Amount<>two.Amount and abs(one.Amount)=abs(two.Amount)
-	where one.LeadId=@leadId
+    select 
+       id,
+       LeadId,
+       Amount,
+       [Timestamp],
+       typeId,
+       currencyId
+     into #SearchResult 
+     from dbo.[Transaction] 
+     where (LeadId=@leadId )
+    
+     select 
+         t.Id,
+         t.LeadId,
+         t.Amount,
+         t.[Timestamp],
+         t.typeId as id,
+         t.currencyId as id
+      from #SearchResult s
+      join [Transaction] t on s.CurrencyId=t.CurrencyId and 
+                         s.TypeId = t.TypeId and
+                         s.[Timestamp]=t.[Timestamp] and
+                         s.Amount<>t.Amount and
+                         abs(s.Amount)=abs(t.Amount)
+      union select 
+           Id,
+           LeadId,
+           Amount,
+           [Timestamp],
+           typeId,
+           currencyId
+       from #SearchResult 
 end

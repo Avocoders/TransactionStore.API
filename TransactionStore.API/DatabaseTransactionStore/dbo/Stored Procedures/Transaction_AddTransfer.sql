@@ -3,7 +3,7 @@
 	@typeId tinyint,
 	@currencyId tinyint,
 	@amount money,
-	@destinationLeadId bigint
+	@leadIdReceiver bigint
 as
 begin
 	declare @timestamp datetime2 = sysdatetime()
@@ -11,7 +11,7 @@ begin
 		values (@leadId, @typeId, @currencyId, -@amount, @timestamp)
 		declare @lead bigint set @lead = scope_identity()
 	insert into [dbo].[Transaction] (LeadId, TypeId, CurrencyId, Amount, [Timestamp])
-		values (@destinationLeadId, @typeId, @currencyId, @amount, @timestamp)
+		values (@leadIdReceiver, @typeId, @currencyId, @amount, @timestamp)
 		select @lead as [lead]
 		union select scope_identity()
 end
