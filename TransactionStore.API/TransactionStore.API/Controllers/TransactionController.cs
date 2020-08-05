@@ -49,9 +49,8 @@ namespace TransactionStore.API.Controllers
         {
             if (_repo.GetById(transactionModel.LeadId) is null) return BadRequest("The user is not found");
             if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");            
-            TransactionDto transactionDto = _mapper.Map<TransactionDto>(transactionModel);
-            transactionDto.Type = new TransactionTypeDto() { Id = (byte)TransactionType.Deposit};       //бизнес логика    
-            DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
+            TransactionDto transactionDto = _mapper.Map<TransactionDto>(transactionModel);               
+            DataWrapper<long> dataWrapper = _transactionService.AddTransaction(1, transactionDto);
             return MakeResponse(dataWrapper);
         }
 
@@ -70,9 +69,7 @@ namespace TransactionStore.API.Controllers
             string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
             TransactionDto transactionDto = _mapper.Map<TransactionDto>(transactionModel);
-            transactionDto.Type = new TransactionTypeDto() { Id = (byte)TransactionType.Withdraw };   //  бизнес логика       
-            transactionDto.Amount *= -1;  //бизнес логика
-            DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
+            DataWrapper<long> dataWrapper = _transactionService.AddTransaction(2, transactionDto);
             return MakeResponse(dataWrapper);
         }
 
