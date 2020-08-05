@@ -1,12 +1,5 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using TransactionStore.API.Models.Input;
-using TransactionStore.API.Models.Output;
-using TransactionStore.Data.DTO;
-using TransactionStore.Data;
-using TransactionStore.Core.Shared;
-using TransactionStore.Business;
 using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using System.Net.Http;
@@ -28,8 +21,7 @@ namespace TransactionStore.API.Controllers
             _logger = logger;            
             _mapper = mapper;
             _httpClient = new HttpClient();
-        }
-               
+        }               
         
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -38,8 +30,7 @@ namespace TransactionStore.API.Controllers
         public async Task<string> ReceiveCurrencyRates()
         {
             var response = await _httpClient.GetAsync($"https://localhost:44352/rates");
-            return _currencyRates = await response.Content.ReadAsStringAsync();
-            
+            return _currencyRates = await response.Content.ReadAsStringAsync();            
         }
     }
 }

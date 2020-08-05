@@ -17,19 +17,23 @@ namespace TransactionStore.API
 {
     public class Startup
     {
-       
+
+        public IConfiguration Configuration { get; set; }
         public Startup(IWebHostEnvironment env)
         {
             var builder = new ConfigurationBuilder()
             .SetBasePath(env.ContentRootPath)
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
             .AddEnvironmentVariables();
+            if (!env.IsProduction())
+            {
+                builder.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+            }
             Configuration = builder.Build();
         }
 
 
-        public IConfiguration Configuration { get; }
+       
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -49,7 +53,7 @@ namespace TransactionStore.API
             });
 
             app.UseHttpsRedirection();
-
+          
             app.UseRouting();
 
             app.UseAuthorization();
@@ -73,7 +77,7 @@ namespace TransactionStore.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "TransactionStore.API", Version = "v1" });
-                c.IncludeXmlComments(String.Format(@"{0}\Swagger.XML", AppContext.BaseDirectory));
+                //c.IncludeXmlComments(String.Format(@"{0}\Swagger.XML", AppContext.BaseDirectory));
             }
             );
             var mappingConfig = new MapperConfiguration(mc =>
@@ -82,13 +86,19 @@ namespace TransactionStore.API
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
-            services.AddMvc();
+            services.AddMvcCore();
+            ConfigureDependencies(services);
             services.Configure<StorageOptions>(Configuration);
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterModule(new AutofacModule());
+        }
+
+        protected virtual void ConfigureDependencies(IServiceCollection services)
+        {
+
         }
     }
 }
