@@ -72,7 +72,21 @@ namespace TransactionStore.Business
                 }
             }
             nonTransferTransactions.AddRange(transfers);
-            return nonTransferTransactions;
+            return nonTransferTransactions;            
+        }
+
+        public DataWrapper<long> AddTransaction(int type, TransactionDto transactionDto)
+        {
+            if (type == 1)
+            { 
+                transactionDto.Type = new TransactionTypeDto() { Id = (byte)TransactionType.Deposit }; 
+            }
+            else
+            {
+                transactionDto.Type = new TransactionTypeDto() { Id = (byte)TransactionType.Withdraw };
+                transactionDto.Amount *= -1;
+            }
+            return _transactionRepository.Add(transactionDto);
         }
     }
 }

@@ -10,6 +10,6 @@ namespace TransactionStore.Data
         DataWrapper<List<TransactionDto>> GetById(long id);
         DataWrapper<List<TransactionDto>> GetByLeadId(long leadId);
         decimal GetTotalAmountInCurrency(long leadId, byte currency);
-        DataWrapper<List<TransactionDto>> SearchTransactions(TransactionSearchParameters searchParameters);
+        DataWrapper<List<TransactionDto>> SearchTransactions(TransactionSearchParameters searchParameters);       
     }
 }
