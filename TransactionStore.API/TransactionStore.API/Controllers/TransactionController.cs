@@ -28,10 +28,10 @@ namespace TransactionStore.API.Controllers
             _mapper = mapper;
         }
 
-        private string FormBadRequest(decimal amount, long leadId, byte currencyId)
+        private string FormBadRequest(decimal amount, long accountId, byte currencyId)
         {
             if (amount <= 0) return "The amount is missing";
-            decimal balance = _repo.GetTotalAmountInCurrency(leadId, currencyId);
+            decimal balance = _repo.GetTotalAmountInCurrency(accountId, currencyId);
             if (balance < 0) return "The balance of minus";
             if (balance < amount) return "Not enough money";
             return "";
@@ -47,7 +47,7 @@ namespace TransactionStore.API.Controllers
         [HttpPost("deposit")]
         public ActionResult<long> CreateDepositTransaction([FromBody] TransactionInputModel transactionModel)
         {
-            if (_repo.GetById(transactionModel.LeadId) is null) return BadRequest("The user is not found");
+            if (_repo.GetById(transactionModel.AccountId) is null) return BadRequest("The user is not found");
             if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");
             if(transactionModel.Amount <= 0) return BadRequest("The amount is missing");
             TransactionDto transactionDto = _mapper.Map<TransactionDto>(transactionModel);               
@@ -65,9 +65,9 @@ namespace TransactionStore.API.Controllers
         [HttpPost("withdraw")]
         public ActionResult<long> CreateWithdrawTransaction([FromBody] TransactionInputModel transactionModel)
         {
-            if (_repo.GetById(transactionModel.LeadId) is null) return BadRequest("The user is not found");
+            if (_repo.GetById(transactionModel.AccountId) is null) return BadRequest("The user is not found");
             if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");
-            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
+            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.AccountId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
             TransactionDto transactionDto = _mapper.Map<TransactionDto>(transactionModel);
             DataWrapper<long> dataWrapper = _transactionService.AddTransaction(2, transactionDto);
@@ -84,9 +84,9 @@ namespace TransactionStore.API.Controllers
         [HttpPost("transfer")]
         public ActionResult<List<long>> CreateTransferTransaction([FromBody] TransferInputModel transactionModel)
         {
-            if (_repo.GetById(transactionModel.LeadId) is null) return BadRequest("The user is not found");
+            if (_repo.GetById(transactionModel.AccountId) is null) return BadRequest("The user is not found");
             if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");
-            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
+            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.AccountId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
             TransferTransaction transfer = _mapper.Map<TransferTransaction>(transactionModel);                
             DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
@@ -94,17 +94,17 @@ namespace TransactionStore.API.Controllers
         }
 
         /// <summary>
-        /// Gets list of transactions by leadId =)
+        /// Gets list of transactions by accountId =)
         /// </summary>
-        /// <param name="leadId"></param>
+        /// <param name="accountId"></param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpGet("by-lead-id/{leadId}")]
-        public ActionResult<List<TransactionOutputModel>> GetTransactionsByLeadId(long leadId)
+        [HttpGet("by-account-id/{accountId}")]
+        public ActionResult<List<TransactionOutputModel>> GetTransactionsByAccountId(long accountId)
         {
-            if (leadId <= 0) return BadRequest("Lead was not found");
-            DataWrapper<List<TransactionDto>> dataWrapper = _transactionService.GetByLeadId(leadId);
+            if (accountId <= 0) return BadRequest("account was not found");
+            DataWrapper<List<TransactionDto>> dataWrapper = _transactionService.GetByAccountId(accountId);
             return MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
         }
 
@@ -124,19 +124,19 @@ namespace TransactionStore.API.Controllers
         }
 
         /// <summary>
-        /// Get lead's balance by leadId in concrete currency |:-D
+        /// Get account's balance by accountId in concrete currency |:-D
         /// </summary>
-        /// <param name="leadId"></param>
+        /// <param name="accountId"></param>
         /// <param name="currencyId"></param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpGet("{leadId}/balance/{currencyId}")]
-        public ActionResult<decimal> GetBalanceByLeadIdInCurrency(long leadId, byte currencyId)
+        [HttpGet("{accountId}/balance/{currencyId}")]
+        public ActionResult<decimal> GetBalanceByAccountIdInCurrency(long accountId, byte currencyId)
         {
-            if (leadId <= 0) return BadRequest("Lead was not found");
+            if (accountId <= 0) return BadRequest("Account was not found");
             if (currencyId <= 0) return BadRequest("Currency was not found");
-            return _repo.GetTotalAmountInCurrency(leadId, currencyId);
+            return _repo.GetTotalAmountInCurrency(accountId, currencyId);
         }
 
         /// <summary>

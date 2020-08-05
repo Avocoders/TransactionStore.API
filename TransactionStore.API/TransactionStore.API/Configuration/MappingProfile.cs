@@ -25,7 +25,7 @@ namespace TransactionStore.API.Configuration
             CreateMap<TransactionDto, TransactionOutputModel>()
                 .ForPath(dest => dest.Type, o => o.MapFrom(src => Enum.GetName(typeof(TransactionType), src.Type.Id)))
                 .ForPath(dest => dest.Currency, o => o.MapFrom(src => Enum.GetName(typeof(TransactionCurrency), src.Currency.Id)))
-                .AfterMap((src, dest) => { var tmp = (TransferTransaction)src; dest.LeadIdReceiver = tmp.LeadIdReceiver; }); 
+                .AfterMap((src, dest) => { var tmp = (TransferTransaction)src; dest.AccountIdReceiver = tmp.AccountIdReceiver; }); 
 
             CreateMap<TransferTransaction, TransactionOutputModel>()
                 .ForPath(dest => dest.Type, o => o.MapFrom(src => Enum.GetName(typeof(TransactionType), src.Type.Id)))

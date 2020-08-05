@@ -4,7 +4,7 @@ namespace TransactionStore.Data
 {
     public class TransactionSearchParameters
     {
-        public long? LeadId { get; set; }
+        public long? AccountId { get; set; }
         public byte? TypeId { get; set; }
         public byte? CurrencyId { get; set; }
         public decimal? AmountBegin { get; set; }
