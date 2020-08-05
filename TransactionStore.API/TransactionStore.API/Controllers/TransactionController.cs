@@ -48,7 +48,8 @@ namespace TransactionStore.API.Controllers
         public ActionResult<long> CreateDepositTransaction([FromBody] TransactionInputModel transactionModel)
         {
             if (_repo.GetById(transactionModel.LeadId) is null) return BadRequest("The user is not found");
-            if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");            
+            if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");
+            if(transactionModel.Amount <= 0) return BadRequest("The amount is missing");
             TransactionDto transactionDto = _mapper.Map<TransactionDto>(transactionModel);               
             DataWrapper<long> dataWrapper = _transactionService.AddTransaction(1, transactionDto);
             return MakeResponse(dataWrapper);
