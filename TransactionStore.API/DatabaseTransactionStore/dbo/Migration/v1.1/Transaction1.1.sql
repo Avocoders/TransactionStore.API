@@ -1,9 +1,15 @@
-﻿alter table [Transaction]
+﻿truncate table dbo.[Transaction]
+go
+
+
+alter table dbo.[Transaction]
 drop column [LeadId]
+go
 
 
-alter table [Transaction]
+alter table dbo.[Transaction]
 add [AccountId] bigint not null
+go
 
 
 alter procedure [dbo].[Transaction_Add]
@@ -28,6 +34,7 @@ begin
 			@timestamp)
 	select scope_identity();
 end
+go
 
 
 alter procedure Transaction_AddTransfer
@@ -67,6 +74,7 @@ begin
 	select @account as [account]
 	union select scope_identity()
 end
+go
 
 
 alter procedure [dbo].[Transaction_GetById]
@@ -106,6 +114,7 @@ begin
            currencyId
        from #SearchResult 
 end
+go
 
 
 alter procedure [dbo].[Transaction_GetByLeadId]
@@ -145,6 +154,7 @@ begin
            currencyId
        from #SearchResult 
 end
+go
 
 
 alter procedure CreateStrings
@@ -238,6 +248,7 @@ as
 	set @length = @length+1
 	end
 end
+go
 
 
 alter procedure  Transaction_Search
@@ -339,3 +350,4 @@ begin
         end
 		exec  sp_sqlexec @resultSql
 end
+go
