@@ -47,6 +47,7 @@
     <DefineTrace>true</DefineTrace>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatTSqlWarningsAsErrors>False</TreatTSqlWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
@@ -74,6 +75,15 @@
     <Build Include="dbo\Stored Procedures\Transaction_GetByLeadId.sql" />
     <Build Include="dbo\Stored Procedures\Transaction_Search.sql" />
     <Build Include="dbo\Stored Procedures\CreateStrings.sql" />
-    <Build Include="dbo\Migration\v1.1\Transaction1.1.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="dbo\Migration\v1.1\TransactionStore-v1.1.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Script.PostDeployment1.sql" />
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>
