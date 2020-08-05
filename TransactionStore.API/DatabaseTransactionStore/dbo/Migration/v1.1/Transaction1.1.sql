@@ -1,8 +1,16 @@
-﻿alter table [Transaction]
-drop column [LeadId]
+﻿truncate table dbo.[Transaction]
+go
 
-alter table [Transaction]
+
+alter table dbo.[Transaction]
+drop column [LeadId]
+go
+
+
+alter table dbo.[Transaction]
 add [AccountId] bigint not null
+go
+
 
 alter procedure [dbo].[Transaction_Add]
 	@accountId bigint,
@@ -12,53 +20,145 @@ alter procedure [dbo].[Transaction_Add]
 as
 begin
 	declare @timestamp datetime2 = sysdatetime()
-	insert into [dbo].[Transaction](AccountId, TypeId, CurrencyId, Amount, [Timestamp]) values(@accountId, @typeId, @currencyId, @amount, @timestamp)
+	insert into [dbo].[Transaction]
+		   (AccountId, 
+		    TypeId,
+			CurrencyId, 
+			Amount, 
+			[Timestamp]) 
+	values		
+		   (@accountId, 
+			@typeId, 
+			@currencyId, 
+			@amount, 
+			@timestamp)
 	select scope_identity();
 end
+go
+
 
 alter procedure Transaction_AddTransfer
 	@accountId bigint,
 	@typeId tinyint,
 	@currencyId tinyint,
 	@amount money,
-	@destinationAccountId bigint
+	@accountIdReceiver bigint
 as
 begin
 	declare @timestamp datetime2 = sysdatetime()
-	insert into [dbo].[Transaction] (AccountId, TypeId, CurrencyId, Amount, [Timestamp])
-		values (@accountId, @typeId, @currencyId, -@amount, @timestamp)
-		declare @account bigint set @account = scope_identity()
-	insert into [dbo].[Transaction] (AccountId, TypeId, CurrencyId, Amount, [Timestamp])
-		values (@destinationAccountId, @typeId, @currencyId, @amount, @timestamp)
-		select @account as [account]
-		union select scope_identity()
+	insert into [dbo].[Transaction] 
+		   (AccountId, 
+			TypeId, 
+			CurrencyId, 
+			Amount, 
+			[Timestamp])
+	values 
+		   (@accountId, 
+			@typeId,
+			@currencyId, 
+			-@amount, 
+			@timestamp)
+	declare @account bigint set @account = scope_identity()
+	insert into [dbo].[Transaction] 
+		   (AccountId, 
+			TypeId, 
+			CurrencyId, 
+			Amount, 
+			[Timestamp])
+	values 
+		   (@accountIdReceiver, 
+			@typeId, 
+			@currencyId,
+			@amount, 
+			@timestamp)
+	select @account as [account]
+	union select scope_identity()
 end
+go
+
 
 alter procedure [dbo].[Transaction_GetById]
-@Id bigint
+	@Id bigint
 as
 begin
-    select two.AccountId as TransientAccountId, one.Id, one.AccountId, one.Amount, one.CurrencyId, one.TypeId, one.[Timestamp]
-	from [dbo].[Transaction] as one
-		left outer join [dbo].[Transaction] as two on one.CurrencyId=two.CurrencyId and one.TypeId = two.TypeId
-			and one.[Timestamp]=two.[Timestamp] and one.Amount<>two.Amount and abs(one.Amount)=abs(two.Amount)
-	where one.Id=@Id
+    select 
+       id,
+       AccountId,
+       Amount,
+       [Timestamp],
+       typeId,
+       currencyId
+     into #SearchResult 
+     from dbo.[Transaction] 
+     where (Id=@id)
+    
+     select 
+         t.Id,
+         t.AccountId,
+         t.Amount,
+         t.[Timestamp],
+         t.typeId as id,
+         t.currencyId as id
+      from #SearchResult s
+      join [Transaction] t on s.CurrencyId=t.CurrencyId and 
+                         s.TypeId = t.TypeId and
+                         s.[Timestamp]=t.[Timestamp] and
+                         s.Amount<>t.Amount and
+                         abs(s.Amount)=abs(t.Amount)
+      union select 
+           Id,
+           AccountId,
+           Amount,
+           [Timestamp],
+           typeId,
+           currencyId
+       from #SearchResult 
 end
+go
 
 
 alter procedure [dbo].[Transaction_GetByLeadId]
-  @accountId bigint
+	@leadId bigint
 as
 begin
-  select two.AccountId as TransientAccountId, one.Id, one.AccountId, one.Amount, one.CurrencyId, one.TypeId, one.[Timestamp]
-	from [dbo].[Transaction] as one
-		full outer join [dbo].[Transaction] as two on one.CurrencyId=two.CurrencyId and one.TypeId = two.TypeId
-			and one.[Timestamp]=two.[Timestamp] and one.Amount<>two.Amount and abs(one.Amount)=abs(two.Amount)
-	where one.AccountId=@accountId
+    select 
+       id,
+       AccountId,
+       Amount,
+       [Timestamp],
+       typeId,
+       currencyId
+     into #SearchResult 
+     from dbo.[Transaction] 
+     where (AccountId=@accountId )
+    
+     select 
+         t.Id,
+         t.AccountId,
+         t.Amount,
+         t.[Timestamp],
+         t.typeId as id,
+         t.currencyId as id
+      from #SearchResult s
+      join [Transaction] t on s.CurrencyId=t.CurrencyId and 
+                         s.TypeId = t.TypeId and
+                         s.[Timestamp]=t.[Timestamp] and
+                         s.Amount<>t.Amount and
+                         abs(s.Amount)=abs(t.Amount)
+      union select 
+           Id,
+           AccountId,
+           Amount,
+           [Timestamp],
+           typeId,
+           currencyId
+       from #SearchResult 
 end
+go
+
 
 alter procedure CreateStrings
-@rowValue bigint 
+	@rowValue bigint 
 as
 	begin
 		declare @length int = 0
@@ -148,51 +248,52 @@ as
 	set @length = @length+1
 	end
 end
+go
 
 
 alter procedure  Transaction_Search
-@accountId bigint = null,
-@typeId int = null,
-@currencyId tinyint = null,
-@amountBegin money = null,
-@amountEnd money = null,
-@fromDate datetime2(7) = null,
-@tillDate datetime2(7) = null
+	@accountId bigint = null,
+	@typeId int = null,
+	@currencyId tinyint = null,
+	@amountBegin money = null,
+	@amountEnd money = null,
+	@fromDate datetime2(7) = null,
+	@tillDate datetime2(7) = null
 as
 begin
-declare @resultSql nvarchar(max)
-declare @partresult nvarchar(max) = ''
+	declare @resultSql nvarchar(max)
+	declare @partresult nvarchar(max) = ''
 
-if @typeId>0
+	if @typeId>0
 		begin
 			set @partresult= @partresult + ' and t.typeId = ' + convert(nvarchar(1), @typeId)
 		end
 
-if @currencyId>0
+	if @currencyId>0
 		begin
 			set @partresult= @partresult + ' and t.currencyId = ' + convert(nvarchar(1), @currencyId)
 		end
 
-if @amountBegin is not null
+	if @amountBegin is not null
 		begin
 			set @partresult = @partresult + ' and t.Amount >=''' + convert(nvarchar(10), @amountBegin)+''''
 		end
 
-if @amountEnd is not null
+	if @amountEnd is not null
 		begin
 			set @partresult = @partresult + ' and t.Amount <=''' + convert(nvarchar(10), @amountEnd)+''''
 		end
 
-if @fromDate is not null
+	if @fromDate is not null
 		begin
 			set @partresult = @partresult + ' and t.[Timestamp] >=''' + convert(nvarchar(10), @fromDate)+''''
 		end
 
-if @tillDate is not null
+	if @tillDate is not null
 		begin
 			set @partresult = @partresult + ' and t.[Timestamp] <=''' + convert(nvarchar(10), @tillDate)+''''
 		end
- if @accountId >0
+    if @accountId >0
       begin
 				set @partresult= @partresult + ' and t.AccountId = ' + convert(nvarchar(20), @accountId)
 	
@@ -208,7 +309,7 @@ if @tillDate is not null
             from dbo.[Transaction] as t
             where 1=1' 
 
- + @partresult
+		+ @partresult
            
             +' select 
                 t.Id,
@@ -249,3 +350,4 @@ if @tillDate is not null
         end
 		exec  sp_sqlexec @resultSql
 end
+go

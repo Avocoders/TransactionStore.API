@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Routing.Constraints;
 using System;
 using TransactionStore.API.Models.Input;
 using TransactionStore.API.Models.Output;
@@ -15,8 +16,9 @@ namespace TransactionStore.API.Configuration
             CreateMap<TransactionInputModel, TransactionDto>()
                 .ForPath(dest => dest.Currency.Id, o => o.MapFrom(src => src.CurrencyId));                
 
-            CreateMap<TransferInputModel, TransferTransaction>()
-                .ForPath(dest => dest.Currency.Id, o => o.MapFrom(src => src.CurrencyId));
+            CreateMap<TransferInputModel, TransferTransaction>()                
+                .ForPath(dest => dest.Currency.Id, o => o.MapFrom(src => src.CurrencyId))
+                .AfterMap((src, dest) => { dest.Type = new TransactionTypeDto() { Id = (byte)TransactionType.Transfer };});
 
             CreateMap<SearchParametersInputModel, TransactionSearchParameters>();
 

@@ -50,8 +50,7 @@ namespace TransactionStore.API.Controllers
             if (_repo.GetById(transactionModel.LeadId) is null) return BadRequest("The user is not found");
             if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");            
             TransactionDto transactionDto = _mapper.Map<TransactionDto>(transactionModel);
-            transactionDto.Type = new TransactionTypeDto();
-            transactionDto.Type.Id = (byte)TransactionType.Deposit;
+            transactionDto.Type = new TransactionTypeDto() { Id = (byte)TransactionType.Deposit};       //бизнес логика    
             DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
             return MakeResponse(dataWrapper);
         }
@@ -71,9 +70,8 @@ namespace TransactionStore.API.Controllers
             string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
             TransactionDto transactionDto = _mapper.Map<TransactionDto>(transactionModel);
-            transactionDto.Type = new TransactionTypeDto();
-            transactionDto.Type.Id = (byte)TransactionType.Withdraw;
-            transactionDto.Amount *= -1;
+            transactionDto.Type = new TransactionTypeDto() { Id = (byte)TransactionType.Withdraw };   //  бизнес логика       
+            transactionDto.Amount *= -1;  //бизнес логика
             DataWrapper<long> dataWrapper = _repo.Add(transactionDto);
             return MakeResponse(dataWrapper);
         }
@@ -92,9 +90,7 @@ namespace TransactionStore.API.Controllers
             if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");
             string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.LeadId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
-            TransferTransaction transfer = _mapper.Map<TransferTransaction>(transactionModel);
-            transfer.Type = new TransactionTypeDto();
-            transfer.Type.Id = (byte)TransactionType.Transfer;            
+            TransferTransaction transfer = _mapper.Map<TransferTransaction>(transactionModel);                
             DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
             return MakeResponse(dataWrapper);
         }
