@@ -108,8 +108,8 @@ begin
        from #SearchResult 
 end
 go
-alter procedure [dbo].[Transaction_GetByLeadId]
-	@leadId bigint
+create procedure [dbo].[Transaction_GetByAccountId]
+	@accountId bigint
 as
 begin
     select 
