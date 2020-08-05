@@ -12,6 +12,11 @@ add [AccountId] bigint not null
 go
 
 
+alter table dbo.[Transaction]
+add [ExchangeRates] decimal(18,10) not null
+go
+
+
 alter procedure [dbo].[Transaction_Add]
 	@accountId bigint,
 	@typeId tinyint,
