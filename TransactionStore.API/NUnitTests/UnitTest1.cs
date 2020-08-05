@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using NUnit.Framework;
 using System.Collections.Generic;
-using TransactionStore.API.Models.Input;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Text;
@@ -11,6 +10,7 @@ using System;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.TestHost;
 using TransactionStore.API;
+using TransactionStore.API.Models.Input;
 using TransactionStore.API.Models.Output;
 using System.Text.RegularExpressions;
 
@@ -41,7 +41,7 @@ namespace NUnitTests
         {
             var transactionInputModel = new TransactionInputModel()
             {
-                LeadId = 256,
+                AccountId = 256,
                 CurrencyId = 2,
                 Amount = 80
             };
@@ -52,7 +52,7 @@ namespace NUnitTests
             string result = await client.GetStringAsync(Configuration.LocalHost + $"transaction/{id}");
             var actual = JsonConvert.DeserializeObject<List<TransactionOutputModel>>(result)[0];
 
-            Assert.AreEqual(actual.LeadId, 256);
+            Assert.AreEqual(actual.AccountId, 256);
             Assert.AreEqual(actual.Currency, "USD");
             Assert.AreEqual(actual.Amount, 80);
             Assert.AreEqual(actual.Type, "Deposit");
@@ -63,7 +63,7 @@ namespace NUnitTests
         {
             var transactionInputModel = new TransactionInputModel()
             {
-                LeadId = 256,
+                AccountId = 256,
                 CurrencyId = 1,
                 Amount = 10
             };
@@ -74,7 +74,7 @@ namespace NUnitTests
             string result = await client.GetStringAsync(Configuration.LocalHost + $"transaction/{id}");
             var actual = JsonConvert.DeserializeObject<List<TransactionOutputModel>>(result)[0];
 
-            Assert.AreEqual(actual.LeadId, 256);
+            Assert.AreEqual(actual.AccountId, 256);
             Assert.AreEqual(actual.Currency, "RUR");
             Assert.AreEqual(actual.Amount, -10);
             Assert.AreEqual(actual.Type, "Withdraw");
@@ -85,10 +85,10 @@ namespace NUnitTests
         {
             var transferInputModel = new TransferInputModel()
             {
-                LeadId = 256,
+                AccountId = 256,
                 CurrencyId = 2,
                 Amount = 80,
-                LeadIdReceiver = 257
+                AccountIdReceiver = 257
             };
             var jsonContent = new StringContent(JsonConvert.SerializeObject(transferInputModel), Encoding.UTF8, "application/json");
             var response = await client.PostAsync(Configuration.LocalHost + "transaction/transfer", jsonContent);
@@ -98,11 +98,11 @@ namespace NUnitTests
             string result = await client.GetStringAsync(Configuration.LocalHost + $"transaction/{id}");
             var actual = JsonConvert.DeserializeObject<List<TransactionOutputModel>>(result)[0];
 
-            Assert.AreEqual(actual.LeadId, 256);
+            Assert.AreEqual(actual.AccountId, 256);
             Assert.AreEqual(actual.Currency, "USD");
             Assert.AreEqual(actual.Amount, -80);
             Assert.AreEqual(actual.Type, "Transfer");
-            Assert.AreEqual(actual.LeadIdReceiver, 257);
+            Assert.AreEqual(actual.AccountIdReceiver, 257);
         }
 
         [OneTimeTearDown]

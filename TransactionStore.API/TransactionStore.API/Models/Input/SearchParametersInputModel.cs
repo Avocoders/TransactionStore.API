@@ -2,7 +2,7 @@
 {
     public class SearchParametersInputModel
     {
-        public long? LeadId { get; set; }
+        public long? AccountId { get; set; }
         public byte? Type { get; set; }
         public byte? Currency { get; set; }
         public decimal? AmountBegin { get; set; }

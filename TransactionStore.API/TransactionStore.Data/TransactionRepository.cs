@@ -24,12 +24,12 @@ namespace TransactionStore.Data
             var result = new DataWrapper<long>();
             try
             {
-                string sqlExpression = "Transaction_Add @leadId, @typeId, @currencyId, @amount";
+                string sqlExpression = "Transaction_Add @accountId, @typeId, @currencyId, @amount";
                 result.Data = _connection.Query<long>(sqlExpression,
                     new
                     {
                         transactionDto.Id,
-                        transactionDto.LeadId,
+                        transactionDto.AccountId,
                         TypeId = transactionDto.Type.Id,
                         CurrencyId = transactionDto.Currency.Id,
                         transactionDto.Amount
@@ -50,16 +50,16 @@ namespace TransactionStore.Data
             var result = new DataWrapper<List<long>>();
             try
             {
-                string sqlExpression = "Transaction_AddTransfer @leadId, @typeId, @currencyId, @amount, @leadIdReceiver";
+                string sqlExpression = "Transaction_AddTransfer @accountId, @typeId, @currencyId, @amount, @accountIdReceiver";
                 result.Data = _connection.Query<long>(sqlExpression,
                     new
                     {
                         transfer.Id,
-                        transfer.LeadId,
+                        transfer.AccountId,
                         transfer.Amount,
                         typeId = transfer.Type.Id,
                         currencyId = transfer.Currency.Id,
-                        transfer.LeadIdReceiver
+                        transfer.AccountIdReceiver
                     }).ToList();
                 result.IsOk = true;
             }
@@ -101,13 +101,13 @@ namespace TransactionStore.Data
             return result;
         }
 
-        public DataWrapper<List<TransactionDto>> GetByLeadId(long leadId)
+        public DataWrapper<List<TransactionDto>> GetByAccountId(long accountId)
         {
             var result = new DataWrapper<List<TransactionDto>>();
             try
             {
                 var transactions = new List<TransactionDto>();
-                string sqlExpression = "Transaction_GetByLeadId @leadId";
+                string sqlExpression = "Transaction_GetByAccountId @accountId";
                 var data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression,
                     (transaction, type, currency) =>
                     {
@@ -118,7 +118,7 @@ namespace TransactionStore.Data
                         transactions.Add(transactionEntry);
                         return transactionEntry;
                     },
-                    new { leadId },
+                    new { accountId },
                     splitOn: "id").ToList();
                 result.Data = transactions;
                 result.IsOk = true;
@@ -137,7 +137,7 @@ namespace TransactionStore.Data
             try
             {
                 var transactions = new List<TransactionDto>();
-                string sqlExpression = "Transaction_Search @leadId, @typeId, @currencyId, @amountBegin, @amountEnd, @fromDate, @tillDate";
+                string sqlExpression = "Transaction_Search @accountId, @typeId, @currencyId, @amountBegin, @amountEnd, @fromDate, @tillDate";
                 var data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression,
                     (transaction, type, currency) =>
                     {
@@ -163,14 +163,14 @@ namespace TransactionStore.Data
             return result;
         }
 
-        public decimal GetTotalAmountInCurrency(long leadId, byte currency)
+        public decimal GetTotalAmountInCurrency(long accountId, byte currency)
         {
             decimal balance = 0;
             List<TransactionDto> transactions;
-            transactions = GetByLeadId(leadId).Data;
+            transactions = GetByAccountId(accountId).Data;
             foreach (var transaction in transactions)
             {
-                if (transaction.LeadId != leadId) transaction.Amount *= -1;
+                if (transaction.AccountId != accountId) transaction.Amount *= -1;
                 if (currency == (byte)TransactionCurrency.RUR)
                 {
                     if (transaction.Currency.Id == (byte)TransactionCurrency.USD) transaction.Amount *= 71;

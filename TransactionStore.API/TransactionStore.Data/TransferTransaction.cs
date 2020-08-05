@@ -4,6 +4,6 @@ namespace TransactionStore.Data
 {
     public class TransferTransaction : TransactionDto
     { 
-        public long LeadIdReceiver { get; set; }
+        public long AccountIdReceiver { get; set; }
     }
 }

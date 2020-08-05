@@ -25,9 +25,9 @@ namespace TransactionStore.Business
             return data;
         }
 
-        public DataWrapper<List<TransactionDto>> GetByLeadId(long leadId) 
+        public DataWrapper<List<TransactionDto>> GetByAccountId(long accountId) 
         {
-            var data = _transactionRepository.GetByLeadId(leadId);
+            var data = _transactionRepository.GetByAccountId(accountId);
             if (data.IsOk)
             {
                 data.Data = ProcessTransactions(data.Data);
@@ -62,12 +62,12 @@ namespace TransactionStore.Business
                     transfers.Add(new TransferTransaction()
                     {
                         Id = transfer.Id,
-                        LeadId = transfer.LeadId,
+                        AccountId = transfer.AccountId,
                         Type = transfer.Type,
                         Currency = transfer.Currency,
                         Amount = transfer.Amount,
                         Timestamp = transfer.Timestamp,
-                        LeadIdReceiver = transferReceiver?.LeadId ?? -1
+                        AccountIdReceiver = transferReceiver?.AccountId ?? -1
                     });
                 }
             }
