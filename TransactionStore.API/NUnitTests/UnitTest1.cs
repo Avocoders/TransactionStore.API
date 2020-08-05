@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using NUnit.Framework;
-using RestSharp;
 using System.Collections.Generic;
-using System.Linq;
 using TransactionStore.API.Models.Input;
 
 using System.Net.Http;
@@ -15,6 +13,7 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.TestHost;
 using TransactionStore.API;
 using TransactionStore.API.Models.Output;
+using System.Text.RegularExpressions;
 
 namespace NUnitTests
 {
@@ -66,8 +65,8 @@ namespace NUnitTests
             var transactionInputModel = new TransactionInputModel()
             {
                 LeadId = 256,
-                CurrencyId = 2,
-                Amount = 80
+                CurrencyId = 1,
+                Amount = 10
             };
             var jsonContent = new StringContent(JsonConvert.SerializeObject(transactionInputModel), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("https://localhost:44388/transaction/withdraw", jsonContent);
@@ -77,9 +76,34 @@ namespace NUnitTests
             var actual = JsonConvert.DeserializeObject<List<TransactionOutputModel>>(result)[0];
 
             Assert.AreEqual(actual.LeadId, 256);
+            Assert.AreEqual(actual.Currency, "RUR");
+            Assert.AreEqual(actual.Amount, -10);
+            Assert.AreEqual(actual.Type, "Withdraw");
+        }
+
+        [Test]
+        public async Task CreateTransferTest()
+        {
+            var transferInputModel = new TransferInputModel()
+            {
+                LeadId = 256,
+                CurrencyId = 2,
+                Amount = 80,
+                LeadIdReceiver = 257
+            };
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(transferInputModel), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("https://localhost:44388/transaction/transfer", jsonContent);
+            string ids = Convert.ToString(await response.Content.ReadAsStringAsync());
+            string[] data = Regex.Split(ids, @"\D+");
+            long id = Convert.ToInt64(data[1]);
+            string result = await client.GetStringAsync($"https://localhost:44388/transaction/{id}");
+            var actual = JsonConvert.DeserializeObject<List<TransactionOutputModel>>(result)[0];
+
+            Assert.AreEqual(actual.LeadId, 256);
             Assert.AreEqual(actual.Currency, "USD");
             Assert.AreEqual(actual.Amount, -80);
-            Assert.AreEqual(actual.Type, "Withdraw");
+            Assert.AreEqual(actual.Type, "Transfer");
+            Assert.AreEqual(actual.LeadIdReceiver, 257);
         }
 
         [OneTimeTearDown]
