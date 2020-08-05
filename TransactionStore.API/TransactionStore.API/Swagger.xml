@@ -41,7 +41,7 @@
         </member>
         <member name="M:TransactionStore.API.Controllers.TransactionController.GetBalanceByAccountIdInCurrency(System.Int64,System.Byte)">
             <summary>
-            Get lead's balance by accountId in concrete currency |:-D
+            Get account's balance by accountId in concrete currency |:-D
             </summary>
             <param name="accountId"></param>
             <param name="currencyId"></param>

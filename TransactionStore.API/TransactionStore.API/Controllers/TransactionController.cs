@@ -98,7 +98,7 @@ namespace TransactionStore.API.Controllers
         /// </summary>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        [ProducesResponseType(StatusCodes.Status200OK)]GetByAccountId
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("by-account-id/{accountId}")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByAccountId(long accountId)
@@ -124,7 +124,7 @@ namespace TransactionStore.API.Controllers
         }
 
         /// <summary>
-        /// Get lead's balance by accountId in concrete currency |:-D
+        /// Get account's balance by accountId in concrete currency |:-D
         /// </summary>
         /// <param name="accountId"></param>
         /// <param name="currencyId"></param>
@@ -134,7 +134,7 @@ namespace TransactionStore.API.Controllers
         [HttpGet("{accountId}/balance/{currencyId}")]
         public ActionResult<decimal> GetBalanceByAccountIdInCurrency(long accountId, byte currencyId)
         {
-            if (accountId <= 0) return BadRequest("Lead was not found");
+            if (accountId <= 0) return BadRequest("Account was not found");
             if (currencyId <= 0) return BadRequest("Currency was not found");
             return _repo.GetTotalAmountInCurrency(accountId, currencyId);
         }
