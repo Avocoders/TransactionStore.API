@@ -1,4 +1,9 @@
-﻿truncate table dbo.[Transaction]
+﻿DECLARE @currentDBVersion nvarchar(10);
+set @currentDBVersion = (select top(1) DbVersion from [dbo].[DbVersion] order by Created desc)
+
+IF @currentDBVersion <> '1.1'
+
+truncate table dbo.[Transaction]
 go
 alter table dbo.[Transaction]
 drop column [LeadId]
@@ -337,4 +342,6 @@ begin
         end
 		exec  sp_sqlexec @resultSql
 end
+go
+INSERT INTO dbo.[DbVersion] (Created, DbVersion) VALUES (SYSDATETIME(), '1.1')
 go
