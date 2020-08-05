@@ -1,22 +1,14 @@
 ﻿truncate table dbo.[Transaction]
 go
-
-
 alter table dbo.[Transaction]
 drop column [LeadId]
 go
-
-
 alter table dbo.[Transaction]
 add [AccountId] bigint not null
 go
-
-
 alter table dbo.[Transaction]
 add [ExchangeRates] decimal(18,10) not null
 go
-
-
 alter procedure [dbo].[Transaction_Add]
 	@accountId bigint,
 	@typeId tinyint,
@@ -40,8 +32,6 @@ begin
 	select scope_identity();
 end
 go
-
-
 alter procedure Transaction_AddTransfer
 	@accountId bigint,
 	@typeId tinyint,
@@ -80,8 +70,6 @@ begin
 	union select scope_identity()
 end
 go
-
-
 alter procedure [dbo].[Transaction_GetById]
 	@Id bigint
 as
@@ -120,8 +108,6 @@ begin
        from #SearchResult 
 end
 go
-
-
 alter procedure [dbo].[Transaction_GetByLeadId]
 	@leadId bigint
 as
@@ -160,8 +146,6 @@ begin
        from #SearchResult 
 end
 go
-
-
 alter procedure CreateStrings
 	@rowValue bigint 
 as
@@ -254,8 +238,6 @@ as
 	end
 end
 go
-
-
 alter procedure  Transaction_Search
 	@accountId bigint = null,
 	@typeId int = null,
