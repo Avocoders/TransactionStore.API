@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Hosting;
 using NUnit.Framework;
 using System.Collections.Generic;
 using TransactionStore.API.Models.Input;
-
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Text;
@@ -34,7 +33,7 @@ namespace NUnitTests
 
 
             server = new TestServer(webHostBuilder);
-            client = server.CreateClient();
+            client = server.CreateClient();            
         }
 
         [Test]
@@ -47,10 +46,10 @@ namespace NUnitTests
                 Amount = 80
             };
             var jsonContent = new StringContent(JsonConvert.SerializeObject(transactionInputModel), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("https://localhost:44388/transaction/deposit", jsonContent);
+            var response = await client.PostAsync(Configuration.LocalHost + "transaction/deposit", jsonContent);
             long id = Convert.ToInt64(await response.Content.ReadAsStringAsync());
 
-            string result = await client.GetStringAsync($"https://localhost:44388/transaction/{id}");
+            string result = await client.GetStringAsync(Configuration.LocalHost + $"transaction/{id}");
             var actual = JsonConvert.DeserializeObject<List<TransactionOutputModel>>(result)[0];
 
             Assert.AreEqual(actual.LeadId, 256);
@@ -69,10 +68,10 @@ namespace NUnitTests
                 Amount = 10
             };
             var jsonContent = new StringContent(JsonConvert.SerializeObject(transactionInputModel), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("https://localhost:44388/transaction/withdraw", jsonContent);
+            var response = await client.PostAsync(Configuration.LocalHost + "transaction/withdraw", jsonContent);
             long id = Convert.ToInt64(await response.Content.ReadAsStringAsync());
 
-            string result = await client.GetStringAsync($"https://localhost:44388/transaction/{id}");
+            string result = await client.GetStringAsync(Configuration.LocalHost + $"transaction/{id}");
             var actual = JsonConvert.DeserializeObject<List<TransactionOutputModel>>(result)[0];
 
             Assert.AreEqual(actual.LeadId, 256);
@@ -92,11 +91,11 @@ namespace NUnitTests
                 LeadIdReceiver = 257
             };
             var jsonContent = new StringContent(JsonConvert.SerializeObject(transferInputModel), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("https://localhost:44388/transaction/transfer", jsonContent);
+            var response = await client.PostAsync(Configuration.LocalHost + "transaction/transfer", jsonContent);
             string ids = Convert.ToString(await response.Content.ReadAsStringAsync());
             string[] data = Regex.Split(ids, @"\D+");
             long id = Convert.ToInt64(data[1]);
-            string result = await client.GetStringAsync($"https://localhost:44388/transaction/{id}");
+            string result = await client.GetStringAsync(Configuration.LocalHost + $"transaction/{id}");
             var actual = JsonConvert.DeserializeObject<List<TransactionOutputModel>>(result)[0];
 
             Assert.AreEqual(actual.LeadId, 256);
