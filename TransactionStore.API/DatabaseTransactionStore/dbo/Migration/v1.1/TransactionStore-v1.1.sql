@@ -5,9 +5,9 @@ IF @currentDBVersion <> '1.1'
 
 truncate table dbo.[Transaction]
 go
-alter table dbo.[Transaction]
-drop column [LeadId]
-go
+--alter table dbo.[Transaction]
+--drop column [LeadId]
+--go
 alter table dbo.[Transaction]
 add [AccountId] bigint not null
 go
@@ -151,20 +151,34 @@ begin
        from #SearchResult 
 end
 go
-alter procedure CreateStrings
+ALTER procedure [dbo].[CreateStrings]
 	@rowValue bigint 
 as
 	begin
 		declare @length int = 0
-		while @length < @rowValue
-		begin
 		declare @accountId_1 bigint
-        declare @accountId_2 bigint
+		declare @accountId_2 bigint
 		declare @typeId tinyint
 		declare @currencyId tinyint
 		declare @amountDeposit money
 		declare @timestamp datetime2
 		declare @amountWithdraw money
+		declare @exchangeRates decimal(18,10)
+
+		create table #RandomExchangeRates
+			(id int,
+			 [Rate] decimal(18,10))
+		
+
+	    insert into #RandomExchangeRates
+			(id, [Rate])
+			select 1, 86.01 union
+			select 2, 1.17 union
+			select 3, 1 union
+			select 4, 124.60 
+
+  	while @length < @rowValue
+		begin			
 
 		set @accountId_1=(select round((rand()*100000),1))
 
@@ -184,6 +198,11 @@ as
 
 		set @timestamp= dateadd(day, rand()*(3000-1)+1, '2010-01-01')
 
+		set @exchangeRates =(select top 1 Rate
+							from #RandomExchangeRates
+							where id = @currencyId
+							order by newid())
+
 		if @typeId=1
 			begin
 				insert into [Transaction](
@@ -191,12 +210,14 @@ as
 					TypeId,
 					CurrencyId,
 					Amount,
-					[Timestamp])
+					[Timestamp],
+					ExchangeRates)
 					values (@accountId_1,
 							@typeId,
 							@currencyId,
 							@amountDeposit,
-							@timestamp)
+							@timestamp,
+							@exchangeRates)
 		end
 
 		if @typeId=2
@@ -206,12 +227,14 @@ as
 					TypeId,
 					CurrencyId,
 					Amount,
-					[Timestamp])
+					[Timestamp],
+					ExchangeRates)
 					values (@accountId_1,
 							@typeId,
 							@currencyId,
 							@amountWithdraw,
-							@timestamp)
+							@timestamp,
+							@exchangeRates)
 		end
 
 		if @typeId=3
@@ -221,26 +244,31 @@ as
 					TypeId,
 					CurrencyId,
 					Amount,
-					[Timestamp])
+					[Timestamp],
+					ExchangeRates)
 					values (@accountId_1,
 							@typeId,
 							@currencyId,
 							@amountDeposit,
-							@timestamp)
+							@timestamp,
+							@exchangeRates)
 				insert into [Transaction](
 					AccountId,
 					TypeId,
 					CurrencyId,
 					Amount,
-					[Timestamp])
+					[Timestamp],
+					ExchangeRates)
 					values (@accountId_2,
 							@typeId,
 							@currencyId,
 							@amountWithdraw,
-							@timestamp)
+							@timestamp,
+							@exchangeRates)
 		end
 	set @length = @length+1
 	end
+	drop table #RandomExchangeRates
 end
 go
 alter procedure  Transaction_Search
