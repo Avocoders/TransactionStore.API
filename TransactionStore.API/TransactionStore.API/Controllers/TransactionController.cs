@@ -82,10 +82,12 @@ namespace TransactionStore.API.Controllers
         [HttpPost("transfer")]
         public ActionResult<List<long>> CreateTransferTransaction([FromBody] TransferInputModel transactionModel)
         {
-            if (_repo.GetById(transactionModel.AccountId) is null) return BadRequest("The user is not found");
+            if (_repo.GetById(transactionModel.AccountId) is null) return BadRequest("The account is not found");
             if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");
             string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.AccountId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
+
+
             TransferTransaction transfer = _mapper.Map<TransferTransaction>(transactionModel);                
             DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
             return MakeResponse(dataWrapper);
@@ -101,7 +103,7 @@ namespace TransactionStore.API.Controllers
         [HttpGet("by-account-id/{accountId}")]
         public ActionResult<List<TransactionOutputModel>> GetTransactionsByAccountId(long accountId)
         {
-            if (accountId <= 0) return BadRequest("account was not found");
+            if (accountId <= 0) return BadRequest("Account was not found");
             DataWrapper<List<TransactionDto>> dataWrapper = _transactionService.GetByAccountId(accountId);
             return MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
         }

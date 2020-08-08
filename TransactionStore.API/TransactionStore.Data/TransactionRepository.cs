@@ -21,7 +21,9 @@ namespace TransactionStore.Data
 
         public DataWrapper<long> Add(TransactionDto transactionDto) 
         {
+
             var rates = new ExchangeRates();
+         
             var result = new DataWrapper<long>();
             try
             {
@@ -34,7 +36,7 @@ namespace TransactionStore.Data
                         TypeId = transactionDto.Type.Id,
                         CurrencyId = transactionDto.Currency.Id,
                         transactionDto.Amount,
-                        ExchangeRates = rates.GetExchangeRates(transactionDto.Currency.Id.Value),
+                        ExchangeRates = rates.GetExchangeRates(transactionDto.Currency.Id.Value)
 
                     }).FirstOrDefault();
                 result.IsOk = true;
@@ -49,21 +51,28 @@ namespace TransactionStore.Data
 
         public DataWrapper<List<long>> AddTransfer(TransferTransaction transfer)
         {
-
+            var rates = new ExchangeRates();
+            decimal exchangeRates1 = rates.GetExchangeRates(transfer.Currency.Id.Value);
+            decimal exchangeRates2 = rates.GetExchangeRates(transfer.ReceiverCurrencyId);
+            
             var result = new DataWrapper<List<long>>();
             try
             {
-                string sqlExpression = "Transaction_AddTransfer @accountId, @typeId, @currencyId, @amount, @accountIdReceiver";
+                string sqlExpression = "Transaction_AddTransfer ";
                 result.Data = _connection.Query<long>(sqlExpression,
                     new
                     {
-                        transfer.Id,
-                        transfer.AccountId,
-                        transfer.Amount,
+                        accountId = transfer.AccountId,
                         typeId = transfer.Type.Id,
                         currencyId = transfer.Currency.Id,
-                        transfer.AccountIdReceiver
-                    }).ToList();
+                        amount1 = transfer.Amount,
+                        Amount2 = transfer.Amount / exchangeRates1 * exchangeRates2,
+                        accountIdReceiver = transfer.AccountIdReceiver,
+                        receiverCurrencyId = transfer.ReceiverCurrencyId,
+                        exchangeRates1,
+                        exchangeRates2 
+
+                    }, commandType:CommandType.StoredProcedure).ToList();
                 result.IsOk = true;
             }
 
@@ -81,18 +90,17 @@ namespace TransactionStore.Data
             {
                 var transactions = new List<TransactionDto>();
                 string sqlExpression = "Transaction_GetById @id";
-                result.Data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression,
-                    (transaction, type, currency) =>
+                result.Data = _connection.Query<TransactionDto, TransactionTypeDto, TransactionDto>(sqlExpression,
+                    (transaction, type) =>
                     {
                         TransactionDto transactionEntry;
                         transactionEntry = transaction;
                         transactionEntry.Type = type;
-                        transactionEntry.Currency = currency;
                         transactions.Add(transactionEntry);
                         return transactionEntry;
                     },
-                    new { id },
-                    splitOn: "id").ToList();
+                    new { id }
+                   ).ToList();
                 result.Data = transactions;
                 result.IsOk = true;
             }

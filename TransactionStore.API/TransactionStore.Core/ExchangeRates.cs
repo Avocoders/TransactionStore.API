@@ -11,7 +11,7 @@ namespace TransactionStore.Core
             switch (currencyId)
             {
                 case 1:
-                    return 86.12M;
+                    return 83.23M;
 
                 case 2:
                     return 1.14M;

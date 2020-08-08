@@ -19,7 +19,7 @@ ALTER procedure [dbo].[Transaction_Add]
 	@typeId tinyint,
 	@currencyId tinyint,
 	@amount money,
-	@exchangeRates decimal
+	@exchangeRates decimal(18,10)
 as
 begin
 	declare @timestamp datetime2 = sysdatetime()
@@ -40,12 +40,17 @@ begin
 	select scope_identity();
 end
 go
-alter procedure Transaction_AddTransfer
+ALTER procedure [dbo].[Transaction_AddTransfer]
 	@accountId bigint,
 	@typeId tinyint,
 	@currencyId tinyint,
-	@amount money,
-	@accountIdReceiver bigint
+	@amount1 money,
+	@amount2 money,
+	@accountIdReceiver bigint,
+	@receiverCurrencyId tinyint,
+	@exchangeRates1 decimal (18,10), 
+	@exchangeRates2 decimal (18,10)
+	
 as
 begin
 	declare @timestamp datetime2 = sysdatetime()
@@ -54,12 +59,14 @@ begin
 			TypeId, 
 			CurrencyId, 
 			Amount, 
+			ExchangeRates,
 			[Timestamp])
 	values 
 		   (@accountId, 
 			@typeId,
 			@currencyId, 
-			-@amount, 
+			-@amount1,
+			@exchangeRates1,
 			@timestamp)
 	declare @account bigint set @account = scope_identity()
 	insert into [dbo].[Transaction] 
@@ -67,18 +74,21 @@ begin
 			TypeId, 
 			CurrencyId, 
 			Amount, 
+			ExchangeRates,
 			[Timestamp])
 	values 
 		   (@accountIdReceiver, 
 			@typeId, 
-			@currencyId,
-			@amount, 
+			@receiverCurrencyId,
+			@amount2,
+			@exchangeRates2,
 			@timestamp)
 	select @account as [account]
 	union select scope_identity()
 end
+
 go
-alter procedure [dbo].[Transaction_GetById]
+ALTER procedure [dbo].[Transaction_GetById]
 	@Id bigint
 as
 begin
@@ -87,8 +97,7 @@ begin
        AccountId,
        Amount,
        [Timestamp],
-       typeId,
-       currencyId
+       typeId
      into #SearchResult 
      from dbo.[Transaction] 
      where (Id=@id)
@@ -98,21 +107,18 @@ begin
          t.AccountId,
          t.Amount,
          t.[Timestamp],
-         t.typeId as id,
-         t.currencyId as id
+         t.typeId as id         
       from #SearchResult s
-      join [Transaction] t on s.CurrencyId=t.CurrencyId and 
+      join [Transaction] t on  
                          s.TypeId = t.TypeId and
-                         s.[Timestamp]=t.[Timestamp] and
-                         s.Amount<>t.Amount and
-                         abs(s.Amount)=abs(t.Amount)
+                         s.[Timestamp]=t.[Timestamp] 
+                                               
       union select 
            Id,
            AccountId,
            Amount,
            [Timestamp],
-           typeId,
-           currencyId
+           typeId
        from #SearchResult 
 end
 go
