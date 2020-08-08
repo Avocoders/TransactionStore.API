@@ -14,11 +14,12 @@ go
 alter table dbo.[Transaction]
 add [ExchangeRates] decimal(18,10) not null
 go
-alter procedure [dbo].[Transaction_Add]
+ALTER procedure [dbo].[Transaction_Add]
 	@accountId bigint,
 	@typeId tinyint,
 	@currencyId tinyint,
-	@amount money	
+	@amount money,
+	@exchangeRates decimal
 as
 begin
 	declare @timestamp datetime2 = sysdatetime()
@@ -27,12 +28,14 @@ begin
 		    TypeId,
 			CurrencyId, 
 			Amount, 
+			ExchangeRates,
 			[Timestamp]) 
 	values		
 		   (@accountId, 
 			@typeId, 
 			@currencyId, 
 			@amount, 
+			@exchangeRates,
 			@timestamp)
 	select scope_identity();
 end

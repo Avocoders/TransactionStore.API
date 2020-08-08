@@ -21,10 +21,11 @@ namespace TransactionStore.Data
 
         public DataWrapper<long> Add(TransactionDto transactionDto) 
         {
+            var rates = new ExchangeRates();
             var result = new DataWrapper<long>();
             try
             {
-                string sqlExpression = "Transaction_Add @accountId, @typeId, @currencyId, @amount";
+                string sqlExpression = "Transaction_Add @accountId, @typeId, @currencyId, @amount, @exchangeRates";
                 result.Data = _connection.Query<long>(sqlExpression,
                     new
                     {
@@ -32,7 +33,9 @@ namespace TransactionStore.Data
                         transactionDto.AccountId,
                         TypeId = transactionDto.Type.Id,
                         CurrencyId = transactionDto.Currency.Id,
-                        transactionDto.Amount
+                        transactionDto.Amount,
+                        ExchangeRates = rates.GetExchangeRates(transactionDto.Currency.Id.Value),
+
                     }).FirstOrDefault();
                 result.IsOk = true;
             }
@@ -171,14 +174,14 @@ namespace TransactionStore.Data
             foreach (var transaction in transactions)
             {
                 if (transaction.AccountId != accountId) transaction.Amount *= -1;
-                if (currency == (byte)TransactionCurrency.RUR)
+                if (currency == (byte)TransactionCurrency.RUB)
                 {
                     if (transaction.Currency.Id == (byte)TransactionCurrency.USD) transaction.Amount *= 71;
                     if (transaction.Currency.Id == (byte)TransactionCurrency.EUR) transaction.Amount *= 80;
                 }
                 if (currency == (byte)TransactionCurrency.USD)
                 {
-                    if (transaction.Currency.Id == (byte)TransactionCurrency.RUR) transaction.Amount /= 71;
+                    if (transaction.Currency.Id == (byte)TransactionCurrency.RUB) transaction.Amount /= 71;
                     if (transaction.Currency.Id == (byte)TransactionCurrency.EUR) transaction.Amount *= (decimal)0.89;
                 }
                 if (currency == (byte)TransactionCurrency.EUR)
