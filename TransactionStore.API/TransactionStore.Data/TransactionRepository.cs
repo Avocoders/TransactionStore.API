@@ -119,13 +119,12 @@ namespace TransactionStore.Data
             {
                 var transactions = new List<TransactionDto>();
                 string sqlExpression = "Transaction_GetByAccountId @accountId";
-                var data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression,
-                    (transaction, type, currency) =>
+                var data = _connection.Query<TransactionDto, TransactionTypeDto, TransactionDto>(sqlExpression,
+                    (transaction, type) =>
                     {
                         TransactionDto transactionEntry;
                         transactionEntry = transaction;
                         transactionEntry.Type = type;
-                        transactionEntry.Currency = currency;
                         transactions.Add(transactionEntry);
                         return transactionEntry;
                     },
@@ -174,7 +173,7 @@ namespace TransactionStore.Data
             return result;
         }
 
-        public decimal GetTotalAmountInCurrency(long accountId, byte currency)
+        public decimal GetTotalAmountByAccountId(long accountId)
         {
             decimal balance = 0;
             List<TransactionDto> transactions;
@@ -182,21 +181,8 @@ namespace TransactionStore.Data
             foreach (var transaction in transactions)
             {
                 if (transaction.AccountId != accountId) transaction.Amount *= -1;
-                if (currency == (byte)TransactionCurrency.RUB)
-                {
-                    if (transaction.Currency.Id == (byte)TransactionCurrency.USD) transaction.Amount *= 71;
-                    if (transaction.Currency.Id == (byte)TransactionCurrency.EUR) transaction.Amount *= 80;
-                }
-                if (currency == (byte)TransactionCurrency.USD)
-                {
-                    if (transaction.Currency.Id == (byte)TransactionCurrency.RUB) transaction.Amount /= 71;
-                    if (transaction.Currency.Id == (byte)TransactionCurrency.EUR) transaction.Amount *= (decimal)0.89;
-                }
-                if (currency == (byte)TransactionCurrency.EUR)
-                {
-                    if (transaction.Currency.Id == 1) transaction.Amount /= 80;
-                    if (transaction.Currency.Id == (byte)TransactionCurrency.USD) transaction.Amount *= (decimal)1.13;
-                }
+                
+               
                 balance += transaction.Amount;
             }
             return balance;

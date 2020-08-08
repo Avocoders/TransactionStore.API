@@ -39,12 +39,11 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:TransactionStore.API.Controllers.TransactionController.GetBalanceByAccountIdInCurrency(System.Int64,System.Byte)">
+        <member name="M:TransactionStore.API.Controllers.TransactionController.GetBalanceByAccountId(System.Int64)">
             <summary>
             Get account's balance by accountId in concrete currency |:-D
             </summary>
             <param name="accountId"></param>
-            <param name="currencyId"></param>
             <returns></returns>
         </member>
         <member name="M:TransactionStore.API.Controllers.TransactionController.GetTransactionSearchParameters(TransactionStore.API.Models.Input.SearchParametersInputModel)">

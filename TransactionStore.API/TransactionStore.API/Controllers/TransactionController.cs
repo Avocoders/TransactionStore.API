@@ -31,7 +31,7 @@ namespace TransactionStore.API.Controllers
         private string FormBadRequest(decimal amount, long accountId, byte currencyId)
         {
             if (amount <= 0) return "The amount is missing";
-            decimal balance = _repo.GetTotalAmountInCurrency(accountId, currencyId);
+            decimal balance = _repo.GetTotalAmountByAccountId(accountId);
             if (balance < 0) return "The balance of minus";
             if (balance < amount) return "Not enough money";
             return "";
@@ -127,16 +127,14 @@ namespace TransactionStore.API.Controllers
         /// Get account's balance by accountId in concrete currency |:-D
         /// </summary>
         /// <param name="accountId"></param>
-        /// <param name="currencyId"></param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpGet("{accountId}/balance/{currencyId}")]
-        public ActionResult<decimal> GetBalanceByAccountIdInCurrency(long accountId, byte currencyId)
+        [HttpGet("{accountId}/balance")]
+        public ActionResult<decimal> GetBalanceByAccountId(long accountId)
         {
             if (accountId <= 0) return BadRequest("Account was not found");
-            if (currencyId <= 0) return BadRequest("Currency was not found");
-            return _repo.GetTotalAmountInCurrency(accountId, currencyId);
+            return _repo.GetTotalAmountByAccountId(accountId);
         }
 
         /// <summary>

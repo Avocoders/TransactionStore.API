@@ -122,7 +122,7 @@ begin
        from #SearchResult 
 end
 go
-create procedure [dbo].[Transaction_GetByAccountId]
+ALTER procedure [dbo].[Transaction_GetByAccountId]
 	@accountId bigint
 as
 begin
@@ -131,8 +131,7 @@ begin
        AccountId,
        Amount,
        [Timestamp],
-       typeId,
-       currencyId
+       typeId
      into #SearchResult 
      from dbo.[Transaction] 
      where (AccountId=@accountId )
@@ -142,21 +141,17 @@ begin
          t.AccountId,
          t.Amount,
          t.[Timestamp],
-         t.typeId as id,
-         t.currencyId as id
+         t.typeId as id
       from #SearchResult s
-      join [Transaction] t on s.CurrencyId=t.CurrencyId and 
-                         s.TypeId = t.TypeId and
-                         s.[Timestamp]=t.[Timestamp] and
-                         s.Amount<>t.Amount and
-                         abs(s.Amount)=abs(t.Amount)
+      join [Transaction] t on s.TypeId = t.TypeId and
+                              s.[Timestamp]=t.[Timestamp] 
+                         
       union select 
            Id,
            AccountId,
            Amount,
            [Timestamp],
-           typeId,
-           currencyId
+           typeId
        from #SearchResult 
 end
 go
@@ -280,7 +275,7 @@ as
 	drop table #RandomExchangeRates
 end
 go
-alter procedure  Transaction_Search
+ALTER procedure  [dbo].[Transaction_Search]
 	@accountId bigint = null,
 	@typeId int = null,
 	@currencyId tinyint = null,
@@ -348,11 +343,10 @@ begin
                 t.typeId as id,
                 t.currencyId as id
             from #SearchResult s
-            join [Transaction] t on s.CurrencyId=t.CurrencyId and 
+            join [Transaction] t on  
                                     s.TypeId = t.TypeId and
-                                    s.[Timestamp]=t.[Timestamp] and
-                                    s.Amount<>t.Amount and
-                                    abs(s.Amount)=abs(t.Amount)
+                                    s.[Timestamp]=t.[Timestamp] 
+                                    
             union select 
                 Id,
                 AccountId,
