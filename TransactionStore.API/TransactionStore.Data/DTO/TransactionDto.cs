@@ -13,5 +13,6 @@ namespace TransactionStore.Data.DTO
         public CurrencyDto Currency { get; set; }
 
         public decimal ExchangeRates { get; set; }
+        public long? AccountIdReceiver { get; set; }
     }
 }

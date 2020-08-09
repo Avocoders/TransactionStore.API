@@ -16,18 +16,19 @@ namespace TransactionStore.API.Configuration
             CreateMap<TransactionInputModel, TransactionDto>()
                 .ForPath(dest => dest.Currency.Id, o => o.MapFrom(src => src.CurrencyId));
 
-            CreateMap<TransferInputModel, TransferTransaction>()
+            CreateMap<TransferInputModel, TransferTransactionDto>()
                 .ForPath(dest => dest.Currency.Id, o => o.MapFrom(src => src.CurrencyId))
                 .AfterMap((src, dest) => { dest.Type = new TransactionTypeDto() { Id = (byte)TransactionType.Transfer }; });
 
             CreateMap<SearchParametersInputModel, TransactionSearchParameters>();
 
             CreateMap<TransactionDto, TransactionOutputModel>()
-                .ForPath(dest => dest.Type, o => o.MapFrom(src => Enum.GetName(typeof(TransactionType), src.Type.Id)))
-                .AfterMap((src, dest) => { var tmp = (TransferTransaction)src; dest.AccountIdReceiver = tmp.AccountIdReceiver; });
-
-            CreateMap<TransferTransaction, TransactionOutputModel>()
                 .ForPath(dest => dest.Type, o => o.MapFrom(src => Enum.GetName(typeof(TransactionType), src.Type.Id)));
+                //.AfterMap((src, dest) => { var tmp = (TransferTransactionDto)src; dest.AccountIdReceiver = tmp.AccountIdReceiver; });
+
+            CreateMap<TransferTransactionDto, TransactionOutputModel>()
+                .ForPath(dest => dest.Type, o => o.MapFrom(src => Enum.GetName(typeof(TransactionType), src.Type.Id)));
+            ;
         }
     }
 }

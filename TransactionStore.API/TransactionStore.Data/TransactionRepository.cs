@@ -49,7 +49,7 @@ namespace TransactionStore.Data
             return result;
         }
 
-        public DataWrapper<List<long>> AddTransfer(TransferTransaction transfer)
+        public DataWrapper<List<long>> AddTransfer(TransferTransactionDto transfer)
         {
             var rates = new ExchangeRates();
             decimal exchangeRates1 = rates.GetExchangeRates(transfer.Currency.Id.Value);
