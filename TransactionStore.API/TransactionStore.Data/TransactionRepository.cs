@@ -21,10 +21,13 @@ namespace TransactionStore.Data
 
         public DataWrapper<long> Add(TransactionDto transactionDto) 
         {
+
+            var rates = new ExchangeRates();
+         
             var result = new DataWrapper<long>();
             try
             {
-                string sqlExpression = "Transaction_Add @accountId, @typeId, @currencyId, @amount";
+                string sqlExpression = "Transaction_Add @accountId, @typeId, @currencyId, @amount, @exchangeRates";
                 result.Data = _connection.Query<long>(sqlExpression,
                     new
                     {
@@ -32,7 +35,9 @@ namespace TransactionStore.Data
                         transactionDto.AccountId,
                         TypeId = transactionDto.Type.Id,
                         CurrencyId = transactionDto.Currency.Id,
-                        transactionDto.Amount
+                        transactionDto.Amount,
+                        ExchangeRates = rates.GetExchangeRates(transactionDto.Currency.Id.Value)
+
                     }).FirstOrDefault();
                 result.IsOk = true;
             }
@@ -46,21 +51,28 @@ namespace TransactionStore.Data
 
         public DataWrapper<List<long>> AddTransfer(TransferTransaction transfer)
         {
-
+            var rates = new ExchangeRates();
+            decimal exchangeRates1 = rates.GetExchangeRates(transfer.Currency.Id.Value);
+            decimal exchangeRates2 = rates.GetExchangeRates(transfer.ReceiverCurrencyId);
+            
             var result = new DataWrapper<List<long>>();
             try
             {
-                string sqlExpression = "Transaction_AddTransfer @accountId, @typeId, @currencyId, @amount, @accountIdReceiver";
+                string sqlExpression = "Transaction_AddTransfer ";
                 result.Data = _connection.Query<long>(sqlExpression,
                     new
                     {
-                        transfer.Id,
-                        transfer.AccountId,
-                        transfer.Amount,
+                        accountId = transfer.AccountId,
                         typeId = transfer.Type.Id,
                         currencyId = transfer.Currency.Id,
-                        transfer.AccountIdReceiver
-                    }).ToList();
+                        amount1 = transfer.Amount,
+                        Amount2 = transfer.Amount / exchangeRates1 * exchangeRates2,
+                        accountIdReceiver = transfer.AccountIdReceiver,
+                        receiverCurrencyId = transfer.ReceiverCurrencyId,
+                        exchangeRates1,
+                        exchangeRates2 
+
+                    }, commandType:CommandType.StoredProcedure).ToList();
                 result.IsOk = true;
             }
 
@@ -78,18 +90,17 @@ namespace TransactionStore.Data
             {
                 var transactions = new List<TransactionDto>();
                 string sqlExpression = "Transaction_GetById @id";
-                result.Data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression,
-                    (transaction, type, currency) =>
+                result.Data = _connection.Query<TransactionDto, TransactionTypeDto, TransactionDto>(sqlExpression,
+                    (transaction, type) =>
                     {
                         TransactionDto transactionEntry;
                         transactionEntry = transaction;
                         transactionEntry.Type = type;
-                        transactionEntry.Currency = currency;
                         transactions.Add(transactionEntry);
                         return transactionEntry;
                     },
-                    new { id },
-                    splitOn: "id").ToList();
+                    new { id }
+                   ).ToList();
                 result.Data = transactions;
                 result.IsOk = true;
             }
@@ -108,13 +119,12 @@ namespace TransactionStore.Data
             {
                 var transactions = new List<TransactionDto>();
                 string sqlExpression = "Transaction_GetByAccountId @accountId";
-                var data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression,
-                    (transaction, type, currency) =>
+                var data = _connection.Query<TransactionDto, TransactionTypeDto, TransactionDto>(sqlExpression,
+                    (transaction, type) =>
                     {
                         TransactionDto transactionEntry;
                         transactionEntry = transaction;
                         transactionEntry.Type = type;
-                        transactionEntry.Currency = currency;
                         transactions.Add(transactionEntry);
                         return transactionEntry;
                     },
@@ -163,32 +173,22 @@ namespace TransactionStore.Data
             return result;
         }
 
-        public decimal GetTotalAmountInCurrency(long accountId, byte currency)
+        public DataWrapper<decimal> GetBalanceByAccountId(long accountId)
         {
-            decimal balance = 0;
-            List<TransactionDto> transactions;
-            transactions = GetByAccountId(accountId).Data;
-            foreach (var transaction in transactions)
+            var result = new DataWrapper<decimal>();
+            try
             {
-                if (transaction.AccountId != accountId) transaction.Amount *= -1;
-                if (currency == (byte)TransactionCurrency.RUR)
-                {
-                    if (transaction.Currency.Id == (byte)TransactionCurrency.USD) transaction.Amount *= 71;
-                    if (transaction.Currency.Id == (byte)TransactionCurrency.EUR) transaction.Amount *= 80;
-                }
-                if (currency == (byte)TransactionCurrency.USD)
-                {
-                    if (transaction.Currency.Id == (byte)TransactionCurrency.RUR) transaction.Amount /= 71;
-                    if (transaction.Currency.Id == (byte)TransactionCurrency.EUR) transaction.Amount *= (decimal)0.89;
-                }
-                if (currency == (byte)TransactionCurrency.EUR)
-                {
-                    if (transaction.Currency.Id == 1) transaction.Amount /= 80;
-                    if (transaction.Currency.Id == (byte)TransactionCurrency.USD) transaction.Amount *= (decimal)1.13;
-                }
-                balance += transaction.Amount;
+                string sqlExpression = "Transaction_GetBalanceByAccountId";
+                var balance = _connection.Query<decimal>(sqlExpression, new { accountId }, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                result.Data = balance;
+                result.IsOk = true;
             }
-            return balance;
+
+            catch (Exception e)
+            {
+                result.ExceptionMessage = e.Message;
+            }
+            return result;
         }
     }
 }

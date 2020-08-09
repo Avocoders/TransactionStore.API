@@ -11,5 +11,7 @@ namespace TransactionStore.Data.DTO
         public DateTime Timestamp { get; set; }        
         public TransactionTypeDto Type { get; set; }
         public CurrencyDto Currency { get; set; }
+
+        public decimal ExchangeRates { get; set; }
     }
 }

@@ -14,11 +14,12 @@ go
 alter table dbo.[Transaction]
 add [ExchangeRates] decimal(18,10) not null
 go
-alter procedure [dbo].[Transaction_Add]
+ALTER procedure [dbo].[Transaction_Add]
 	@accountId bigint,
 	@typeId tinyint,
 	@currencyId tinyint,
-	@amount money	
+	@amount money,
+	@exchangeRates decimal(18,10)
 as
 begin
 	declare @timestamp datetime2 = sysdatetime()
@@ -27,22 +28,29 @@ begin
 		    TypeId,
 			CurrencyId, 
 			Amount, 
+			ExchangeRates,
 			[Timestamp]) 
 	values		
 		   (@accountId, 
 			@typeId, 
 			@currencyId, 
 			@amount, 
+			@exchangeRates,
 			@timestamp)
 	select scope_identity();
 end
 go
-alter procedure Transaction_AddTransfer
+ALTER procedure [dbo].[Transaction_AddTransfer]
 	@accountId bigint,
 	@typeId tinyint,
 	@currencyId tinyint,
-	@amount money,
-	@accountIdReceiver bigint
+	@amount1 money,
+	@amount2 money,
+	@accountIdReceiver bigint,
+	@receiverCurrencyId tinyint,
+	@exchangeRates1 decimal (18,10), 
+	@exchangeRates2 decimal (18,10)
+	
 as
 begin
 	declare @timestamp datetime2 = sysdatetime()
@@ -51,12 +59,14 @@ begin
 			TypeId, 
 			CurrencyId, 
 			Amount, 
+			ExchangeRates,
 			[Timestamp])
 	values 
 		   (@accountId, 
 			@typeId,
 			@currencyId, 
-			-@amount, 
+			-@amount1,
+			@exchangeRates1,
 			@timestamp)
 	declare @account bigint set @account = scope_identity()
 	insert into [dbo].[Transaction] 
@@ -64,18 +74,21 @@ begin
 			TypeId, 
 			CurrencyId, 
 			Amount, 
+			ExchangeRates,
 			[Timestamp])
 	values 
 		   (@accountIdReceiver, 
 			@typeId, 
-			@currencyId,
-			@amount, 
+			@receiverCurrencyId,
+			@amount2,
+			@exchangeRates2,
 			@timestamp)
 	select @account as [account]
 	union select scope_identity()
 end
+
 go
-alter procedure [dbo].[Transaction_GetById]
+ALTER procedure [dbo].[Transaction_GetById]
 	@Id bigint
 as
 begin
@@ -84,8 +97,7 @@ begin
        AccountId,
        Amount,
        [Timestamp],
-       typeId,
-       currencyId
+       typeId
      into #SearchResult 
      from dbo.[Transaction] 
      where (Id=@id)
@@ -95,25 +107,22 @@ begin
          t.AccountId,
          t.Amount,
          t.[Timestamp],
-         t.typeId as id,
-         t.currencyId as id
+         t.typeId as id         
       from #SearchResult s
-      join [Transaction] t on s.CurrencyId=t.CurrencyId and 
+      join [Transaction] t on  
                          s.TypeId = t.TypeId and
-                         s.[Timestamp]=t.[Timestamp] and
-                         s.Amount<>t.Amount and
-                         abs(s.Amount)=abs(t.Amount)
+                         s.[Timestamp]=t.[Timestamp] 
+                                               
       union select 
            Id,
            AccountId,
            Amount,
            [Timestamp],
-           typeId,
-           currencyId
+           typeId
        from #SearchResult 
 end
 go
-create procedure [dbo].[Transaction_GetByAccountId]
+ALTER procedure [dbo].[Transaction_GetByAccountId]
 	@accountId bigint
 as
 begin
@@ -122,8 +131,7 @@ begin
        AccountId,
        Amount,
        [Timestamp],
-       typeId,
-       currencyId
+       typeId
      into #SearchResult 
      from dbo.[Transaction] 
      where (AccountId=@accountId )
@@ -133,21 +141,17 @@ begin
          t.AccountId,
          t.Amount,
          t.[Timestamp],
-         t.typeId as id,
-         t.currencyId as id
+         t.typeId as id
       from #SearchResult s
-      join [Transaction] t on s.CurrencyId=t.CurrencyId and 
-                         s.TypeId = t.TypeId and
-                         s.[Timestamp]=t.[Timestamp] and
-                         s.Amount<>t.Amount and
-                         abs(s.Amount)=abs(t.Amount)
+      join [Transaction] t on s.TypeId = t.TypeId and
+                              s.[Timestamp]=t.[Timestamp] 
+                         
       union select 
            Id,
            AccountId,
            Amount,
            [Timestamp],
-           typeId,
-           currencyId
+           typeId
        from #SearchResult 
 end
 go
@@ -271,7 +275,7 @@ as
 	drop table #RandomExchangeRates
 end
 go
-alter procedure  Transaction_Search
+ALTER procedure  [dbo].[Transaction_Search]
 	@accountId bigint = null,
 	@typeId int = null,
 	@currencyId tinyint = null,
@@ -339,11 +343,10 @@ begin
                 t.typeId as id,
                 t.currencyId as id
             from #SearchResult s
-            join [Transaction] t on s.CurrencyId=t.CurrencyId and 
+            join [Transaction] t on  
                                     s.TypeId = t.TypeId and
-                                    s.[Timestamp]=t.[Timestamp] and
-                                    s.Amount<>t.Amount and
-                                    abs(s.Amount)=abs(t.Amount)
+                                    s.[Timestamp]=t.[Timestamp] 
+                                    
             union select 
                 Id,
                 AccountId,
@@ -372,4 +375,16 @@ begin
 end
 go
 INSERT INTO dbo.[DbVersion] (Created, DbVersion) VALUES (SYSDATETIME(), '1.1')
+go
+create Procedure [dbo].[Transaction_GetBalanceByAccountId]
+@accountId bigint
+as
+
+Begin
+select SUM(t.Amount) From [Transaction] t
+
+Where t.AccountId=@accountId
+Group By t.AccountId
+
+end
 go

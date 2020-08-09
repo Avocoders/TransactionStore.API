@@ -53,7 +53,6 @@ namespace NUnitTests
             var actual = JsonConvert.DeserializeObject<List<TransactionOutputModel>>(result)[0];
 
             Assert.AreEqual(actual.AccountId, 256);
-            Assert.AreEqual(actual.Currency, "USD");
             Assert.AreEqual(actual.Amount, 80);
             Assert.AreEqual(actual.Type, "Deposit");
         }
@@ -75,7 +74,6 @@ namespace NUnitTests
             var actual = JsonConvert.DeserializeObject<List<TransactionOutputModel>>(result)[0];
 
             Assert.AreEqual(actual.AccountId, 256);
-            Assert.AreEqual(actual.Currency, "RUR");
             Assert.AreEqual(actual.Amount, -10);
             Assert.AreEqual(actual.Type, "Withdraw");
         }
@@ -99,7 +97,6 @@ namespace NUnitTests
             var actual = JsonConvert.DeserializeObject<List<TransactionOutputModel>>(result)[0];
 
             Assert.AreEqual(actual.AccountId, 256);
-            Assert.AreEqual(actual.Currency, "USD");
             Assert.AreEqual(actual.Amount, -80);
             Assert.AreEqual(actual.Type, "Transfer");
             Assert.AreEqual(actual.AccountIdReceiver, 257);

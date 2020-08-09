@@ -9,8 +9,9 @@
 
     public enum TransactionCurrency
     {
-        RUR = 1,
+        RUB = 1,
         USD,
-        EUR
+        EUR,
+        JPY
     }
 }

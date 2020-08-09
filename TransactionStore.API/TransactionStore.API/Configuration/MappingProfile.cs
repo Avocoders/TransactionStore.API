@@ -14,22 +14,20 @@ namespace TransactionStore.API.Configuration
         public MappingProfile()
         {
             CreateMap<TransactionInputModel, TransactionDto>()
-                .ForPath(dest => dest.Currency.Id, o => o.MapFrom(src => src.CurrencyId));                
+                .ForPath(dest => dest.Currency.Id, o => o.MapFrom(src => src.CurrencyId));
 
-            CreateMap<TransferInputModel, TransferTransaction>()                
+            CreateMap<TransferInputModel, TransferTransaction>()
                 .ForPath(dest => dest.Currency.Id, o => o.MapFrom(src => src.CurrencyId))
-                .AfterMap((src, dest) => { dest.Type = new TransactionTypeDto() { Id = (byte)TransactionType.Transfer };});
+                .AfterMap((src, dest) => { dest.Type = new TransactionTypeDto() { Id = (byte)TransactionType.Transfer }; });
 
             CreateMap<SearchParametersInputModel, TransactionSearchParameters>();
 
             CreateMap<TransactionDto, TransactionOutputModel>()
                 .ForPath(dest => dest.Type, o => o.MapFrom(src => Enum.GetName(typeof(TransactionType), src.Type.Id)))
-                .ForPath(dest => dest.Currency, o => o.MapFrom(src => Enum.GetName(typeof(TransactionCurrency), src.Currency.Id)))
-                .AfterMap((src, dest) => { var tmp = (TransferTransaction)src; dest.AccountIdReceiver = tmp.AccountIdReceiver; }); 
+                .AfterMap((src, dest) => { var tmp = (TransferTransaction)src; dest.AccountIdReceiver = tmp.AccountIdReceiver; });
 
             CreateMap<TransferTransaction, TransactionOutputModel>()
-                .ForPath(dest => dest.Type, o => o.MapFrom(src => Enum.GetName(typeof(TransactionType), src.Type.Id)))
-                .ForPath(dest => dest.Currency, o => o.MapFrom(src => Enum.GetName(typeof(TransactionCurrency), src.Currency.Id)));
+                .ForPath(dest => dest.Type, o => o.MapFrom(src => Enum.GetName(typeof(TransactionType), src.Type.Id)));
         }
     }
 }
