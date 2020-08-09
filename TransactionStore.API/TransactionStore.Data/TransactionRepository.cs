@@ -173,19 +173,22 @@ namespace TransactionStore.Data
             return result;
         }
 
-        public decimal GetTotalAmountByAccountId(long accountId)
+        public DataWrapper<decimal> GetBalanceByAccountId(long accountId)
         {
-            decimal balance = 0;
-            List<TransactionDto> transactions;
-            transactions = GetByAccountId(accountId).Data;
-            foreach (var transaction in transactions)
+            var result = new DataWrapper<decimal>();
+            try
             {
-                if (transaction.AccountId != accountId) transaction.Amount *= -1;
-                
-               
-                balance += transaction.Amount;
+                string sqlExpression = "Transaction_GetBalanceByAccountId";
+                var balance = _connection.Query<decimal>(sqlExpression, new { accountId }, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                result.Data = balance;
+                result.IsOk = true;
             }
-            return balance;
+
+            catch (Exception e)
+            {
+                result.ExceptionMessage = e.Message;
+            }
+            return result;
         }
     }
 }

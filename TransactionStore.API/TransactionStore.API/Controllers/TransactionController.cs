@@ -31,9 +31,9 @@ namespace TransactionStore.API.Controllers
         private string FormBadRequest(decimal amount, long accountId, byte currencyId)
         {
             if (amount <= 0) return "The amount is missing";
-            decimal balance = _repo.GetTotalAmountByAccountId(accountId);
-            if (balance < 0) return "The balance of minus";
-            if (balance < amount) return "Not enough money";
+            var balance = _repo.GetBalanceByAccountId(accountId);
+            if (balance.Data < 0) return "The balance of minus";
+            if (balance.Data < amount) return "Not enough money";
             return "";
         }
 
@@ -134,7 +134,9 @@ namespace TransactionStore.API.Controllers
         public ActionResult<decimal> GetBalanceByAccountId(long accountId)
         {
             if (accountId <= 0) return BadRequest("Account was not found");
-            return _repo.GetTotalAmountByAccountId(accountId);
+            DataWrapper<decimal> dataWrapper = _repo.GetBalanceByAccountId(accountId);
+            return MakeResponse(dataWrapper);
+           
         }
 
         /// <summary>

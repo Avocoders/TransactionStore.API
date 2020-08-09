@@ -376,3 +376,15 @@ end
 go
 INSERT INTO dbo.[DbVersion] (Created, DbVersion) VALUES (SYSDATETIME(), '1.1')
 go
+create Procedure [dbo].[Transaction_GetBalanceByAccountId]
+@accountId bigint
+as
+
+Begin
+select SUM(t.Amount) From [Transaction] t
+
+Where t.AccountId=@accountId
+Group By t.AccountId
+
+end
+go
