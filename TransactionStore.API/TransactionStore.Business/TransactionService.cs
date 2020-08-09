@@ -50,7 +50,7 @@ namespace TransactionStore.Business
         {
             var nonTransferTransactions = transactions.Where(t => t.Type.Id != (byte)TransactionType.Transfer).ToList();
             var transferTransactions = transactions.Where(t => t.Type.Id == (byte)TransactionType.Transfer).ToList();
-            List<TransferTransaction> transfers = new List<TransferTransaction>();
+            List<TransferTransactionDto> transfers = new List<TransferTransactionDto>();
             foreach (var transfer in transferTransactions)
             {
                 if (transfer.Amount < 0)
@@ -59,7 +59,7 @@ namespace TransactionStore.Business
                         .Where(tT => tT.Amount > 0)
                         .Where(tT => tT.Timestamp == transfer.Timestamp)
                         .FirstOrDefault();
-                    transfers.Add(new TransferTransaction()
+                    transfers.Add(new TransferTransactionDto()
                     {
                         Id = transfer.Id,
                         AccountId = transfer.AccountId,

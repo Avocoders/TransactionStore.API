@@ -8,6 +8,6 @@ namespace TransactionStore.API.Models.Output
         public string Type { get; set; }
         public decimal Amount { get; set; }
         public string Timestamp { get; set; }
-        public long AccountIdReceiver { get; set; }
+        public long? AccountIdReceiver { get; set; }
     }
 }

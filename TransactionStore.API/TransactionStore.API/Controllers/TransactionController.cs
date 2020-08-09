@@ -88,7 +88,7 @@ namespace TransactionStore.API.Controllers
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
 
 
-            TransferTransaction transfer = _mapper.Map<TransferTransaction>(transactionModel);                
+            TransferTransactionDto transfer = _mapper.Map<TransferTransactionDto>(transactionModel);                
             DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
             return MakeResponse(dataWrapper);
         }
