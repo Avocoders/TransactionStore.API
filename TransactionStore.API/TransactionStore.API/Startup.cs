@@ -71,6 +71,22 @@ namespace TransactionStore.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumer<EventConsumer>();
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host("localhost");
+
+                    cfg.ReceiveEndpoint("CurrencyRates", ec =>
+                    {
+                        //ec.ConfigureConsumer<EventConsumer>(context);  с ней выводит два раза 
+                    });
+                    cfg.ConfigureEndpoints(context);
+                });
+            });
+            services.AddMassTransitHostedService();
+
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
@@ -90,22 +106,6 @@ namespace TransactionStore.API
             services.AddMvcCore();
             ConfigureDependencies(services);
             services.Configure<StorageOptions>(Configuration);
-
-            services.AddMassTransit(x =>
-            {
-                x.AddConsumer<EventConsumer>();
-                x.UsingRabbitMq((context, cfg) =>
-                {
-                    cfg.Host("localhost");
-
-                    cfg.ReceiveEndpoint("CurrencyRates", ec =>
-                    {                        
-                        //ec.ConfigureConsumer<EventConsumer>(context);  с ней выводит два раза 
-                    });                    
-                    cfg.ConfigureEndpoints(context);
-                });
-            });
-            services.AddMassTransitHostedService();
         }
 
         public void ConfigureContainer(ContainerBuilder builder)

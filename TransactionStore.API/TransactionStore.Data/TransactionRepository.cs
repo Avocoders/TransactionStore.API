@@ -8,6 +8,7 @@ using TransactionStore.Core.Shared;
 using System.Data.SqlClient;
 using TransactionStore.Core;
 using Microsoft.Extensions.Options;
+using Messaging;
 
 namespace TransactionStore.Data
 {
@@ -21,9 +22,9 @@ namespace TransactionStore.Data
 
         public DataWrapper<long> Add(TransactionDto transactionDto) 
         {
+            // var rates = new ExchangeRates();
+            string currency = Enum.GetName(typeof(TransactionCurrency), transactionDto.Currency.Id.Value);
 
-            var rates = new ExchangeRates();
-         
             var result = new DataWrapper<long>();
             try
             {
@@ -36,7 +37,7 @@ namespace TransactionStore.Data
                         TypeId = transactionDto.Type.Id,
                         CurrencyId = transactionDto.Currency.Id,
                         transactionDto.Amount,
-                        ExchangeRates = rates.GetExchangeRates(transactionDto.Currency.Id.Value)
+                        ExchangeRates = Currencies.Rates[currency]
 
                     }).FirstOrDefault();
                 result.IsOk = true;

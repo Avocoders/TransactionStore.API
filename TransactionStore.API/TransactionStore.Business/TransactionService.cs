@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Messaging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TransactionStore.Core;
@@ -91,9 +92,12 @@ namespace TransactionStore.Business
 
         public decimal ConvertAmount(byte currencyId, decimal amount, byte receiverCurrencyId)
         {
-            ExchangeRates rates = new ExchangeRates();
+            string currency1 = Enum.GetName(typeof(TransactionCurrency), currencyId);
+            string currency2 = Enum.GetName(typeof(TransactionCurrency), receiverCurrencyId);
 
-            return amount/rates.GetExchangeRates(currencyId)*rates.GetExchangeRates(receiverCurrencyId);
+            //ExchangeRates rates = new ExchangeRates();            
+
+            return amount/Currencies.Rates[currency1]* Currencies.Rates[currency2];
 
         }
     }
