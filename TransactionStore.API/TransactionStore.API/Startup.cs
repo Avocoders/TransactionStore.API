@@ -12,6 +12,8 @@ using Microsoft.OpenApi.Models;
 using AutoMapper;
 using System;
 using TransactionStore.Core;
+using MassTransit;
+
 
 namespace TransactionStore.API
 {
@@ -89,6 +91,23 @@ namespace TransactionStore.API
             services.AddMvcCore();
             ConfigureDependencies(services);
             services.Configure<StorageOptions>(Configuration);
+
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumer<EventConsumer>();
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host("localhost");
+
+                    cfg.ReceiveEndpoint("currencyRates", ec =>
+                    {                        
+                        ec.ConfigureConsumer<EventConsumer>(context);
+                    });                    
+                    cfg.ConfigureEndpoints(context);
+                });
+            });
+
+            services.AddMassTransitHostedService();
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
