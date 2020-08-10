@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
-
-namespace Messaging
+﻿namespace Messaging
 {
-    public class CurrencyRates
+    public interface CurrencyRates
     {
-        public List<Currency> Rates { get; set; }
+        double USD { get; set; }
+        double RUB { get; set; }
+        double JPY { get; set; }        
+        //public List<Currency> Rates { get; set; }
     }
 
     public class Currency
     {
-        public string Code { get; set; }
-        public decimal Rate { get; set; }
+        
+        //public string Code { get; set; }
+        //public decimal Rate { get; set; }
     }
 }

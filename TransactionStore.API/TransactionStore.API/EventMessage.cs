@@ -1,7 +1,7 @@
 ﻿namespace Messaging
 {
-    public interface EventMessage
-    {
-        string Text { get; set; }
-    }
+    //public interface EventMessage
+    //{
+    //    string Text { get; set; }
+    //}
 }

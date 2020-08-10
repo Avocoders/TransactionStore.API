@@ -9,7 +9,12 @@ namespace TransactionStore.API
     {
         public async Task Consume(ConsumeContext<CurrencyRates> context)
         {
-            await Console.Out.WriteLineAsync(context.Message.Rates[0].Code);            
+            string usd = context.Message.USD.ToString();
+            string rub = context.Message.RUB.ToString();
+            string jpy = context.Message.JPY.ToString();
+            await Console.Out.WriteLineAsync(usd);
+            await Console.Out.WriteLineAsync(rub);
+            await Console.Out.WriteLineAsync(jpy);
             //return Task.CompletedTask;
         }
     }

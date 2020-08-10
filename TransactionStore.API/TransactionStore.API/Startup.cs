@@ -10,7 +10,6 @@ using Autofac;
 using TransactionStore.API.Configuration;
 using Microsoft.OpenApi.Models;
 using AutoMapper;
-using System;
 using TransactionStore.Core;
 using MassTransit;
 
@@ -19,7 +18,6 @@ namespace TransactionStore.API
 {
     public class Startup
     {
-
         public IConfiguration Configuration { get; set; }
         public Startup(IWebHostEnvironment env)
         {
@@ -34,8 +32,6 @@ namespace TransactionStore.API
             Configuration = builder.Build();
         }
 
-
-       
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -76,18 +72,21 @@ namespace TransactionStore.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "TransactionStore.API", Version = "v1" });
                 //c.IncludeXmlComments(String.Format(@"{0}\Swagger.XML", AppContext.BaseDirectory));
             }
             );
+
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new MappingProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+
             services.AddMvcCore();
             ConfigureDependencies(services);
             services.Configure<StorageOptions>(Configuration);
@@ -99,14 +98,13 @@ namespace TransactionStore.API
                 {
                     cfg.Host("localhost");
 
-                    cfg.ReceiveEndpoint("currencyRates", ec =>
+                    cfg.ReceiveEndpoint("CurrencyRates", ec =>
                     {                        
-                        ec.ConfigureConsumer<EventConsumer>(context);
+                        //ec.ConfigureConsumer<EventConsumer>(context);  с ней выводит два раза 
                     });                    
                     cfg.ConfigureEndpoints(context);
                 });
             });
-
             services.AddMassTransitHostedService();
         }
 
@@ -117,7 +115,6 @@ namespace TransactionStore.API
 
         protected virtual void ConfigureDependencies(IServiceCollection services)
         {
-
         }
     }
 }
