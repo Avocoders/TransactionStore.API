@@ -15,7 +15,7 @@ namespace Messaging
         //public List<Currency> Rates { get; set; }        
     }
 
-    //public class Currency    
+    //public class Currency  на всякий случай  
     //{       
     //    public string Code { get; set; }
     //    public decimal Rate { get; set; }

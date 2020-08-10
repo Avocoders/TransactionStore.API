@@ -9,6 +9,6 @@ namespace TransactionStore.Business
         DataWrapper<List<TransactionDto>> SearchTransactions(TransactionSearchParameters searchParameters);
         DataWrapper<List<TransactionDto>> GetById(long id);
         DataWrapper<List<TransactionDto>> GetByAccountId(long accountId);        
-        DataWrapper<long> AddTransaction(int type, TransactionDto transactionDto);
+        DataWrapper<long> AddTransaction(int type, TransactionDto transactionDto);        
     }
 }

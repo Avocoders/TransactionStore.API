@@ -86,8 +86,6 @@ namespace TransactionStore.API.Controllers
             if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");
             string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.AccountId, transactionModel.CurrencyId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
-
-
             TransferTransactionDto transfer = _mapper.Map<TransferTransactionDto>(transactionModel);                
             DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
             return MakeResponse(dataWrapper);

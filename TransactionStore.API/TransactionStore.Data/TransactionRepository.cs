@@ -21,10 +21,8 @@ namespace TransactionStore.Data
         }
 
         public DataWrapper<long> Add(TransactionDto transactionDto) 
-        {
-            // var rates = new ExchangeRates();
+        {            
             string currency = Enum.GetName(typeof(TransactionCurrency), transactionDto.Currency.Id.Value);
-
             var result = new DataWrapper<long>();
             try
             {
@@ -52,10 +50,11 @@ namespace TransactionStore.Data
 
         public DataWrapper<List<long>> AddTransfer(TransferTransactionDto transfer)
         {
-            var rates = new ExchangeRates();
-            decimal exchangeRates1 = rates.GetExchangeRates(transfer.Currency.Id.Value);
-            decimal exchangeRates2 = rates.GetExchangeRates(transfer.ReceiverCurrencyId);
-            
+            string currency1 = Enum.GetName(typeof(TransactionCurrency), transfer.Currency.Id.Value);
+            string currency2 = Enum.GetName(typeof(TransactionCurrency), transfer.ReceiverCurrencyId);
+            decimal exchangeRates1 = Currencies.Rates[currency1];
+            decimal exchangeRates2 = Currencies.Rates[currency2];
+
             var result = new DataWrapper<List<long>>();
             try
             {
@@ -76,7 +75,6 @@ namespace TransactionStore.Data
                     }, commandType:CommandType.StoredProcedure).ToList();
                 result.IsOk = true;
             }
-
             catch (Exception e)
             {
                 result.ExceptionMessage = e.Message;
@@ -105,7 +103,6 @@ namespace TransactionStore.Data
                 result.Data = transactions;
                 result.IsOk = true;
             }
-
             catch (Exception e)
             {
                 result.ExceptionMessage = e.Message;
@@ -134,7 +131,6 @@ namespace TransactionStore.Data
                 result.Data = transactions;
                 result.IsOk = true;
             }
-
             catch (Exception e)
             {
                 result.ExceptionMessage = e.Message;
@@ -184,7 +180,6 @@ namespace TransactionStore.Data
                 result.Data = balance;
                 result.IsOk = true;
             }
-
             catch (Exception e)
             {
                 result.ExceptionMessage = e.Message;
