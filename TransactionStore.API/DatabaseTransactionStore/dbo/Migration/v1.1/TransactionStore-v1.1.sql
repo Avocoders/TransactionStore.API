@@ -5,9 +5,9 @@ IF @currentDBVersion <> '1.1'
 
 truncate table dbo.[Transaction]
 go
---alter table dbo.[Transaction]
---drop column [LeadId]
---go
+alter table dbo.[Transaction]
+drop column [LeadId]
+go
 alter table dbo.[Transaction]
 add [AccountId] bigint not null
 go
