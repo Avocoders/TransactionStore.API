@@ -13,7 +13,8 @@ namespace TransactionStore.API
             Currencies.Rates = new Dictionary<string, decimal>();
             Currencies.Rates.Add("USD", (decimal)context.Message.USD);
             Currencies.Rates.Add("RUB", (decimal)context.Message.RUB);
-            Currencies.Rates.Add("JPY", (decimal)context.Message.JPY);            
+            Currencies.Rates.Add("JPY", (decimal)context.Message.JPY);
+            Currencies.Rates.Add("EUR", 1);
 
             //вариант со списоком
             //currencies.Rates = new List<Currency>();
