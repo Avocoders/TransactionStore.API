@@ -35,7 +35,7 @@ namespace TransactionStore.Data
                         TypeId = transactionDto.Type.Id,
                         CurrencyId = transactionDto.Currency.Id,
                         transactionDto.Amount,
-                        ExchangeRates = Currencies.Rates[currency]
+                        //ExchangeRates = Currencies.Rates[currency]
 
                     }).FirstOrDefault();
                 result.IsOk = true;
@@ -52,8 +52,8 @@ namespace TransactionStore.Data
         {
             string currency1 = Enum.GetName(typeof(TransactionCurrency), transfer.Currency.Id.Value);
             string currency2 = Enum.GetName(typeof(TransactionCurrency), transfer.ReceiverCurrencyId);
-            decimal exchangeRates1 = Currencies.Rates[currency1];
-            decimal exchangeRates2 = Currencies.Rates[currency2];
+            //decimal exchangeRates1 = Currencies.Rates[currency1];
+            //decimal exchangeRates2 = Currencies.Rates[currency2];
 
             var result = new DataWrapper<List<long>>();
             try
@@ -66,11 +66,11 @@ namespace TransactionStore.Data
                         typeId = transfer.Type.Id,
                         currencyId = transfer.Currency.Id,
                         amount1 = transfer.Amount,
-                        Amount2 = transfer.Amount / exchangeRates1 * exchangeRates2,
+                        //Amount2 = transfer.Amount / exchangeRates1 * exchangeRates2,
                         accountIdReceiver = transfer.AccountIdReceiver,
                         receiverCurrencyId = transfer.ReceiverCurrencyId,
-                        exchangeRates1,
-                        exchangeRates2 
+                        //exchangeRates1,
+                        //exchangeRates2 
 
                     }, commandType:CommandType.StoredProcedure).ToList();
                 result.IsOk = true;

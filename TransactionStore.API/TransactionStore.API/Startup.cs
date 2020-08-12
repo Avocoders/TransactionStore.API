@@ -78,7 +78,7 @@ namespace TransactionStore.API
                 {
                     cfg.Host("localhost");
 
-                    cfg.ReceiveEndpoint("CurrencyRates", ec =>
+                    cfg.ReceiveEndpoint("Currencies", ec =>
                     {
                         //ec.ConfigureConsumer<EventConsumer>(context);  с ней выводит два раза 
                     });
