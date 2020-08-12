@@ -9,6 +9,7 @@ using TransactionStore.Core.Shared;
 using TransactionStore.Business;
 using Microsoft.AspNetCore.Http;
 using AutoMapper;
+using Messaging;
 
 namespace TransactionStore.API.Controllers
 {
@@ -20,12 +21,14 @@ namespace TransactionStore.API.Controllers
         private readonly IMapper _mapper;
         private readonly ITransactionRepository _repo;
         private readonly ITransactionService _transactionService;
-        public TransactionController(ILogger<TransactionController> logger, ITransactionRepository repo, ITransactionService transactionService, IMapper mapper)
+        private Currencies _currencies;
+        public TransactionController(ILogger<TransactionController> logger, ITransactionRepository repo, ITransactionService transactionService, IMapper mapper, Currencies currencies)
         {
             _logger = logger;            
             _repo = repo;
             _transactionService = transactionService;
             _mapper = mapper;
+            _currencies = currencies;
         }
 
         private string FormBadRequest(decimal amount, long accountId, byte currencyId)

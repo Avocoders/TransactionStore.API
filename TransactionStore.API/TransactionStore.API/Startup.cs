@@ -12,7 +12,7 @@ using Microsoft.OpenApi.Models;
 using AutoMapper;
 using TransactionStore.Core;
 using MassTransit;
-
+using Messaging;
 
 namespace TransactionStore.API
 {
@@ -87,6 +87,9 @@ namespace TransactionStore.API
             });
             services.AddMassTransitHostedService();
 
+            Currencies currencies = new Currencies();
+            services.AddSingleton(currencies);
+
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
@@ -102,6 +105,7 @@ namespace TransactionStore.API
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+            
 
             services.AddMvcCore();
             ConfigureDependencies(services);

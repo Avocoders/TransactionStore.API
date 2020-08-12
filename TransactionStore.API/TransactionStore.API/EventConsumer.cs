@@ -8,8 +8,14 @@ namespace TransactionStore.API
 {
     public class EventConsumer : IConsumer<Currencies>
     {
-        public async Task Consume(ConsumeContext<Currencies> context)
+        Currencies _currencies;
+        public EventConsumer(Currencies currencies)
         {
+            _currencies = currencies;
+        }
+        public async Task Consume(ConsumeContext<Currencies> context)
+        {                     
+            _currencies.Rates = context.Message.Rates;
             await Console.Out.WriteLineAsync(context.Message.Rates[0].Rate.ToString());
         }
     }
