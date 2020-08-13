@@ -8,22 +8,22 @@ using TransactionStore.Core.Shared;
 using System.Data.SqlClient;
 using TransactionStore.Core;
 using Microsoft.Extensions.Options;
+using Messaging;
 
 namespace TransactionStore.Data
 {
     public class TransactionRepository : ITransactionRepository
     {
         private readonly IDbConnection _connection;
-        public TransactionRepository(IOptions<StorageOptions> options)
+        private readonly Currencies _currencies;
+        public TransactionRepository(IOptions<StorageOptions> options, Currencies currencies)
         {
             _connection = new SqlConnection(options.Value.DBConnectionString);
+            _currencies = currencies;
         }
 
         public DataWrapper<long> Add(TransactionDto transactionDto) 
-        {
-
-            var rates = new ExchangeRates();
-         
+        {   
             var result = new DataWrapper<long>();
             try
             {
@@ -36,7 +36,7 @@ namespace TransactionStore.Data
                         TypeId = transactionDto.Type.Id,
                         CurrencyId = transactionDto.Currency.Id,
                         transactionDto.Amount,
-                        ExchangeRates = rates.GetExchangeRates(transactionDto.Currency.Id.Value)
+                        ExchangeRates = GetRates(transactionDto.Currency.Id.Value)
 
                     }).FirstOrDefault();
                 result.IsOk = true;
@@ -51,10 +51,9 @@ namespace TransactionStore.Data
 
         public DataWrapper<List<long>> AddTransfer(TransferTransactionDto transfer)
         {
-            var rates = new ExchangeRates();
-            decimal exchangeRates1 = rates.GetExchangeRates(transfer.Currency.Id.Value);
-            decimal exchangeRates2 = rates.GetExchangeRates(transfer.ReceiverCurrencyId);
-            
+            decimal exchangeRates1 = GetRates(transfer.Currency.Id.Value);
+            decimal exchangeRates2 = GetRates(transfer.ReceiverCurrencyId);
+
             var result = new DataWrapper<List<long>>();
             try
             {
@@ -66,16 +65,15 @@ namespace TransactionStore.Data
                         typeId = transfer.Type.Id,
                         currencyId = transfer.Currency.Id,
                         amount1 = transfer.Amount,
-                        Amount2 = transfer.Amount / exchangeRates1 * exchangeRates2,
+                        amount2 = transfer.Amount / exchangeRates1 * exchangeRates2,
                         accountIdReceiver = transfer.AccountIdReceiver,
                         receiverCurrencyId = transfer.ReceiverCurrencyId,
                         exchangeRates1,
-                        exchangeRates2 
+                        exchangeRates2,
 
                     }, commandType:CommandType.StoredProcedure).ToList();
                 result.IsOk = true;
             }
-
             catch (Exception e)
             {
                 result.ExceptionMessage = e.Message;
@@ -104,7 +102,6 @@ namespace TransactionStore.Data
                 result.Data = transactions;
                 result.IsOk = true;
             }
-
             catch (Exception e)
             {
                 result.ExceptionMessage = e.Message;
@@ -133,7 +130,6 @@ namespace TransactionStore.Data
                 result.Data = transactions;
                 result.IsOk = true;
             }
-
             catch (Exception e)
             {
                 result.ExceptionMessage = e.Message;
@@ -183,12 +179,35 @@ namespace TransactionStore.Data
                 result.Data = balance;
                 result.IsOk = true;
             }
-
             catch (Exception e)
             {
                 result.ExceptionMessage = e.Message;
             }
             return result;
+        }
+
+        public void UpdateCurrencyRates()
+        {
+            foreach (var c in _currencies.Rates)
+            {
+                string sqlExpression = "CurrencyRates_Update @code, @rate";
+                _connection.Execute(sqlExpression,
+                    new
+                    {
+                        code = c.Code,
+                        rate = c.Rate
+                    });
+            }
+        }
+
+        public decimal GetRates(byte currencyId)
+        {
+            string code = Enum.GetName(typeof(TransactionCurrency), currencyId);
+            var rate = _currencies.Rates?.Where(t => t.Code == code).FirstOrDefault();
+            if (rate != null)
+                return rate.Rate;
+            else
+                return _connection.Query<decimal>("CurrencyRates_GetById @id", new { id = currencyId }).FirstOrDefault();
         }
     }
 }

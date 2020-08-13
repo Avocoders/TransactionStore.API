@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Messaging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using TransactionStore.Core;
 using TransactionStore.Core.Shared;
 using TransactionStore.Data;
 using TransactionStore.Data.DTO;
@@ -87,14 +87,6 @@ namespace TransactionStore.Business
                 transactionDto.Amount *= -1;
             }
             return _transactionRepository.Add(transactionDto);
-        }
-
-        public decimal ConvertAmount(byte currencyId, decimal amount, byte receiverCurrencyId)
-        {
-            ExchangeRates rates = new ExchangeRates();
-
-            return amount/rates.GetExchangeRates(currencyId)*rates.GetExchangeRates(receiverCurrencyId);
-
         }
     }
 }

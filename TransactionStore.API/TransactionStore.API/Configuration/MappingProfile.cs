@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Routing.Constraints;
 using System;
 using TransactionStore.API.Models.Input;
 using TransactionStore.API.Models.Output;
@@ -23,8 +22,7 @@ namespace TransactionStore.API.Configuration
             CreateMap<SearchParametersInputModel, TransactionSearchParameters>();
 
             CreateMap<TransactionDto, TransactionOutputModel>()
-                .ForPath(dest => dest.Type, o => o.MapFrom(src => Enum.GetName(typeof(TransactionType), src.Type.Id)));
-                //.AfterMap((src, dest) => { var tmp = (TransferTransactionDto)src; dest.AccountIdReceiver = tmp.AccountIdReceiver; });
+                .ForPath(dest => dest.Type, o => o.MapFrom(src => Enum.GetName(typeof(TransactionType), src.Type.Id)));                
 
             CreateMap<TransferTransactionDto, TransactionOutputModel>()
                 .ForPath(dest => dest.Type, o => o.MapFrom(src => Enum.GetName(typeof(TransactionType), src.Type.Id)));
