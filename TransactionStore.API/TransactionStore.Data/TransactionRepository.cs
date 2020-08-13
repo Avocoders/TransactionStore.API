@@ -15,14 +15,17 @@ namespace TransactionStore.Data
     public class TransactionRepository : ITransactionRepository
     {
         private readonly IDbConnection _connection;
-        public TransactionRepository(IOptions<StorageOptions> options)
+        private readonly Currencies _currencies;
+        public TransactionRepository(IOptions<StorageOptions> options, Currencies currencies)
         {
             _connection = new SqlConnection(options.Value.DBConnectionString);
+            _currencies = currencies;
         }
 
         public DataWrapper<long> Add(TransactionDto transactionDto) 
-        {            
+        {   
             string currency = Enum.GetName(typeof(TransactionCurrency), transactionDto.Currency.Id.Value);
+            var rate = _currencies.Rates. Where(t => t.Code == currency).FirstOrDefault();
             var result = new DataWrapper<long>();
             try
             {
@@ -35,7 +38,7 @@ namespace TransactionStore.Data
                         TypeId = transactionDto.Type.Id,
                         CurrencyId = transactionDto.Currency.Id,
                         transactionDto.Amount,
-                        //ExchangeRates = Currencies.Rates[currency]
+                        ExchangeRates = rate.Rate
 
                     }).FirstOrDefault();
                 result.IsOk = true;
@@ -52,8 +55,10 @@ namespace TransactionStore.Data
         {
             string currency1 = Enum.GetName(typeof(TransactionCurrency), transfer.Currency.Id.Value);
             string currency2 = Enum.GetName(typeof(TransactionCurrency), transfer.ReceiverCurrencyId);
-            //decimal exchangeRates1 = Currencies.Rates[currency1];
-            //decimal exchangeRates2 = Currencies.Rates[currency2];
+            var rate1 = _currencies.Rates.Where(t => t.Code == currency1).FirstOrDefault();
+            var rate2 = _currencies.Rates.Where(t => t.Code == currency2).FirstOrDefault();
+            decimal exchangeRates1 = rate1.Rate;
+            decimal exchangeRates2 = rate2.Rate;
 
             var result = new DataWrapper<List<long>>();
             try
@@ -66,11 +71,11 @@ namespace TransactionStore.Data
                         typeId = transfer.Type.Id,
                         currencyId = transfer.Currency.Id,
                         amount1 = transfer.Amount,
-                        //Amount2 = transfer.Amount / exchangeRates1 * exchangeRates2,
+                        amount2 = transfer.Amount / exchangeRates1 * exchangeRates2,
                         accountIdReceiver = transfer.AccountIdReceiver,
                         receiverCurrencyId = transfer.ReceiverCurrencyId,
-                        //exchangeRates1,
-                        //exchangeRates2 
+                        exchangeRates1,
+                        exchangeRates2,
 
                     }, commandType:CommandType.StoredProcedure).ToList();
                 result.IsOk = true;
