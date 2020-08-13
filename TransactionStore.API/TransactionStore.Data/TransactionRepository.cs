@@ -24,8 +24,6 @@ namespace TransactionStore.Data
 
         public DataWrapper<long> Add(TransactionDto transactionDto) 
         {   
-            string currency = Enum.GetName(typeof(TransactionCurrency), transactionDto.Currency.Id.Value);
-            var rate = _currencies.Rates. Where(t => t.Code == currency).FirstOrDefault();
             var result = new DataWrapper<long>();
             try
             {
@@ -38,7 +36,7 @@ namespace TransactionStore.Data
                         TypeId = transactionDto.Type.Id,
                         CurrencyId = transactionDto.Currency.Id,
                         transactionDto.Amount,
-                        ExchangeRates = rate.Rate
+                        ExchangeRates = GetRates(transactionDto.Currency.Id.Value)
 
                     }).FirstOrDefault();
                 result.IsOk = true;
@@ -53,12 +51,8 @@ namespace TransactionStore.Data
 
         public DataWrapper<List<long>> AddTransfer(TransferTransactionDto transfer)
         {
-            string currency1 = Enum.GetName(typeof(TransactionCurrency), transfer.Currency.Id.Value);
-            string currency2 = Enum.GetName(typeof(TransactionCurrency), transfer.ReceiverCurrencyId);
-            var rate1 = _currencies.Rates.Where(t => t.Code == currency1).FirstOrDefault();
-            var rate2 = _currencies.Rates.Where(t => t.Code == currency2).FirstOrDefault();
-            decimal exchangeRates1 = rate1.Rate;
-            decimal exchangeRates2 = rate2.Rate;
+            decimal exchangeRates1 = GetRates(transfer.Currency.Id.Value);
+            decimal exchangeRates2 = GetRates(transfer.ReceiverCurrencyId);
 
             var result = new DataWrapper<List<long>>();
             try
@@ -190,6 +184,30 @@ namespace TransactionStore.Data
                 result.ExceptionMessage = e.Message;
             }
             return result;
+        }
+
+        public void UpdateCurrencyRates()
+        {
+            foreach (var c in _currencies.Rates)
+            {
+                string sqlExpression = "CurrencyRates_Update @code, @rate";
+                _connection.Execute(sqlExpression,
+                    new
+                    {
+                        code = c.Code,
+                        rate = c.Rate
+                    });
+            }
+        }
+
+        public decimal GetRates(byte currencyId)
+        {
+            string code = Enum.GetName(typeof(TransactionCurrency), currencyId);
+            var rate = _currencies.Rates?.Where(t => t.Code == code).FirstOrDefault();
+            if (rate != null)
+                return rate.Rate;
+            else
+                return _connection.Query<decimal>("CurrencyRates_GetById @id", new { id = currencyId }).FirstOrDefault();
         }
     }
 }

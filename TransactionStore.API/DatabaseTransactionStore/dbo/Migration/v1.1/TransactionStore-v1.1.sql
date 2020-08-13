@@ -14,6 +14,31 @@ go
 alter table dbo.[Transaction]
 add [ExchangeRates] decimal(18,10) not null
 go
+create table [dbo].[CurrencyRates](
+	[id] [tinyint] NOT NULL,
+	[Code] [nvarchar](3) NULL,
+	[Rate] [decimal](18, 10) NULL
+) on [PRIMARY]
+go
+CREATE PROCEDURE [dbo].[CurrencyRates_Update] 
+@code nvarchar(3),
+@rate decimal(18,10)
+AS
+BEGIN
+	update dbo.[CurrencyRates]
+	set Rate=@rate
+	where Code = @code
+END
+go
+CREATE PROCEDURE dbo.CurrencyRates_GetById 
+@id tinyint
+AS
+BEGIN
+	select c.Rate
+	from dbo.CurrencyRates as c
+	where Id = @id
+END
+GO
 ALTER procedure [dbo].[Transaction_Add]
 	@accountId bigint,
 	@typeId tinyint,
