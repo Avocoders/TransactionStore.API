@@ -16,22 +16,20 @@ namespace TransactionStore.API.Controllers
     [ApiController]
     [Route("[Controller]")]
     public class TransactionController : Controller
-    {
-        private readonly ILogger<TransactionController> _logger;        
+    {    
         private readonly IMapper _mapper;
         private readonly ITransactionRepository _repo;
         private readonly ITransactionService _transactionService;
         private Currencies _currencies;
-        public TransactionController(ILogger<TransactionController> logger, ITransactionRepository repo, ITransactionService transactionService, IMapper mapper, Currencies currencies)
-        {
-            _logger = logger;            
+        public TransactionController(ITransactionRepository repo, ITransactionService transactionService, IMapper mapper, Currencies currencies)
+        {        
             _repo = repo;
             _transactionService = transactionService;
             _mapper = mapper;
             _currencies = currencies;
         }
 
-        private string FormBadRequest(decimal amount, long accountId, byte currencyId)
+        private string FormBadRequest(decimal amount, long accountId)
         {
             if (amount <= 0) return "The amount is missing";
             var balance = _repo.GetBalanceByAccountId(accountId);
@@ -68,7 +66,7 @@ namespace TransactionStore.API.Controllers
         public ActionResult<long> CreateWithdrawTransaction([FromBody] TransactionInputModel transactionModel)
         {
             if (_repo.GetByAccountId(transactionModel.AccountId) is null) return BadRequest("The account is not found");
-            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.AccountId, transactionModel.CurrencyId);
+            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.AccountId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
             TransactionDto transactionDto = _mapper.Map<TransactionDto>(transactionModel);
             DataWrapper<long> dataWrapper = _transactionService.AddTransaction(2, transactionDto);
@@ -87,7 +85,7 @@ namespace TransactionStore.API.Controllers
         {
             if (_repo.GetById(transactionModel.AccountId) is null) return BadRequest("The account is not found");
             if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");
-            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.AccountId, transactionModel.CurrencyId);
+            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.AccountId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
             TransferTransactionDto transfer = _mapper.Map<TransferTransactionDto>(transactionModel);                
             DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);

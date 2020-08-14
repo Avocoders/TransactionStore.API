@@ -13,6 +13,7 @@ using AutoMapper;
 using TransactionStore.Core;
 using MassTransit;
 using Messaging;
+using System;
 
 namespace TransactionStore.API
 {
@@ -95,7 +96,7 @@ namespace TransactionStore.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "TransactionStore.API", Version = "v1" });
-                //c.IncludeXmlComments(String.Format(@"{0}\Swagger.XML", AppContext.BaseDirectory)); с этим надо разобраться
+                c.IncludeXmlComments(String.Format(@"{0}\Swagger.XML", AppContext.BaseDirectory));
             }
             );
 
