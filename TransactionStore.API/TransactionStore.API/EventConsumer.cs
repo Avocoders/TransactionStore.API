@@ -19,7 +19,7 @@ namespace TransactionStore.API
         public async Task Consume(ConsumeContext<Currencies> context)
         {                     
             _currencies.Rates = context.Message.Rates;
-            await Console.Out.WriteLineAsync(context.Message.Rates[0].Rate.ToString());
+            //await Console.Out.WriteLineAsync(context.Message.Rates[0].Rate.ToString());
             _repo.UpdateCurrencyRates();
         }
     }
