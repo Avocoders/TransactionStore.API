@@ -1,6 +1,4 @@
-﻿using Messaging;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TransactionStore.Core.Shared;
 using TransactionStore.Data;
