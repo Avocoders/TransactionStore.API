@@ -193,9 +193,9 @@ namespace TransactionStore.Data
         public decimal GetRates(byte currencyId)
         {
             string code = Enum.GetName(typeof(TransactionCurrency), currencyId);
-            var rate = _currencies.Rates?.Where(t => t.Code == code).FirstOrDefault();
-            if (rate != null)
-                return rate.Rate;
+            var currency = _currencies.Rates?.Where(t => t.Code == code).FirstOrDefault();
+            if (currency != null)
+                return currency.Rate;
             else
                 return _connection.Query<decimal>("CurrencyRates_GetById @id", new { id = currencyId }).FirstOrDefault();
         }

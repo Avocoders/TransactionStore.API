@@ -18,32 +18,27 @@ namespace TransactionStore.Business
 
         public DataWrapper<List<TransactionDto>> GetById(long id) 
         {
-            var data = _transactionRepository.GetById(id);
-            if (data.IsOk)
-            {
-                data.Data = ProcessTransactions(data.Data);
-            }
-            return data;
+            return MakeResponse(_transactionRepository.GetById(id));
         }
 
         public DataWrapper<List<TransactionDto>> GetByAccountId(long accountId) 
         {
-            var data = _transactionRepository.GetByAccountId(accountId);
-            if (data.IsOk)
+            var dataWrapper = _transactionRepository.GetByAccountId(accountId);
+            if (dataWrapper.IsOk)
             {
-                data.Data = ProcessTransactions(data.Data);
+                dataWrapper.Data = ProcessTransactions(dataWrapper.Data);
             }
-            return data;
+            return dataWrapper;
         }
 
         public DataWrapper<List<TransactionDto>> SearchTransactions(TransactionSearchParameters searchParameters)
         {
-            var data = _transactionRepository.SearchTransactions(searchParameters);
-            if (data.IsOk)
+            var dataWrapper = _transactionRepository.SearchTransactions(searchParameters);
+            if (dataWrapper.IsOk)
             {
-                data.Data = ProcessTransactions(data.Data);
+                dataWrapper.Data = ProcessTransactions(dataWrapper.Data);
             }
-            return data;
+            return dataWrapper;
         }
 
         private List<TransactionDto> ProcessTransactions(List<TransactionDto> transactions)
@@ -87,6 +82,15 @@ namespace TransactionStore.Business
                 transactionDto.Amount *= -1;
             }
             return _transactionRepository.Add(transactionDto);
+        }
+
+        private DataWrapper<List<TransactionDto>> MakeResponse(DataWrapper<List<TransactionDto>> dataWrapper)
+        {
+            if (dataWrapper.IsOk)
+            {
+                dataWrapper.Data = ProcessTransactions(dataWrapper.Data);
+            }
+            return dataWrapper;
         }
     }
 }
