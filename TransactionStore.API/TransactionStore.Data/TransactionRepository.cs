@@ -166,8 +166,7 @@ namespace TransactionStore.Data
             try
             {
                 string sqlExpression = "Transaction_GetBalanceByAccountId";
-                var balance = _connection.Query<decimal>(sqlExpression, new { accountId }, commandType: CommandType.StoredProcedure).FirstOrDefault();
-                result.Data = balance;
+                result.Data = _connection.Query<decimal>(sqlExpression, new { accountId }, commandType: CommandType.StoredProcedure).FirstOrDefault();
                 result.IsOk = true;
             }
             catch (Exception e)
