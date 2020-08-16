@@ -21,8 +21,7 @@ namespace TransactionStore.Data
             _connection = new SqlConnection(options.Value.DBConnectionString);
             _currencies = currencies;
         }
-
-        public DataWrapper<long> Add(TransactionDto transaction) 
+        public DataWrapper<long> Add(TransactionDto transactionDto) 
         {   
             var result = new DataWrapper<long>();
             try
@@ -31,13 +30,12 @@ namespace TransactionStore.Data
                 result.Data = _connection.Query<long>(sqlExpression,
                     new
                     {
-                        transaction.Id,
-                        transaction.AccountId,
-                        TypeId = transaction.Type.Id,
-                        CurrencyId = transaction.Currency.Id,
-                        transaction.Amount,
-                        ExchangeRates = GetRates(transaction.Currency.Id.Value)
-
+                        transactionDto.Id,
+                        transactionDto.AccountId,
+                        TypeId = transactionDto.Type.Id,
+                        CurrencyId = transactionDto.Currency.Id,
+                        transactionDto.Amount,
+                        ExchangeRates = GetRates(transactionDto.Currency.Id.Value)
                     }).FirstOrDefault();
                 result.IsOk = true;
             }
@@ -48,7 +46,6 @@ namespace TransactionStore.Data
             }
             return result;
         }
-
         public DataWrapper<List<long>> AddTransfer(TransferTransactionDto transfer)
         {
             var exchangeRates1 = GetRates(transfer.Currency.Id.Value);
@@ -80,7 +77,6 @@ namespace TransactionStore.Data
             }
             return result;
         }
-
         public DataWrapper<List<TransactionDto>> GetById(long id)
         {
             var result = new DataWrapper<List<TransactionDto>>();
@@ -105,7 +101,6 @@ namespace TransactionStore.Data
             }
             return result;
         }
-
         public DataWrapper<List<TransactionDto>> GetByAccountId(long accountId)
         {
             var result = new DataWrapper<List<TransactionDto>>();
@@ -130,7 +125,6 @@ namespace TransactionStore.Data
             }
             return result;
         }
-
         public DataWrapper<List<TransactionDto>> SearchTransactions(TransactionSearchParameters searchParameters)
         {
             var result = new DataWrapper<List<TransactionDto>>();
@@ -159,7 +153,6 @@ namespace TransactionStore.Data
             }
             return result;
         }
-
         public DataWrapper<decimal> GetBalanceByAccountId(long accountId)
         {
             var result = new DataWrapper<decimal>();
@@ -175,7 +168,6 @@ namespace TransactionStore.Data
             }
             return result;
         }
-
         public void UpdateCurrencyRates()
         {
             foreach (var c in _currencies.Rates)
@@ -189,7 +181,6 @@ namespace TransactionStore.Data
                     });
             }
         }
-
         public decimal GetRates(byte currencyId)
         {
             string code = Enum.GetName(typeof(TransactionCurrency), currencyId);
