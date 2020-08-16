@@ -23,22 +23,12 @@ namespace TransactionStore.Business
 
         public DataWrapper<List<TransactionDto>> GetByAccountId(long accountId) 
         {
-            var dataWrapper = _transactionRepository.GetByAccountId(accountId);
-            if (dataWrapper.IsOk)
-            {
-                dataWrapper.Data = ProcessTransactions(dataWrapper.Data);
-            }
-            return dataWrapper;
+            return MakeResponse(_transactionRepository.GetByAccountId(accountId));
         }
 
         public DataWrapper<List<TransactionDto>> SearchTransactions(TransactionSearchParameters searchParameters)
         {
-            var dataWrapper = _transactionRepository.SearchTransactions(searchParameters);
-            if (dataWrapper.IsOk)
-            {
-                dataWrapper.Data = ProcessTransactions(dataWrapper.Data);
-            }
-            return dataWrapper;
+            return MakeResponse(_transactionRepository.SearchTransactions(searchParameters));
         }
 
         private List<TransactionDto> ProcessTransactions(List<TransactionDto> transactions)
