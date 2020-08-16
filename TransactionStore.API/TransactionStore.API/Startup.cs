@@ -81,7 +81,7 @@ namespace TransactionStore.API
 
                     cfg.ReceiveEndpoint("Currencies", ec =>
                     {
-                        //ec.ConfigureConsumer<EventConsumer>(context);  с ней выводит два раза 
+                        //ec.ConfigureConsumer<EventConsumer>(context);  ? ??? ??????? ??? ???? 
                     });
                     cfg.ConfigureEndpoints(context);
                 });
@@ -96,7 +96,7 @@ namespace TransactionStore.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "TransactionStore.API", Version = "v1" });
-                c.IncludeXmlComments(String.Format(@"{0}\Swagger.XML", AppContext.BaseDirectory));
+                //c.IncludeXmlComments(String.Format(@"{0}\Swagger.XML", AppContext.BaseDirectory));
             }
             );
 

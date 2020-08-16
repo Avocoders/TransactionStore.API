@@ -22,7 +22,7 @@ namespace TransactionStore.Data
             _currencies = currencies;
         }
 
-        public DataWrapper<long> Add(TransactionDto transactionDto) 
+        public DataWrapper<long> Add(TransactionDto transaction) 
         {   
             var result = new DataWrapper<long>();
             try
@@ -31,12 +31,12 @@ namespace TransactionStore.Data
                 result.Data = _connection.Query<long>(sqlExpression,
                     new
                     {
-                        transactionDto.Id,
-                        transactionDto.AccountId,
-                        TypeId = transactionDto.Type.Id,
-                        CurrencyId = transactionDto.Currency.Id,
-                        transactionDto.Amount,
-                        ExchangeRates = GetRates(transactionDto.Currency.Id.Value)
+                        transaction.Id,
+                        transaction.AccountId,
+                        TypeId = transaction.Type.Id,
+                        CurrencyId = transaction.Currency.Id,
+                        transaction.Amount,
+                        ExchangeRates = GetRates(transaction.Currency.Id.Value)
 
                     }).FirstOrDefault();
                 result.IsOk = true;
@@ -51,13 +51,13 @@ namespace TransactionStore.Data
 
         public DataWrapper<List<long>> AddTransfer(TransferTransactionDto transfer)
         {
-            decimal exchangeRates1 = GetRates(transfer.Currency.Id.Value);
-            decimal exchangeRates2 = GetRates(transfer.ReceiverCurrencyId);
+            var exchangeRates1 = GetRates(transfer.Currency.Id.Value);
+            var exchangeRates2 = GetRates(transfer.ReceiverCurrencyId);
 
             var result = new DataWrapper<List<long>>();
             try
             {
-                string sqlExpression = "Transaction_AddTransfer ";
+                string sqlExpression = "Transaction_AddTransfer";
                 result.Data = _connection.Query<long>(sqlExpression,
                     new
                     {
@@ -86,7 +86,6 @@ namespace TransactionStore.Data
             var result = new DataWrapper<List<TransactionDto>>();
             try
             {
-                var transactions = new List<TransactionDto>();
                 string sqlExpression = "Transaction_GetById @id";
                 result.Data = _connection.Query<TransactionDto, TransactionTypeDto, TransactionDto>(sqlExpression,
                     (transaction, type) =>
@@ -94,12 +93,10 @@ namespace TransactionStore.Data
                         TransactionDto transactionEntry;
                         transactionEntry = transaction;
                         transactionEntry.Type = type;
-                        transactions.Add(transactionEntry);
                         return transactionEntry;
                     },
                     new { id }
                    ).ToList();
-                result.Data = transactions;
                 result.IsOk = true;
             }
             catch (Exception e)
@@ -114,20 +111,17 @@ namespace TransactionStore.Data
             var result = new DataWrapper<List<TransactionDto>>();
             try
             {
-                var transactions = new List<TransactionDto>();
                 string sqlExpression = "Transaction_GetByAccountId @accountId";
-                var data = _connection.Query<TransactionDto, TransactionTypeDto, TransactionDto>(sqlExpression,
+                result.Data = _connection.Query<TransactionDto, TransactionTypeDto, TransactionDto>(sqlExpression,
                     (transaction, type) =>
                     {
                         TransactionDto transactionEntry;
                         transactionEntry = transaction;
                         transactionEntry.Type = type;
-                        transactions.Add(transactionEntry);
                         return transactionEntry;
                     },
                     new { accountId },
                     splitOn: "id").ToList();
-                result.Data = transactions;
                 result.IsOk = true;
             }
             catch (Exception e)
@@ -142,9 +136,8 @@ namespace TransactionStore.Data
             var result = new DataWrapper<List<TransactionDto>>();
             try
             {
-                var transactions = new List<TransactionDto>();
                 string sqlExpression = "Transaction_Search @accountId, @typeId, @currencyId, @amountBegin, @amountEnd, @fromDate, @tillDate";
-                var data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression,
+                result.Data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression,
                     (transaction, type, currency) =>
                     {
                         TransactionDto transactionEntry;
@@ -152,14 +145,12 @@ namespace TransactionStore.Data
                         transactionEntry = transaction;
                         transactionEntry.Type = type;
                         transactionEntry.Currency = currency;
-                        transactions.Add(transactionEntry);
 
                         return transactionEntry;
                     },
                     searchParameters,
                     splitOn: "id").ToList();
 
-                result.Data =transactions;
                 result.IsOk = true;
             }
             catch (Exception e)
