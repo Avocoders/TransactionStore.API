@@ -78,11 +78,6 @@ namespace TransactionStore.API
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.Host("localhost");
-
-                    cfg.ReceiveEndpoint("Currencies", ec =>
-                    {
-                        //ec.ConfigureConsumer<EventConsumer>(context);  ? ??? ??????? ??? ???? 
-                    });
                     cfg.ConfigureEndpoints(context);
                 });
             });
