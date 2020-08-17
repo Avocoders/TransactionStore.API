@@ -81,7 +81,7 @@ namespace TransactionStore.API
 
                     cfg.ReceiveEndpoint("Currencies", ec =>
                     {
-                        ec.ConfigureConsumer<EventConsumer>(context);  //с ней выводит два раза 
+                        //ec.ConfigureConsumer<EventConsumer>(context);  с ней выводит два раза 
                     });
                     cfg.ConfigureEndpoints(context);
                 });
