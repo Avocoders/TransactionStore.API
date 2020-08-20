@@ -106,6 +106,7 @@ namespace TransactionStore.API
             services.AddMvcCore();
             ConfigureDependencies(services);
             services.Configure<StorageOptions>(Configuration);
+            services.Configure<UrlOptions>(Configuration);
         }
 
         public void ConfigureContainer(ContainerBuilder builder)

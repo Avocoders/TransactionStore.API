@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using TransactionStore.Data;
 using TransactionStore.Business;
+using TransactionStore.Core;
 
 namespace TransactionStore.API.Configuration
 {
@@ -10,6 +11,7 @@ namespace TransactionStore.API.Configuration
         {
             builder.RegisterType<TransactionRepository>().As<ITransactionRepository>();
             builder.RegisterType<TransactionService>().As<ITransactionService>();
+            builder.RegisterType<UrlOptions>().As<IUrlOptions>();
         }
     }
 }
