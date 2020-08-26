@@ -1,5 +1,4 @@
-﻿
-namespace TransactionStore.API.Models.Output
+﻿namespace TransactionStore.API.Models.Output
 {
     public class TransactionOutputModel
     {

@@ -25,8 +25,7 @@ namespace TransactionStore.API.Configuration
                 .ForPath(dest => dest.Type, o => o.MapFrom(src => Enum.GetName(typeof(TransactionType), src.Type.Id)));                
 
             CreateMap<TransferTransactionDto, TransactionOutputModel>()
-                .ForPath(dest => dest.Type, o => o.MapFrom(src => Enum.GetName(typeof(TransactionType), src.Type.Id)));
-            ;
+                .ForPath(dest => dest.Type, o => o.MapFrom(src => Enum.GetName(typeof(TransactionType), src.Type.Id)));            
         }
     }
 }

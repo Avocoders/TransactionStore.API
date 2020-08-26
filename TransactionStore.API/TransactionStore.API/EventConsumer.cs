@@ -1,8 +1,6 @@
 ﻿using MassTransit;
 using System.Threading.Tasks;
 using Messaging;
-using System.Collections.Generic;
-using System;
 using TransactionStore.Data;
 
 namespace TransactionStore.API
