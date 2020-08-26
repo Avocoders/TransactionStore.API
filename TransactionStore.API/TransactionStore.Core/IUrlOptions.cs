@@ -2,7 +2,6 @@
 {
     public interface IUrlOptions
     {
-
         string PayPalUrl { get; set; }
     }
 }

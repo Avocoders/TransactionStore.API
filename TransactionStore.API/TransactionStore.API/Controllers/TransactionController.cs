@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using TransactionStore.API.Models.Input;
 using TransactionStore.API.Models.Output;
 using TransactionStore.Data.DTO;
@@ -20,13 +19,12 @@ namespace TransactionStore.API.Controllers
         private readonly IMapper _mapper;
         private readonly ITransactionRepository _repo;
         private readonly ITransactionService _transactionService;
-        private Currencies _currencies;
-        public TransactionController(ITransactionRepository repo, ITransactionService transactionService, IMapper mapper, Currencies currencies)
+       
+        public TransactionController(ITransactionRepository repo, ITransactionService transactionService, IMapper mapper)
         {        
             _repo = repo;
             _transactionService = transactionService;
-            _mapper = mapper;
-            _currencies = currencies;
+            _mapper = mapper;           
         }
 
         private string FormBadRequest(decimal amount, long accountId)
@@ -135,7 +133,6 @@ namespace TransactionStore.API.Controllers
             if (accountId <= 0) return BadRequest("Account was not found");
             DataWrapper<decimal> dataWrapper = _repo.GetBalanceByAccountId(accountId);
             return MakeResponse(dataWrapper);
-           
         }
 
         /// <summary>

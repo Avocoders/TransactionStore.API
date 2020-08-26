@@ -32,20 +32,14 @@ namespace TransactionStore.API
             }
             Configuration = builder.Build();
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
-
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
+            }           
+            app.UseSwagger();           
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
@@ -68,8 +62,7 @@ namespace TransactionStore.API
                 .ExceptFromLocalhost()
                 .ExceptFromIPAddresses(new List<IPAddress>() {IPAddress.Parse("127.0.0.1")}));
         }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
+        
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMassTransit(x =>
@@ -100,8 +93,7 @@ namespace TransactionStore.API
                 mc.AddProfile(new MappingProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
-            
+            services.AddSingleton(mapper);            
 
             services.AddMvcCore();
             ConfigureDependencies(services);
