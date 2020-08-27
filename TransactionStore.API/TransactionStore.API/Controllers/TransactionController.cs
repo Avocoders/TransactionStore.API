@@ -84,7 +84,7 @@ namespace TransactionStore.API.Controllers
             if (_repo.GetById(transactionModel.AccountId) is null) return BadRequest("The account is not found");
             if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");
             string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.AccountId);
-            if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
+            if (!string.IsNullOrWhiteSpace(badRequest)) return Problem("Not enough money on the account", statusCode: 418);
             TransferTransactionDto transfer = _mapper.Map<TransferTransactionDto>(transactionModel);                
             DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
             return MakeResponse(dataWrapper);
