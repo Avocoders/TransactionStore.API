@@ -22,27 +22,29 @@ namespace TransactionStore.Data
             _currencies = currencies;
         }
         public DataWrapper<long> Add(TransactionDto transactionDto) 
-        {   
+        {
+            transactionDto.Timestamp = GetBalanceByAccountId(transactionDto.AccountId).Data.Timestamp;
+            transactionDto.ExchangeRates = GetRates(transactionDto.Currency.Id.Value);
             var result = new DataWrapper<long>();
             try
             {
-                string sqlExpression = "Transaction_Add @accountId, @typeId, @currencyId, @amount, @exchangeRates";
+                string sqlExpression = "Transaction_Add";
                 result.Data = _connection.Query<long>(sqlExpression,
                     new
                     {
-                        transactionDto.Id,
-                        transactionDto.AccountId,
-                        TypeId = transactionDto.Type.Id,
-                        CurrencyId = transactionDto.Currency.Id,
-                        transactionDto.Amount,
-                        ExchangeRates = GetRates(transactionDto.Currency.Id.Value)
-                    }).FirstOrDefault();
+                        //transactionDto.Id,
+                        accountId = transactionDto.AccountId,
+                        typeId = transactionDto.Type.Id,
+                        currencyId = transactionDto.Currency.Id,
+                        amount = transactionDto.Amount,
+                        exchangeRates = transactionDto.ExchangeRates,
+                        timestamp = transactionDto.Timestamp
+                    }, commandType:CommandType.StoredProcedure).FirstOrDefault();
                 result.IsOk = true;
             }
-
             catch (Exception e)
             {
-                result.ExceptionMessage = e.Message;
+                result.ExceptionMessage = e.Message; 
             }
             return result;
         }
@@ -153,13 +155,13 @@ namespace TransactionStore.Data
             }
             return result;
         }
-        public DataWrapper<decimal> GetBalanceByAccountId(long accountId)
+        public DataWrapper<BalanceDto> GetBalanceByAccountId(long accountId)
         {
-            var result = new DataWrapper<decimal>();
+            var result = new DataWrapper<BalanceDto>();
             try
             {
                 string sqlExpression = "Transaction_GetBalanceByAccountId";
-                result.Data = _connection.Query<decimal>(sqlExpression, new { accountId }, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                result.Data = _connection.Query<BalanceDto>(sqlExpression, new { accountId }, commandType: CommandType.StoredProcedure).FirstOrDefault();
                 result.IsOk = true;
             }
             catch (Exception e)

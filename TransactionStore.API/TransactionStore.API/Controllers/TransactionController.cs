@@ -31,8 +31,8 @@ namespace TransactionStore.API.Controllers
         {
             if (amount <= 0) return "The amount is missing";
             var balance = _repo.GetBalanceByAccountId(accountId);
-            if (balance.Data < 0) return "The balance of minus";
-            if (balance.Data < amount) return "Not enough money";
+            if (balance.Data.Balance < 0) return "The balance of minus";
+            if (balance.Data.Balance < amount) return "Not enough money";
             return "";
         }
 
@@ -64,8 +64,9 @@ namespace TransactionStore.API.Controllers
         public ActionResult<long> CreateWithdrawTransaction([FromBody] TransactionInputModel transactionModel)
         {
             if (_repo.GetByAccountId(transactionModel.AccountId) is null) return BadRequest("The account is not found");
-            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.AccountId);
-            if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
+            //string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.AccountId);
+            //if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
+            //transactionModel.Timestamp = _repo.GetBalanceByAccountId(transactionModel.AccountId).Data.Timestamp;
             TransactionDto transactionDto = _mapper.Map<TransactionDto>(transactionModel);
             DataWrapper<long> dataWrapper = _transactionService.AddTransaction(2, transactionDto);
             return MakeResponse(dataWrapper);
@@ -128,10 +129,10 @@ namespace TransactionStore.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("{accountId}/balance")]
-        public ActionResult<decimal> GetBalanceByAccountId(long accountId)
+        public ActionResult<BalanceDto> GetBalanceByAccountId(long accountId)
         {
             if (accountId <= 0) return BadRequest("Account was not found");
-            DataWrapper<decimal> dataWrapper = _repo.GetBalanceByAccountId(accountId);
+            DataWrapper<BalanceDto> dataWrapper = _repo.GetBalanceByAccountId(accountId);
             return MakeResponse(dataWrapper);
         }
 
