@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ADO.Net.Client.Annotations;
+using System;
 
 namespace TransactionStore.Data.DTO
 {

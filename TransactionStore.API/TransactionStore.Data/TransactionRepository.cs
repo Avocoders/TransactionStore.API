@@ -23,7 +23,7 @@ namespace TransactionStore.Data
         }
         public DataWrapper<long> Add(TransactionDto transactionDto) 
         {
-            transactionDto.Timestamp = GetBalanceByAccountId(transactionDto.AccountId).Data.Timestamp;
+            transactionDto.Timestamp = GetBalanceByAccountId(transactionDto.AccountId).Data.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
             transactionDto.ExchangeRates = GetRates(transactionDto.Currency.Id.Value);
             var result = new DataWrapper<long>();
             try
