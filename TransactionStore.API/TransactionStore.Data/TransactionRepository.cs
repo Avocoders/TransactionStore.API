@@ -10,7 +10,6 @@ using TransactionStore.Core;
 using Microsoft.Extensions.Options;
 using Messaging;
 using System.Threading.Tasks;
-using ADO.Net.Client.Core;
 
 namespace TransactionStore.Data
 {
@@ -33,9 +32,8 @@ namespace TransactionStore.Data
             transactionDto.ExchangeRates = await GetRates(transactionDto.Currency.Id.Value);
             var result = new DataWrapper<long>();
             try
-            {                
-                string sqlExpression = "Transaction_Add";
-                var tmp = await _connection.QueryAsync<long>(sqlExpression,
+            {   
+                var tmp = await _connection.QueryAsync<long>(StoredProcedures.AddTransaction,
                     new
                     {
                         accountId = transactionDto.AccountId,
@@ -68,8 +66,7 @@ namespace TransactionStore.Data
             var result = new DataWrapper<List<long>>();
             try
             {
-                string sqlExpression = "Transaction_AddTransfer";
-                var tmp = await _connection.QueryAsync<long>(sqlExpression,
+                var tmp = await _connection.QueryAsync<long>(StoredProcedures.AddTranfer,
                     new
                     {
                         accountId = transfer.AccountId,
@@ -98,8 +95,8 @@ namespace TransactionStore.Data
             var result = new DataWrapper<List<TransactionDto>>();
             try
             {
-                string sqlExpression = "Transaction_GetById @id";
-                var tmp = await _connection.QueryAsync<TransactionDto, TransactionTypeDto, TransactionDto>(sqlExpression,
+                var tmp = await _connection.QueryAsync<TransactionDto, TransactionTypeDto, TransactionDto>
+                    (StoredProcedures.GetTransactionById,
                     (transaction, type) =>
                     {
                         TransactionDto transactionEntry;
@@ -107,8 +104,7 @@ namespace TransactionStore.Data
                         transactionEntry.Type = type;
                         return transactionEntry;
                     },
-                    new { id }
-                   );
+                    new { id }, commandType: CommandType.StoredProcedure);
                 result.Data = tmp.ToList();
                 result.IsOk = true;
             }
@@ -123,8 +119,8 @@ namespace TransactionStore.Data
             var result = new DataWrapper<List<TransactionDto>>();
             try
             {
-                string sqlExpression = "Transaction_GetByAccountId @accountId";
-                var tmp = await _connection.QueryAsync<TransactionDto, TransactionTypeDto, TransactionDto>(sqlExpression,
+                var tmp = await _connection.QueryAsync<TransactionDto, TransactionTypeDto, TransactionDto>
+                    (StoredProcedures.GetTransactionByAccountId,
                     (transaction, type) =>
                     {
                         TransactionDto transactionEntry;
@@ -133,7 +129,7 @@ namespace TransactionStore.Data
                         return transactionEntry;
                     },
                     new { accountId },
-                    splitOn: "id");
+                    splitOn: "id", commandType: CommandType.StoredProcedure);
                 result.Data = tmp.ToList();
                 result.IsOk = true;
             }
@@ -148,8 +144,8 @@ namespace TransactionStore.Data
             var result = new DataWrapper<List<TransactionDto>>();
             try
             {
-                string sqlExpression = "Transaction_Search @accountId, @typeId, @currencyId, @amountBegin, @amountEnd, @fromDate, @tillDate";
-                var tmp = await _connection.QueryAsync<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression,
+                var tmp = await _connection.QueryAsync<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>
+                    (StoredProcedures.SearchTransaction,
                     (transaction, type, currency) =>
                     {
                         TransactionDto transactionEntry;
@@ -161,7 +157,7 @@ namespace TransactionStore.Data
                         return transactionEntry;
                     },
                     searchParameters,
-                    splitOn: "id");
+                    splitOn: "id", commandType: CommandType.StoredProcedure);
                 result.Data = tmp.ToList();
 
                 result.IsOk = true;
@@ -178,8 +174,8 @@ namespace TransactionStore.Data
             var result = new DataWrapper<BalanceDto>();
             try
             {
-                string sqlExpression = "Transaction_GetBalanceByAccountId";
-                var tmp = await _connection.QueryAsync<BalanceDto>(sqlExpression, new { accountId }, commandType: CommandType.StoredProcedure);
+                var tmp = await _connection.QueryAsync<BalanceDto>(StoredProcedures.GetBalanceByAccountId, 
+                    new { accountId }, commandType: CommandType.StoredProcedure);
                 result.Data = tmp.FirstOrDefault();
                 result.IsOk = true;
             }
@@ -193,14 +189,13 @@ namespace TransactionStore.Data
         public async ValueTask UpdateCurrencyRates()
         {
             foreach (var c in _currencies.Rates)
-            {
-                string sqlExpression = "CurrencyRates_Update @code, @rate";                
-                await _connection.ExecuteAsync(sqlExpression,
+            {              
+                await _connection.ExecuteAsync(StoredProcedures.UpdateCurrencyRates,
                     new
                     {
                         code = c.Code,
                         rate = c.Rate
-                    });
+                    }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -212,7 +207,8 @@ namespace TransactionStore.Data
                 return currency.Rate;
             else
             {
-                var tmp = await _connection.QueryAsync<decimal>("CurrencyRates_GetById @id", new { id = currencyId });
+                var tmp = await _connection.QueryAsync<decimal>(StoredProcedures.GetCurrencyRateById, 
+                    new { id = currencyId }, commandType: CommandType.StoredProcedure);
                 return tmp.FirstOrDefault();
             }
         }
