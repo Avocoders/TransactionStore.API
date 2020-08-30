@@ -45,7 +45,7 @@ ALTER procedure [dbo].[Transaction_Add]
 	@currencyId tinyint,
 	@amount money,
 	@exchangeRates decimal(18,10),
-	@timestamp datetime2
+	@timestamp nvarchar(40)
 as
 begin
 	if ((select max(t.[Timestamp]) From [Transaction] t where t.AccountId = @accountId) = @timestamp)
