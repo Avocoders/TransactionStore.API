@@ -153,11 +153,11 @@ namespace TransactionStore.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("{accountId}/balance")]
-        public async ValueTask<ActionResult<BalanceDto>> GetBalanceByAccountId(long accountId)
+        public async ValueTask<ActionResult<BalanceOutputModel>> GetBalanceByAccountId(long accountId)
         {
             if (accountId <= 0) return BadRequest("Account was not found");
             var dataWrapper = await _repo.GetBalanceByAccountId(accountId);
-            return await MakeResponse(dataWrapper);
+            return await MakeResponse(dataWrapper, _mapper.Map<BalanceOutputModel>);
         }
 
         /// <summary>
