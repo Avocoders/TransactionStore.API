@@ -64,9 +64,9 @@ namespace TransactionStore.API.Controllers
         public ActionResult<long> CreateWithdrawTransaction([FromBody] TransactionInputModel transactionModel)
         {
             if (_repo.GetByAccountId(transactionModel.AccountId) is null) return BadRequest("The account is not found");
-            //string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.AccountId);
-            //if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
-            //transactionModel.Timestamp = _repo.GetBalanceByAccountId(transactionModel.AccountId).Data.Timestamp;
+            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.AccountId);
+            if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
+           // transactionModel.Timestamp = _repo.GetBalanceByAccountId(transactionModel.AccountId).Data.Timestamp;
             TransactionDto transactionDto = _mapper.Map<TransactionDto>(transactionModel);
             DataWrapper<long> dataWrapper = _transactionService.AddTransaction(2, transactionDto);
             return MakeResponse(dataWrapper);
