@@ -10,7 +10,7 @@ namespace TransactionStore.Data
         DataWrapper<List<TransactionDto>> GetById(long id);
         DataWrapper<List<TransactionDto>> GetByAccountId(long accountId);
         DataWrapper<List<TransactionDto>> SearchTransactions(TransactionSearchParameters searchParameters);
-        DataWrapper<decimal> GetBalanceByAccountId (long accountId);
+        DataWrapper<BalanceDto> GetBalanceByAccountId (long accountId);
         void UpdateCurrencyRates();
     }
 }

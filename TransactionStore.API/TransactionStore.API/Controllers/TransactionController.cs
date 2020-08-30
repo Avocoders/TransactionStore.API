@@ -9,6 +9,7 @@ using TransactionStore.Business;
 using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using Messaging;
+using NLog;
 
 namespace TransactionStore.API.Controllers
 {
@@ -19,7 +20,8 @@ namespace TransactionStore.API.Controllers
         private readonly IMapper _mapper;
         private readonly ITransactionRepository _repo;
         private readonly ITransactionService _transactionService;
-       
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
         public TransactionController(ITransactionRepository repo, ITransactionService transactionService, IMapper mapper)
         {        
             _repo = repo;
@@ -29,10 +31,22 @@ namespace TransactionStore.API.Controllers
 
         private string FormBadRequest(decimal amount, long accountId)
         {
-            if (amount <= 0) return "The amount is missing";
+            if (amount <= 0)
+            { 
+                _logger.Info($"The amount is missing for AccountId [{accountId}]");
+                return "The amount is missing";
+            }
             var balance = _repo.GetBalanceByAccountId(accountId);
-            if (balance.Data < 0) return "The balance of minus";
-            if (balance.Data < amount) return "Not enough money";
+            if (balance.Data.Balance < 0) 
+            {
+                _logger.Info($"The amount is missing for AccountId [{accountId}]");
+                return "The balance of minus"; 
+            }
+            if (balance.Data.Balance < amount) 
+            {
+                _logger.Info($"Not enough money for AccountId [{accountId}]");
+                return "Not enough money"; 
+            }
             return "";
         }
 
@@ -46,10 +60,19 @@ namespace TransactionStore.API.Controllers
         [HttpPost("deposit")]
         public ActionResult<long> CreateDepositTransaction([FromBody] TransactionInputModel transactionModel)
         {
-            if (_repo.GetByAccountId(transactionModel.AccountId) is null) return BadRequest("The account is not found");
-            if(transactionModel.Amount <= 0) return BadRequest("The amount is missing");
+            if (_repo.GetByAccountId(transactionModel.AccountId) is null)
+            {
+                _logger.Info($"The Account [{transactionModel.AccountId}] is not found");
+                return BadRequest("The account is not found");
+            }
+            if (transactionModel.Amount <= 0)
+            {
+                _logger.Info($"The amount is missing for AccountId [{transactionModel.AccountId}]");
+                return BadRequest("The amount is missing");
+            }
             TransactionDto transactionDto = _mapper.Map<TransactionDto>(transactionModel);               
             DataWrapper<long> dataWrapper = _transactionService.AddTransaction(1, transactionDto);
+            _logger.Info($"Create Deposit Transaction with Amount = {transactionDto.Amount} {transactionDto.Currency} for AccountId [{transactionDto.AccountId}]");
             return MakeResponse(dataWrapper);
         }
 
@@ -68,6 +91,7 @@ namespace TransactionStore.API.Controllers
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
             TransactionDto transactionDto = _mapper.Map<TransactionDto>(transactionModel);
             DataWrapper<long> dataWrapper = _transactionService.AddTransaction(2, transactionDto);
+            _logger.Info($"Create Withdraw Transaction with Amount = {transactionDto.Amount} {transactionDto.Currency} for AccountId [{transactionDto.AccountId}]");
             return MakeResponse(dataWrapper);
         }
 
@@ -87,6 +111,7 @@ namespace TransactionStore.API.Controllers
             if (!string.IsNullOrWhiteSpace(badRequest)) return Problem("Not enough money on the account", statusCode: 418);
             TransferTransactionDto transfer = _mapper.Map<TransferTransactionDto>(transactionModel);                
             DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
+            _logger.Info($"Create Transfer Transaction with Amount = {transfer.Amount} {transfer.Currency} from AccountId [{transfer.AccountId}] for AccountId [{transfer.AccountIdReceiver}]");
             return MakeResponse(dataWrapper);
         }
 
@@ -128,10 +153,10 @@ namespace TransactionStore.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("{accountId}/balance")]
-        public ActionResult<decimal> GetBalanceByAccountId(long accountId)
+        public ActionResult<BalanceDto> GetBalanceByAccountId(long accountId)
         {
             if (accountId <= 0) return BadRequest("Account was not found");
-            DataWrapper<decimal> dataWrapper = _repo.GetBalanceByAccountId(accountId);
+            DataWrapper<BalanceDto> dataWrapper = _repo.GetBalanceByAccountId(accountId);
             return MakeResponse(dataWrapper);
         }
 

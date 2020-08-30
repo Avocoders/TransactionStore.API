@@ -22,32 +22,41 @@ namespace TransactionStore.Data
             _currencies = currencies;
         }
         public DataWrapper<long> Add(TransactionDto transactionDto) 
-        {   
+        {
+            var balance = GetBalanceByAccountId(transactionDto.AccountId);
+            if (balance.Data != null)
+                transactionDto.Timestamp = balance.Data.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
+            transactionDto.ExchangeRates = GetRates(transactionDto.Currency.Id.Value);
             var result = new DataWrapper<long>();
             try
             {
-                string sqlExpression = "Transaction_Add @accountId, @typeId, @currencyId, @amount, @exchangeRates";
+                string sqlExpression = "Transaction_Add";
                 result.Data = _connection.Query<long>(sqlExpression,
                     new
                     {
-                        transactionDto.Id,
-                        transactionDto.AccountId,
-                        TypeId = transactionDto.Type.Id,
-                        CurrencyId = transactionDto.Currency.Id,
-                        transactionDto.Amount,
-                        ExchangeRates = GetRates(transactionDto.Currency.Id.Value)
-                    }).FirstOrDefault();
+                        accountId = transactionDto.AccountId,
+                        typeId = transactionDto.Type.Id,
+                        currencyId = transactionDto.Currency.Id,
+                        amount = transactionDto.Amount,
+                        exchangeRates = transactionDto.ExchangeRates,
+                        timestamp = transactionDto.Timestamp
+                    }, commandType:CommandType.StoredProcedure).FirstOrDefault();
                 result.IsOk = true;
             }
-
             catch (Exception e)
             {
-                result.ExceptionMessage = e.Message;
+                if (e.Message.StartsWith("Error 50001"))                
+                    result.ExceptionMessage = "The operation was rejected";                
+                else                
+                    result.ExceptionMessage = e.Message;
             }
             return result;
         }
         public DataWrapper<List<long>> AddTransfer(TransferTransactionDto transfer)
         {
+            var balance = GetBalanceByAccountId(transfer.AccountId);
+            if (balance.Data != null)
+                transfer.Timestamp = balance.Data.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
             var exchangeRates1 = GetRates(transfer.Currency.Id.Value);
             var exchangeRates2 = GetRates(transfer.ReceiverCurrencyId);
 
@@ -67,6 +76,7 @@ namespace TransactionStore.Data
                         receiverCurrencyId = transfer.ReceiverCurrencyId,
                         exchangeRates1,
                         exchangeRates2,
+                        timestamp = transfer.Timestamp
 
                     }, commandType:CommandType.StoredProcedure).ToList();
                 result.IsOk = true;
@@ -153,13 +163,13 @@ namespace TransactionStore.Data
             }
             return result;
         }
-        public DataWrapper<decimal> GetBalanceByAccountId(long accountId)
+        public DataWrapper<BalanceDto> GetBalanceByAccountId(long accountId)
         {
-            var result = new DataWrapper<decimal>();
+            var result = new DataWrapper<BalanceDto>();
             try
             {
                 string sqlExpression = "Transaction_GetBalanceByAccountId";
-                result.Data = _connection.Query<decimal>(sqlExpression, new { accountId }, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                result.Data = _connection.Query<BalanceDto>(sqlExpression, new { accountId }, commandType: CommandType.StoredProcedure).FirstOrDefault();
                 result.IsOk = true;
             }
             catch (Exception e)

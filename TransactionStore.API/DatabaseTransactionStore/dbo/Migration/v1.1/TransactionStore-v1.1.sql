@@ -44,25 +44,37 @@ ALTER procedure [dbo].[Transaction_Add]
 	@typeId tinyint,
 	@currencyId tinyint,
 	@amount money,
-	@exchangeRates decimal(18,10)
+	@exchangeRates decimal(18,10),
+	@timestamp nvarchar(40)
 as
 begin
-	declare @timestamp datetime2 = sysdatetime()
-	insert into [dbo].[Transaction]
-		   (AccountId, 
-		    TypeId,
-			CurrencyId, 
-			Amount, 
-			ExchangeRates,
-			[Timestamp]) 
-	values		
-		   (@accountId, 
-			@typeId, 
-			@currencyId, 
-			@amount, 
-			@exchangeRates,
-			@timestamp)
-	select scope_identity();
+	if @timestamp is not null
+	Begin
+	    declare @newTimestamp datetime2(7)
+		set @newTimestamp = cast (@timestamp as datetime2)
+	end
+	declare @lastTimestamp datetime2(7) 
+	set @lastTimestamp = (select max(t.[Timestamp]) From [Transaction] t where t.AccountId = @accountId)	
+	if (@typeId =1 or @timestamp is null or @newTimestamp = @lastTimestamp  )
+		begin
+			insert into [dbo].[Transaction]
+				   (AccountId, 
+					TypeId,
+					CurrencyId, 
+					Amount, 
+					ExchangeRates,
+					[Timestamp]) 
+			values		
+				   (@accountId, 
+					@typeId, 
+					@currencyId, 
+					@amount, 
+					@exchangeRates,
+					sysdatetime())
+			select CAST(SCOPE_IDENTITY() as [bigint]);
+		end
+	else 
+		RAISERROR (50001,-1,16);
 end
 go
 ALTER procedure [dbo].[Transaction_AddTransfer]
@@ -404,12 +416,9 @@ go
 create Procedure [dbo].[Transaction_GetBalanceByAccountId]
 @accountId bigint
 as
-
 Begin
-select SUM(t.Amount) From [Transaction] t
-
-Where t.AccountId=@accountId
-Group By t.AccountId
-
+	select SUM(t.Amount) as Balance, max(t.[Timestamp]) as [Timestamp] From [Transaction] t
+	Where t.AccountId=@accountId
+	Group By t.AccountId
 end
 go
