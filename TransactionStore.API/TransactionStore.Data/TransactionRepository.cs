@@ -34,7 +34,6 @@ namespace TransactionStore.Data
                 result.Data = _connection.Query<long>(sqlExpression,
                     new
                     {
-                        //transactionDto.Id,
                         accountId = transactionDto.AccountId,
                         typeId = transactionDto.Type.Id,
                         currencyId = transactionDto.Currency.Id,
@@ -52,6 +51,9 @@ namespace TransactionStore.Data
         }
         public DataWrapper<List<long>> AddTransfer(TransferTransactionDto transfer)
         {
+            var balance = GetBalanceByAccountId(transfer.AccountId);
+            if (balance.Data != null)
+                transfer.Timestamp = balance.Data.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
             var exchangeRates1 = GetRates(transfer.Currency.Id.Value);
             var exchangeRates2 = GetRates(transfer.ReceiverCurrencyId);
 
@@ -71,6 +73,7 @@ namespace TransactionStore.Data
                         receiverCurrencyId = transfer.ReceiverCurrencyId,
                         exchangeRates1,
                         exchangeRates2,
+                        timestamp = transfer.Timestamp
 
                     }, commandType:CommandType.StoredProcedure).ToList();
                 result.IsOk = true;
