@@ -48,11 +48,14 @@ ALTER procedure [dbo].[Transaction_Add]
 	@timestamp nvarchar(40)
 as
 begin
-    declare @newTimestamp datetime2(7)
-	set @newTimestamp = cast (@timestamp as datetime2)
+	if @timestamp is not null
+	Begin
+	    declare @newTimestamp datetime2(7)
+		set @newTimestamp = cast (@timestamp as datetime2)
+	end
 	declare @lastTimestamp datetime2(7) 
 	set @lastTimestamp = (select max(t.[Timestamp]) From [Transaction] t where t.AccountId = @accountId)	
-	if (@newTimestamp = @lastTimestamp)
+	if (@typeId =1 or @timestamp is null or @newTimestamp = @lastTimestamp  )
 		begin
 			insert into [dbo].[Transaction]
 				   (AccountId, 
