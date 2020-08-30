@@ -1,7 +1,9 @@
-﻿DECLARE @currentDBVersion nvarchar(10);
+﻿DECLARE @currentDBVersion nvarchar(8)
 set @currentDBVersion = (select top(1) DbVersion from [dbo].[DbVersion] order by Created desc)
+go
 
-IF @currentDBVersion <> '1.1'
+IF @currentDBVersion >='1.1'
+set noexec on
 
 truncate table dbo.[Transaction]
 go
@@ -19,6 +21,7 @@ create table [dbo].[CurrencyRates](
 	[Code] [nvarchar](3) NULL,
 	[Rate] [decimal](18, 10) NULL
 ) on [PRIMARY]
+
 go
 CREATE PROCEDURE [dbo].[CurrencyRates_Update] 
 @code nvarchar(3),
@@ -86,42 +89,54 @@ ALTER procedure [dbo].[Transaction_AddTransfer]
 	@accountIdReceiver bigint,
 	@receiverCurrencyId tinyint,
 	@exchangeRates1 decimal (18,10), 
-	@exchangeRates2 decimal (18,10)
+	@exchangeRates2 decimal (18,10),
+	@timestamp nvarchar(40)
 	
 as
 begin
-	declare @timestamp datetime2 = sysdatetime()
-	insert into [dbo].[Transaction] 
-		   (AccountId, 
-			TypeId, 
-			CurrencyId, 
-			Amount, 
-			ExchangeRates,
-			[Timestamp])
-	values 
-		   (@accountId, 
-			@typeId,
-			@currencyId, 
-			-@amount1,
-			@exchangeRates1,
-			@timestamp)
-	declare @account bigint set @account = scope_identity()
-	insert into [dbo].[Transaction] 
-		   (AccountId, 
-			TypeId, 
-			CurrencyId, 
-			Amount, 
-			ExchangeRates,
-			[Timestamp])
-	values 
-		   (@accountIdReceiver, 
-			@typeId, 
-			@receiverCurrencyId,
-			@amount2,
-			@exchangeRates2,
-			@timestamp)
-	select @account as [account]
-	union select scope_identity()
+	if @timestamp is not null
+		Begin
+			declare @newTimestamp datetime2(7)
+			set @newTimestamp = cast (@timestamp as datetime2)
+	    end
+	declare @lastTimestamp datetime2(7) 
+	set @lastTimestamp = (select max(t.[Timestamp]) From [Transaction] t where t.AccountId = @accountId)	
+	if (@timestamp is null or @newTimestamp = @lastTimestamp  )
+		begin
+			insert into [dbo].[Transaction] 
+				   (AccountId, 
+					TypeId, 
+					CurrencyId, 
+					Amount, 
+					ExchangeRates,
+					[Timestamp])
+			values 
+				   (@accountId, 
+					@typeId,
+					@currencyId, 
+					-@amount1,
+					@exchangeRates1,
+					sysdatetime())
+			declare @account bigint set @account = scope_identity()
+			insert into [dbo].[Transaction] 
+				   (AccountId, 
+					TypeId, 
+					CurrencyId, 
+					Amount, 
+					ExchangeRates,
+					[Timestamp])
+			values 
+				   (@accountIdReceiver, 
+					@typeId, 
+					@receiverCurrencyId,
+					@amount2,
+					@exchangeRates2,
+					sysdatetime())
+			select @account as [account]
+			union select scope_identity()
+		end
+	else 
+		RAISERROR (50001,-1,16);
 end
 
 go
@@ -159,7 +174,7 @@ begin
        from #SearchResult 
 end
 go
-ALTER procedure [dbo].[Transaction_GetByAccountId]
+Create procedure [dbo].[Transaction_GetByAccountId]
 	@accountId bigint
 as
 begin
@@ -312,6 +327,15 @@ as
 	drop table #RandomExchangeRates
 end
 go
+create Procedure [dbo].[Transaction_GetBalanceByAccountId]
+@accountId bigint
+as
+Begin
+	select SUM(t.Amount) as Balance, max(t.[Timestamp]) as [Timestamp] From [Transaction] t
+	Where t.AccountId=@accountId
+	Group By t.AccountId
+end
+go
 ALTER procedure  [dbo].[Transaction_Search]
 	@accountId bigint = null,
 	@typeId int = null,
@@ -412,13 +436,6 @@ begin
 end
 go
 INSERT INTO dbo.[DbVersion] (Created, DbVersion) VALUES (SYSDATETIME(), '1.1')
+
 go
-create Procedure [dbo].[Transaction_GetBalanceByAccountId]
-@accountId bigint
-as
-Begin
-	select SUM(t.Amount) as Balance, max(t.[Timestamp]) as [Timestamp] From [Transaction] t
-	Where t.AccountId=@accountId
-	Group By t.AccountId
-end
-go
+set noexec off
