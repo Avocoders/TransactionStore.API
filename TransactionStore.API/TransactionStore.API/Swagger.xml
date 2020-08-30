@@ -53,5 +53,12 @@
             <param name="searchModel"></param>
             <returns></returns>
         </member>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.DeleteAllTransaction">
+            <summary>
+            Delete all transaction 
+            </summary>
+            <param name=""></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

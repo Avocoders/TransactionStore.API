@@ -10,5 +10,6 @@
         public const string GetBalanceByAccountId = "Transaction_GetBalanceByAccountId";
         public const string UpdateCurrencyRates = "CurrencyRates_Update";
         public const string GetCurrencyRateById = "CurrencyRates_GetById";
+        public const string DeleteAll = "Transaction_DeleteAll";
     }
 }

@@ -42,6 +42,12 @@ BEGIN
 	where Id = @id
 END
 GO
+CREATE PROCEDURE [dbo].[Transaction_DeleteAll]
+AS
+BEGIN
+	truncate table [Transaction]
+END
+GO
 ALTER procedure [dbo].[Transaction_Add]
 	@accountId bigint,
 	@typeId tinyint,

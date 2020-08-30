@@ -13,5 +13,6 @@ namespace TransactionStore.Data
         ValueTask<DataWrapper<List<TransactionDto>>> SearchTransactions(TransactionSearchParameters searchParameters);
         ValueTask<DataWrapper<BalanceDto>> GetBalanceByAccountId (long accountId);
         ValueTask UpdateCurrencyRates();
+        ValueTask DeleteAllTransaction();
     }
 }

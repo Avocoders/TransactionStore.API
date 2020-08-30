@@ -176,6 +176,18 @@ namespace TransactionStore.API.Controllers
             var dataWrapper = await _transactionService.SearchTransactions(_mapper.Map<TransactionSearchParameters>(searchModel));
             return await MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
         }
+        /// <summary>
+        /// Delete all transaction 
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpDelete]
+        public async ValueTask DeleteAllTransaction()
+        {
+            await _repo.DeleteAllTransaction();
+        }
+
 
         private delegate T DtoConverter<T, K>(K dto);
 
