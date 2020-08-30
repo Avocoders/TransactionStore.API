@@ -6,21 +6,21 @@
     <members>
         <member name="M:TransactionStore.API.Controllers.TransactionController.CreateDepositTransaction(TransactionStore.API.Models.Input.TransactionInputModel)">
             <summary>
-            Creates deposit operation and returns transaction's id!!!:D
+            Creates deposit operation and returns transaction's id :D
             </summary>
             <param name="transactionModel"></param>
             <returns></returns>
         </member>
         <member name="M:TransactionStore.API.Controllers.TransactionController.CreateWithdrawTransaction(TransactionStore.API.Models.Input.TransactionInputModel)">
             <summary>
-            Creates withdraw operation and returns transaction's id!!!;D
+            Creates withdraw operation and returns transaction's id ;D
             </summary>
             <param name="transactionModel"></param>
             <returns></returns>
         </member>
         <member name="M:TransactionStore.API.Controllers.TransactionController.CreateTransferTransaction(TransactionStore.API.Models.Input.TransferInputModel)">
             <summary>
-            Creates transfer operation and returns transaction's ids!!!;-)
+            Creates transfer operation and returns transaction's ids ;-)
             </summary>
             <param name="transactionModel"></param>
             <returns></returns>
@@ -46,7 +46,7 @@
             <param name="accountId"></param>
             <returns></returns>
         </member>
-        <member name="M:TransactionStore.API.Controllers.TransactionController.GetTransactionSearchParameters(TransactionStore.API.Models.Input.SearchParametersInputModel)">
+        <member name="M:TransactionStore.API.Controllers.TransactionController.SearchTransactionsByParameters(TransactionStore.API.Models.Input.SearchParametersInputModel)">
             <summary>
             Searches transactions by any parameters ^_^
             </summary>

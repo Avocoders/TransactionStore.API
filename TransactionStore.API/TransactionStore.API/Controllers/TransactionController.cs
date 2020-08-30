@@ -88,7 +88,7 @@ namespace TransactionStore.API.Controllers
         {
             if (await _repo.GetByAccountId(transactionModel.AccountId) is null) return BadRequest("The account is not found");
             string badRequest = await FormBadRequest(transactionModel.Amount, transactionModel.AccountId);
-            if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
+            if (!string.IsNullOrWhiteSpace(badRequest)) return Problem("Not enough money on the account", statusCode: 418);
             var transactionDto = _mapper.Map<TransactionDto>(transactionModel);
             var dataWrapper = await _transactionService.AddTransaction(2, transactionDto);
             _logger.Info($"Create Withdraw Transaction with Amount = {transactionDto.Amount} {transactionDto.Currency} for AccountId [{transactionDto.AccountId}]");
