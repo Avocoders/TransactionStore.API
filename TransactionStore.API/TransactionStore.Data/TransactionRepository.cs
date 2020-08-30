@@ -55,6 +55,7 @@ namespace TransactionStore.Data
             }
             return result;
         }
+
         public async ValueTask<DataWrapper<List<long>>> AddTransfer(TransferTransactionDto transfer)
         {
             var balance = await GetBalanceByAccountId(transfer.AccountId);
@@ -90,6 +91,7 @@ namespace TransactionStore.Data
             }
             return result;
         }
+
         public async ValueTask<DataWrapper<List<TransactionDto>>> GetById(long id)
         {
             var result = new DataWrapper<List<TransactionDto>>();
@@ -114,6 +116,7 @@ namespace TransactionStore.Data
             }
             return result;
         }
+
         public async ValueTask<DataWrapper<List<TransactionDto>>> GetByAccountId(long accountId)
         {
             var result = new DataWrapper<List<TransactionDto>>();
@@ -139,6 +142,7 @@ namespace TransactionStore.Data
             }
             return result;
         }
+
         public async ValueTask<DataWrapper<List<TransactionDto>>> SearchTransactions(TransactionSearchParameters searchParameters)
         {
             var result = new DataWrapper<List<TransactionDto>>();
