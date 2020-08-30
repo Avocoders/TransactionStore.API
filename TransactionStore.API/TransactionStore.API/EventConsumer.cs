@@ -17,7 +17,7 @@ namespace TransactionStore.API
         public async Task Consume(ConsumeContext<Currencies> context)
         {                     
             _currencies.Rates = context.Message.Rates;
-            _repo.UpdateCurrencyRates();
+            await _repo.UpdateCurrencyRates();
         }
     }
 }
