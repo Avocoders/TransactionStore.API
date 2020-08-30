@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TransactionStore.Core.Shared;
 using TransactionStore.Data;
 using TransactionStore.Data.DTO;
@@ -9,27 +10,28 @@ namespace TransactionStore.Business
     public class TransactionService : ITransactionService
     {
         ITransactionRepository _transactionRepository;
+
         public TransactionService(ITransactionRepository transactionRepository)
         {
             _transactionRepository = transactionRepository;
         }
 
-        public DataWrapper<List<TransactionDto>> GetById(long id) 
+        public async ValueTask<DataWrapper<List<TransactionDto>>> GetById(long id) 
         {
-            return MakeResponse(_transactionRepository.GetById(id));
+            return await MakeResponse(await _transactionRepository.GetById(id));
         }
 
-        public DataWrapper<List<TransactionDto>> GetByAccountId(long accountId) 
+        public async ValueTask<DataWrapper<List<TransactionDto>>> GetByAccountId(long accountId) 
         {
-            return MakeResponse(_transactionRepository.GetByAccountId(accountId));
+            return await MakeResponse(await _transactionRepository.GetByAccountId(accountId));
         }
 
-        public DataWrapper<List<TransactionDto>> SearchTransactions(TransactionSearchParameters searchParameters)
+        public async ValueTask<DataWrapper<List<TransactionDto>>> SearchTransactions(TransactionSearchParameters searchParameters)
         {
-            return MakeResponse(_transactionRepository.SearchTransactions(searchParameters));
+            return await MakeResponse(await _transactionRepository.SearchTransactions(searchParameters));
         }
 
-        private List<TransactionDto> ProcessTransactions(List<TransactionDto> transactions)
+        private async ValueTask<List<TransactionDto>> ProcessTransactions(List<TransactionDto> transactions)
         {
             var nonTransferTransactions = transactions.Where(t => t.Type.Id != (byte)TransactionType.Transfer).ToList();
             var transferTransactions = transactions.Where(t => t.Type.Id == (byte)TransactionType.Transfer).ToList();
@@ -58,7 +60,7 @@ namespace TransactionStore.Business
             return nonTransferTransactions;            
         }
 
-        public DataWrapper<long> AddTransaction(int type, TransactionDto transactionDto)
+        public async ValueTask<DataWrapper<long>> AddTransaction(int type, TransactionDto transactionDto)
         {
             if (type == 1)
             { 
@@ -69,14 +71,14 @@ namespace TransactionStore.Business
                 transactionDto.Type = new TransactionTypeDto() { Id = (byte)TransactionType.Withdraw };
                 transactionDto.Amount *= -1;
             }
-            return _transactionRepository.Add(transactionDto);
+            return await _transactionRepository.Add(transactionDto);
         }
 
-        private DataWrapper<List<TransactionDto>> MakeResponse(DataWrapper<List<TransactionDto>> dataWrapper)
+        private async ValueTask<DataWrapper<List<TransactionDto>>> MakeResponse(DataWrapper<List<TransactionDto>> dataWrapper)
         {
             if (dataWrapper.IsOk)
             {
-                dataWrapper.Data = ProcessTransactions(dataWrapper.Data);
+                dataWrapper.Data =  await ProcessTransactions(dataWrapper.Data);
             }
             return dataWrapper;
         }

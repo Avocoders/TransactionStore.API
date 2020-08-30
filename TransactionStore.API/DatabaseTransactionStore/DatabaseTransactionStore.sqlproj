@@ -75,6 +75,7 @@
     <Build Include="dbo\Stored Procedures\Transaction_GetByLeadId.sql" />
     <Build Include="dbo\Stored Procedures\Transaction_Search.sql" />
     <Build Include="dbo\Stored Procedures\CreateStrings.sql" />
+    <Build Include="dbo\Stored Procedures\Transaction_DeleteAll.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dbo\Migration\v1.1\TransactionStore-v1.1.sql" />

@@ -8,8 +8,8 @@ using TransactionStore.Core.Shared;
 using TransactionStore.Business;
 using Microsoft.AspNetCore.Http;
 using AutoMapper;
-using Messaging;
 using NLog;
+using System.Threading.Tasks;
 
 namespace TransactionStore.API.Controllers
 {
@@ -29,14 +29,14 @@ namespace TransactionStore.API.Controllers
             _mapper = mapper;           
         }
 
-        private string FormBadRequest(decimal amount, long accountId)
+        private async ValueTask<string> FormBadRequest(decimal amount, long accountId)
         {
             if (amount <= 0)
             { 
                 _logger.Info($"The amount is missing for AccountId [{accountId}]");
                 return "The amount is missing";
             }
-            var balance = _repo.GetBalanceByAccountId(accountId);
+            var balance = await  _repo.GetBalanceByAccountId(accountId);
             if (balance.Data.Balance < 0) 
             {
                 _logger.Info($"The amount is missing for AccountId [{accountId}]");
@@ -58,9 +58,9 @@ namespace TransactionStore.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("deposit")]
-        public ActionResult<long> CreateDepositTransaction([FromBody] TransactionInputModel transactionModel)
+        public async ValueTask<ActionResult<long>> CreateDepositTransaction([FromBody] TransactionInputModel transactionModel)
         {
-            if (_repo.GetByAccountId(transactionModel.AccountId) is null)
+            if (await _repo.GetByAccountId(transactionModel.AccountId) is null)
             {
                 _logger.Info($"The Account [{transactionModel.AccountId}] is not found");
                 return BadRequest("The account is not found");
@@ -71,9 +71,9 @@ namespace TransactionStore.API.Controllers
                 return BadRequest("The amount is missing");
             }
             TransactionDto transactionDto = _mapper.Map<TransactionDto>(transactionModel);               
-            DataWrapper<long> dataWrapper = _transactionService.AddTransaction(1, transactionDto);
+            DataWrapper<long> dataWrapper = await _transactionService.AddTransaction(1, transactionDto);
             _logger.Info($"Create Deposit Transaction with Amount = {transactionDto.Amount} {transactionDto.Currency} for AccountId [{transactionDto.AccountId}]");
-            return MakeResponse(dataWrapper);
+            return await MakeResponse(dataWrapper);
         }
 
         /// <summary>
@@ -84,15 +84,15 @@ namespace TransactionStore.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("withdraw")]
-        public ActionResult<long> CreateWithdrawTransaction([FromBody] TransactionInputModel transactionModel)
+        public async ValueTask<ActionResult<long>> CreateWithdrawTransaction([FromBody] TransactionInputModel transactionModel)
         {
-            if (_repo.GetByAccountId(transactionModel.AccountId) is null) return BadRequest("The account is not found");
-            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.AccountId);
+            if (await _repo.GetByAccountId(transactionModel.AccountId) is null) return BadRequest("The account is not found");
+            string badRequest = await FormBadRequest(transactionModel.Amount, transactionModel.AccountId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return BadRequest(badRequest);
             TransactionDto transactionDto = _mapper.Map<TransactionDto>(transactionModel);
-            DataWrapper<long> dataWrapper = _transactionService.AddTransaction(2, transactionDto);
+            DataWrapper<long> dataWrapper = await _transactionService.AddTransaction(2, transactionDto);
             _logger.Info($"Create Withdraw Transaction with Amount = {transactionDto.Amount} {transactionDto.Currency} for AccountId [{transactionDto.AccountId}]");
-            return MakeResponse(dataWrapper);
+            return await MakeResponse(dataWrapper);
         }
 
         /// <summary>
@@ -103,16 +103,16 @@ namespace TransactionStore.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("transfer")]
-        public ActionResult<List<long>> CreateTransferTransaction([FromBody] TransferInputModel transactionModel)
+        public async ValueTask<ActionResult<List<long>>> CreateTransferTransaction([FromBody] TransferInputModel transactionModel)
         {
-            if (_repo.GetById(transactionModel.AccountId) is null) return BadRequest("The account is not found");
+            if (await _repo.GetById(transactionModel.AccountId) is null) return BadRequest("The account is not found");
             if (transactionModel.CurrencyId <= 0) return BadRequest("The currency is missing");
-            string badRequest = FormBadRequest(transactionModel.Amount, transactionModel.AccountId);
+            string badRequest = await FormBadRequest(transactionModel.Amount, transactionModel.AccountId);
             if (!string.IsNullOrWhiteSpace(badRequest)) return Problem("Not enough money on the account", statusCode: 418);
             TransferTransactionDto transfer = _mapper.Map<TransferTransactionDto>(transactionModel);                
-            DataWrapper<List<long>> dataWrapper = _repo.AddTransfer(transfer);
+            DataWrapper<List<long>> dataWrapper = await _repo.AddTransfer(transfer);
             _logger.Info($"Create Transfer Transaction with Amount = {transfer.Amount} {transfer.Currency} from AccountId [{transfer.AccountId}] for AccountId [{transfer.AccountIdReceiver}]");
-            return MakeResponse(dataWrapper);
+            return await MakeResponse(dataWrapper);
         }
 
         /// <summary>
@@ -123,11 +123,11 @@ namespace TransactionStore.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("by-account-id/{accountId}")]
-        public ActionResult<List<TransactionOutputModel>> GetTransactionsByAccountId(long accountId)
+        public async ValueTask<ActionResult<List<TransactionOutputModel>>> GetTransactionsByAccountId(long accountId)
         {
             if (accountId <= 0) return BadRequest("Account was not found");
-            DataWrapper<List<TransactionDto>> dataWrapper = _transactionService.GetByAccountId(accountId);
-            return MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
+            DataWrapper<List<TransactionDto>> dataWrapper = await _transactionService.GetByAccountId(accountId);
+            return await MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
         }
 
         /// <summary>
@@ -138,11 +138,11 @@ namespace TransactionStore.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("{Id}")]
-        public ActionResult<List<TransactionOutputModel>> GetTransactionById(long id)
+        public async ValueTask<ActionResult<List<TransactionOutputModel>>> GetTransactionById(long id)
         {
             if (id <= 0) return BadRequest("Transactions were not found");
-            DataWrapper<List<TransactionDto>> dataWrapper = _transactionService.GetById(id);
-            return MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
+            DataWrapper<List<TransactionDto>> dataWrapper = await _transactionService.GetById(id);
+            return await MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
         }
 
         /// <summary>
@@ -153,11 +153,11 @@ namespace TransactionStore.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("{accountId}/balance")]
-        public ActionResult<BalanceDto> GetBalanceByAccountId(long accountId)
+        public async ValueTask<ActionResult<BalanceDto>> GetBalanceByAccountId(long accountId)
         {
             if (accountId <= 0) return BadRequest("Account was not found");
-            DataWrapper<BalanceDto> dataWrapper = _repo.GetBalanceByAccountId(accountId);
-            return MakeResponse(dataWrapper);
+            DataWrapper<BalanceDto> dataWrapper = await _repo.GetBalanceByAccountId(accountId);
+            return await MakeResponse(dataWrapper);
         }
 
         /// <summary>
@@ -167,19 +167,31 @@ namespace TransactionStore.API.Controllers
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]        
         [HttpPost("search")]
-        public ActionResult<List<TransactionOutputModel>> GetTransactionSearchParameters([FromBody] SearchParametersInputModel searchModel)
+        public async ValueTask<ActionResult<List<TransactionOutputModel>>> GetTransactionSearchParameters([FromBody] SearchParametersInputModel searchModel)
         {
             if (string.IsNullOrEmpty(searchModel.FromDate)) searchModel.FromDate = null;            
             if (string.IsNullOrEmpty(searchModel.TillDate)) searchModel.TillDate = null;            
             if (searchModel.Type == (byte)TransactionType.Withdraw) searchModel.AmountBegin *= -1; 
             if (searchModel.Type == (byte)TransactionType.Withdraw) searchModel.AmountEnd *= -1; 
-            var dataWrapper = _transactionService.SearchTransactions(_mapper.Map<TransactionSearchParameters>(searchModel));
-            return MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
+            var dataWrapper = await _transactionService.SearchTransactions(_mapper.Map<TransactionSearchParameters>(searchModel));
+            return await MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
         }
+        /// <summary>
+        /// Delete all transaction 
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpDelete]
+        public async ValueTask DeleteAllTransaction()
+        {
+            await _repo.DeleteAllTransaction();
+        }
+
 
         private delegate T DtoConverter<T, K>(K dto);
 
-        private ActionResult<T> MakeResponse<T>(DataWrapper<T> dataWrapper)
+        private async ValueTask<ActionResult<T>> MakeResponse<T>(DataWrapper<T> dataWrapper)
         {
             if (!dataWrapper.IsOk)
             {
@@ -188,7 +200,7 @@ namespace TransactionStore.API.Controllers
             return Ok(dataWrapper.Data);
         }
 
-        private ActionResult<T> MakeResponse<T, K>(DataWrapper<K> dataWrapper, DtoConverter<T, K> dtoConverter)
+        private async ValueTask<ActionResult<T>> MakeResponse<T, K>(DataWrapper<K> dataWrapper, DtoConverter<T, K> dtoConverter)
         {
             if (!dataWrapper.IsOk)
             {
