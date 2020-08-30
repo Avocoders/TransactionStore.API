@@ -216,7 +216,8 @@ namespace TransactionStore.Data
                 return tmp.FirstOrDefault();
             }
         }
-        public async ValueTask DeleteAllTransaction()
+
+        public async ValueTask DeleteAllTransactions()
         {
             await _connection.ExecuteAsync(StoredProcedures.DeleteAll,commandType: CommandType.StoredProcedure);
         }
