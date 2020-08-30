@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using TransactionStore.Core;
 using Microsoft.Extensions.Options;
 using Messaging;
+using System.Threading.Tasks;
 
 namespace TransactionStore.Data
 {
@@ -16,22 +17,23 @@ namespace TransactionStore.Data
     {
         private readonly IDbConnection _connection;
         private readonly Currencies _currencies;
+
         public TransactionRepository(IOptions<StorageOptions> options, Currencies currencies)
         {
             _connection = new SqlConnection(options.Value.DBConnectionString);
             _currencies = currencies;
         }
-        public DataWrapper<long> Add(TransactionDto transactionDto) 
+
+        public async ValueTask<DataWrapper<long>> Add(TransactionDto transactionDto) 
         {
-            var balance = GetBalanceByAccountId(transactionDto.AccountId);
+            var balance = await GetBalanceByAccountId(transactionDto.AccountId);
             if (balance.Data != null)
                 transactionDto.Timestamp = balance.Data.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
-            transactionDto.ExchangeRates = GetRates(transactionDto.Currency.Id.Value);
+            transactionDto.ExchangeRates = await GetRates(transactionDto.Currency.Id.Value);
             var result = new DataWrapper<long>();
             try
-            {
-                string sqlExpression = "Transaction_Add";
-                result.Data = _connection.Query<long>(sqlExpression,
+            {   
+                var tmp = await _connection.QueryAsync<long>(StoredProcedures.AddTransaction,
                     new
                     {
                         accountId = transactionDto.AccountId,
@@ -40,7 +42,8 @@ namespace TransactionStore.Data
                         amount = transactionDto.Amount,
                         exchangeRates = transactionDto.ExchangeRates,
                         timestamp = transactionDto.Timestamp
-                    }, commandType:CommandType.StoredProcedure).FirstOrDefault();
+                    }, commandType: CommandType.StoredProcedure);
+                result.Data = tmp.FirstOrDefault();
                 result.IsOk = true;
             }
             catch (Exception e)
@@ -52,19 +55,18 @@ namespace TransactionStore.Data
             }
             return result;
         }
-        public DataWrapper<List<long>> AddTransfer(TransferTransactionDto transfer)
+        public async ValueTask<DataWrapper<List<long>>> AddTransfer(TransferTransactionDto transfer)
         {
-            var balance = GetBalanceByAccountId(transfer.AccountId);
+            var balance = await GetBalanceByAccountId(transfer.AccountId);
             if (balance.Data != null)
                 transfer.Timestamp = balance.Data.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
-            var exchangeRates1 = GetRates(transfer.Currency.Id.Value);
-            var exchangeRates2 = GetRates(transfer.ReceiverCurrencyId);
+            var exchangeRates1 = await GetRates(transfer.Currency.Id.Value);
+            var exchangeRates2 = await GetRates(transfer.ReceiverCurrencyId);
 
             var result = new DataWrapper<List<long>>();
             try
             {
-                string sqlExpression = "Transaction_AddTransfer";
-                result.Data = _connection.Query<long>(sqlExpression,
+                var tmp = await _connection.QueryAsync<long>(StoredProcedures.AddTranfer,
                     new
                     {
                         accountId = transfer.AccountId,
@@ -78,7 +80,8 @@ namespace TransactionStore.Data
                         exchangeRates2,
                         timestamp = transfer.Timestamp
 
-                    }, commandType:CommandType.StoredProcedure).ToList();
+                    }, commandType: CommandType.StoredProcedure);
+                result.Data = tmp.ToList();
                 result.IsOk = true;
             }
             catch (Exception e)
@@ -87,13 +90,13 @@ namespace TransactionStore.Data
             }
             return result;
         }
-        public DataWrapper<List<TransactionDto>> GetById(long id)
+        public async ValueTask<DataWrapper<List<TransactionDto>>> GetById(long id)
         {
             var result = new DataWrapper<List<TransactionDto>>();
             try
             {
-                string sqlExpression = "Transaction_GetById @id";
-                result.Data = _connection.Query<TransactionDto, TransactionTypeDto, TransactionDto>(sqlExpression,
+                var tmp = await _connection.QueryAsync<TransactionDto, TransactionTypeDto, TransactionDto>
+                    (StoredProcedures.GetTransactionById,
                     (transaction, type) =>
                     {
                         TransactionDto transactionEntry;
@@ -101,8 +104,8 @@ namespace TransactionStore.Data
                         transactionEntry.Type = type;
                         return transactionEntry;
                     },
-                    new { id }
-                   ).ToList();
+                    new { id }, commandType: CommandType.StoredProcedure);
+                result.Data = tmp.ToList();
                 result.IsOk = true;
             }
             catch (Exception e)
@@ -111,13 +114,13 @@ namespace TransactionStore.Data
             }
             return result;
         }
-        public DataWrapper<List<TransactionDto>> GetByAccountId(long accountId)
+        public async ValueTask<DataWrapper<List<TransactionDto>>> GetByAccountId(long accountId)
         {
             var result = new DataWrapper<List<TransactionDto>>();
             try
             {
-                string sqlExpression = "Transaction_GetByAccountId @accountId";
-                result.Data = _connection.Query<TransactionDto, TransactionTypeDto, TransactionDto>(sqlExpression,
+                var tmp = await _connection.QueryAsync<TransactionDto, TransactionTypeDto, TransactionDto>
+                    (StoredProcedures.GetTransactionByAccountId,
                     (transaction, type) =>
                     {
                         TransactionDto transactionEntry;
@@ -126,7 +129,8 @@ namespace TransactionStore.Data
                         return transactionEntry;
                     },
                     new { accountId },
-                    splitOn: "id").ToList();
+                    splitOn: "id", commandType: CommandType.StoredProcedure);
+                result.Data = tmp.ToList();
                 result.IsOk = true;
             }
             catch (Exception e)
@@ -135,13 +139,13 @@ namespace TransactionStore.Data
             }
             return result;
         }
-        public DataWrapper<List<TransactionDto>> SearchTransactions(TransactionSearchParameters searchParameters)
+        public async ValueTask<DataWrapper<List<TransactionDto>>> SearchTransactions(TransactionSearchParameters searchParameters)
         {
             var result = new DataWrapper<List<TransactionDto>>();
             try
             {
-                string sqlExpression = "Transaction_Search @accountId, @typeId, @currencyId, @amountBegin, @amountEnd, @fromDate, @tillDate";
-                result.Data = _connection.Query<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>(sqlExpression,
+                var tmp = await _connection.QueryAsync<TransactionDto, TransactionTypeDto, CurrencyDto, TransactionDto>
+                    (StoredProcedures.SearchTransaction,
                     (transaction, type, currency) =>
                     {
                         TransactionDto transactionEntry;
@@ -153,7 +157,8 @@ namespace TransactionStore.Data
                         return transactionEntry;
                     },
                     searchParameters,
-                    splitOn: "id").ToList();
+                    splitOn: "id", commandType: CommandType.StoredProcedure);
+                result.Data = tmp.ToList();
 
                 result.IsOk = true;
             }
@@ -163,13 +168,15 @@ namespace TransactionStore.Data
             }
             return result;
         }
-        public DataWrapper<BalanceDto> GetBalanceByAccountId(long accountId)
+
+        public async ValueTask<DataWrapper<BalanceDto>> GetBalanceByAccountId(long accountId)
         {
             var result = new DataWrapper<BalanceDto>();
             try
             {
-                string sqlExpression = "Transaction_GetBalanceByAccountId";
-                result.Data = _connection.Query<BalanceDto>(sqlExpression, new { accountId }, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                var tmp = await _connection.QueryAsync<BalanceDto>(StoredProcedures.GetBalanceByAccountId, 
+                    new { accountId }, commandType: CommandType.StoredProcedure);
+                result.Data = tmp.FirstOrDefault();
                 result.IsOk = true;
             }
             catch (Exception e)
@@ -178,27 +185,32 @@ namespace TransactionStore.Data
             }
             return result;
         }
-        public void UpdateCurrencyRates()
+
+        public async ValueTask UpdateCurrencyRates()
         {
             foreach (var c in _currencies.Rates)
-            {
-                string sqlExpression = "CurrencyRates_Update @code, @rate";
-                _connection.Execute(sqlExpression,
+            {              
+                await _connection.ExecuteAsync(StoredProcedures.UpdateCurrencyRates,
                     new
                     {
                         code = c.Code,
                         rate = c.Rate
-                    });
+                    }, commandType: CommandType.StoredProcedure);
             }
         }
-        public decimal GetRates(byte currencyId)
+
+        public async ValueTask<decimal> GetRates(byte currencyId)
         {
             string code = Enum.GetName(typeof(TransactionCurrency), currencyId);
             var currency = _currencies.Rates?.Where(t => t.Code == code).FirstOrDefault();
             if (currency != null)
                 return currency.Rate;
             else
-                return _connection.Query<decimal>("CurrencyRates_GetById @id", new { id = currencyId }).FirstOrDefault();
+            {
+                var tmp = await _connection.QueryAsync<decimal>(StoredProcedures.GetCurrencyRateById, 
+                    new { id = currencyId }, commandType: CommandType.StoredProcedure);
+                return tmp.FirstOrDefault();
+            }
         }
     }
 }
