@@ -48,9 +48,12 @@ ALTER procedure [dbo].[Transaction_Add]
 	@timestamp nvarchar(40)
 as
 begin
-	if ((select max(t.[Timestamp]) From [Transaction] t where t.AccountId = @accountId) = @timestamp)
+    declare @newTimestamp datetime2(7)
+	set @newTimestamp = cast (@timestamp as datetime2)
+	declare @lastTimestamp datetime2(7) 
+	set @lastTimestamp = (select max(t.[Timestamp]) From [Transaction] t where t.AccountId = @accountId)	
+	if (@newTimestamp = @lastTimestamp)
 		begin
-			declare @newTimestamp datetime2 = sysdatetime()
 			insert into [dbo].[Transaction]
 				   (AccountId, 
 					TypeId,
@@ -64,11 +67,11 @@ begin
 					@currencyId, 
 					@amount, 
 					@exchangeRates,
-					@newTimestamp)
-			select scope_identity();
+					sysdatetime())
+			select CAST(SCOPE_IDENTITY() as [bigint]);
 		end
 	else 
-		raiserror('The operation is rejected',0,1)	
+		RAISERROR (50001,-1,16);
 end
 go
 ALTER procedure [dbo].[Transaction_AddTransfer]
