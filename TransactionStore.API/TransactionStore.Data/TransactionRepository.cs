@@ -23,10 +23,9 @@ namespace TransactionStore.Data
         }
         public DataWrapper<long> Add(TransactionDto transactionDto) 
         {
-            transactionDto.Timestamp = "2020 - 08 - 30 13:06:20.6758109";
-            //var balance = GetBalanceByAccountId(transactionDto.AccountId);
-            //if (balance.Data != null)
-            //    transactionDto.Timestamp = balance.Data.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
+            var balance = GetBalanceByAccountId(transactionDto.AccountId);
+            if (balance.Data != null)
+                transactionDto.Timestamp = balance.Data.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
             transactionDto.ExchangeRates = GetRates(transactionDto.Currency.Id.Value);
             var result = new DataWrapper<long>();
             try
