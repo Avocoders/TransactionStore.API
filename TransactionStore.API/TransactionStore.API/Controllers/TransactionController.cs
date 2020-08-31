@@ -73,7 +73,7 @@ namespace TransactionStore.API.Controllers
             var transactionDto = _mapper.Map<TransactionDto>(transactionModel);               
             var dataWrapper = await _transactionService.AddTransaction(1, transactionDto);
             _logger.Info($"Create Deposit Transaction with Amount = {transactionDto.Amount} {transactionDto.Currency} for AccountId [{transactionDto.AccountId}]");
-            return await MakeResponse(dataWrapper);
+            return MakeResponse(dataWrapper);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace TransactionStore.API.Controllers
             var transactionDto = _mapper.Map<TransactionDto>(transactionModel);
             var dataWrapper = await _transactionService.AddTransaction(2, transactionDto);
             _logger.Info($"Create Withdraw Transaction with Amount = {transactionDto.Amount} {transactionDto.Currency} for AccountId [{transactionDto.AccountId}]");
-            return await MakeResponse(dataWrapper);
+            return MakeResponse(dataWrapper);
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace TransactionStore.API.Controllers
             var transfer = _mapper.Map<TransferTransactionDto>(transactionModel);                
             var dataWrapper = await _repo.AddTransfer(transfer);
             _logger.Info($"Create Transfer Transaction with Amount = {transfer.Amount} {transfer.Currency} from AccountId [{transfer.AccountId}] for AccountId [{transfer.AccountIdReceiver}]");
-            return await MakeResponse(dataWrapper);
+            return MakeResponse(dataWrapper);
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace TransactionStore.API.Controllers
         {
             if (accountId <= 0) return BadRequest("Account was not found");
             var dataWrapper = await _transactionService.GetByAccountId(accountId);
-            return await MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
+            return MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace TransactionStore.API.Controllers
         {
             if (id <= 0) return BadRequest("Transactions were not found");
             var dataWrapper = await _transactionService.GetById(id);
-            return await MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
+            return MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace TransactionStore.API.Controllers
         {
             if (accountId <= 0) return BadRequest("Account was not found");
             var dataWrapper = await _repo.GetBalanceByAccountId(accountId);
-            return await MakeResponse(dataWrapper, _mapper.Map<BalanceOutputModel>);
+            return MakeResponse(dataWrapper, _mapper.Map<BalanceOutputModel>);
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace TransactionStore.API.Controllers
             if (searchModel.Type == (byte)TransactionType.Withdraw) searchModel.AmountBegin *= -1; 
             if (searchModel.Type == (byte)TransactionType.Withdraw) searchModel.AmountEnd *= -1; 
             var dataWrapper = await _transactionService.SearchTransactions(_mapper.Map<TransactionSearchParameters>(searchModel));
-            return await MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
+            return MakeResponse(dataWrapper, _mapper.Map<List<TransactionOutputModel>>);
         }
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace TransactionStore.API.Controllers
 
         private delegate T DtoConverter<T, K>(K dto);
 
-        private async ValueTask<ActionResult<T>> MakeResponse<T>(DataWrapper<T> dataWrapper)
+        private ActionResult<T> MakeResponse<T>(DataWrapper<T> dataWrapper)
         {
             if (!dataWrapper.IsOk)
             {
@@ -197,7 +197,7 @@ namespace TransactionStore.API.Controllers
             return Ok(dataWrapper.Data);
         }
 
-        private async ValueTask<ActionResult<T>> MakeResponse<T, K>(DataWrapper<K> dataWrapper, DtoConverter<T, K> dtoConverter)
+        private ActionResult<T> MakeResponse<T, K>(DataWrapper<K> dataWrapper, DtoConverter<T, K> dtoConverter)
         {
             if (!dataWrapper.IsOk)
             {
