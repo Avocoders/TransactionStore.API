@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TransactionStore.API</name>
+    </assembly>
+    <members>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.CreateDepositTransaction(TransactionStore.API.Models.Input.TransactionInputModel)">
+            <summary>
+            Creates deposit operation and returns transaction's id :D
+            </summary>
+            <param name="transactionModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.CreateWithdrawTransaction(TransactionStore.API.Models.Input.TransactionInputModel)">
+            <summary>
+            Creates withdraw operation and returns transaction's id ;D
+            </summary>
+            <param name="transactionModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.CreateTransferTransaction(TransactionStore.API.Models.Input.TransferInputModel)">
+            <summary>
+            Creates transfer operation and returns transaction's ids ;-)
+            </summary>
+            <param name="transactionModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.GetTransactionsByAccountId(System.Int64)">
+            <summary>
+            Gets list of transactions by accountId =)
+            </summary>
+            <param name="accountId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.GetTransactionById(System.Int64)">
+            <summary>
+            Gets list of transactions by Id =D
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.GetBalanceByAccountId(System.Int64)">
+            <summary>
+            Get account's balance by accountId in concrete currency |:-D
+            </summary>
+            <param name="accountId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.SearchTransactionsByParameters(TransactionStore.API.Models.Input.SearchParametersInputModel)">
+            <summary>
+            Searches transactions by any parameters ^_^
+            </summary>
+            <param name="searchModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TransactionStore.API.Controllers.TransactionController.DeleteAllTransactions">
+            <summary>
+            Deletes all transactions 
+            </summary>                   
+        </member>
+    </members>
+</doc>

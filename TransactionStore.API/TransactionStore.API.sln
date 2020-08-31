@@ -3,9 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionStore.API", "TransactionStore.API\TransactionStore.API.csproj", "{6C76C802-DC06-49A5-B01F-6C7384847AAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionStore.API", "TransactionStore.API\TransactionStore.API.csproj", "{6C76C802-DC06-49A5-B01F-6C7384847AAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionStore.Data", "TransactionStore.Data\TransactionStore.Data.csproj", "{19BDCC58-1F26-4418-A84E-BBBECAA6D279}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionStore.Data", "TransactionStore.Data\TransactionStore.Data.csproj", "{19BDCC58-1F26-4418-A84E-BBBECAA6D279}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionStore.Core", "TransactionStore.Core\TransactionStore.Core.csproj", "{4CE74369-AF20-4C72-8DAB-F0DE9D76BAAA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionStore.Business", "TransactionStore.Business\TransactionStore.Business.csproj", "{9A87D82D-C1EC-4F2F-82F9-5F4CE2DB41EE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{56611EA5-FA51-4768-93AE-B4E34791E06A}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DatabaseTransactionStore", "DatabaseTransactionStore\DatabaseTransactionStore.sqlproj", "{AE98CAE5-39F4-4503-A356-B32560CC67EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +32,20 @@ Global
 		{19BDCC58-1F26-4418-A84E-BBBECAA6D279}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19BDCC58-1F26-4418-A84E-BBBECAA6D279}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19BDCC58-1F26-4418-A84E-BBBECAA6D279}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CE74369-AF20-4C72-8DAB-F0DE9D76BAAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CE74369-AF20-4C72-8DAB-F0DE9D76BAAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CE74369-AF20-4C72-8DAB-F0DE9D76BAAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CE74369-AF20-4C72-8DAB-F0DE9D76BAAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A87D82D-C1EC-4F2F-82F9-5F4CE2DB41EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A87D82D-C1EC-4F2F-82F9-5F4CE2DB41EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A87D82D-C1EC-4F2F-82F9-5F4CE2DB41EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A87D82D-C1EC-4F2F-82F9-5F4CE2DB41EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE98CAE5-39F4-4503-A356-B32560CC67EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE98CAE5-39F4-4503-A356-B32560CC67EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE98CAE5-39F4-4503-A356-B32560CC67EE}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{AE98CAE5-39F4-4503-A356-B32560CC67EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE98CAE5-39F4-4503-A356-B32560CC67EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE98CAE5-39F4-4503-A356-B32560CC67EE}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
